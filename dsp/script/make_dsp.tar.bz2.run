@@ -1,0 +1,5 @@
+make clean
+rm bin/debug/dsp
+rm bin/release/dsp
+find .  -xdev  -type f  -exec  md5sum  {} ';'>md5sum.txt
+tar -cvjf ../dsp.tar.bz2 ../dsp

@@ -1,0 +1,38 @@
+echo "run"
+echo path="$1"
+pwd_debian=`pwd`
+echo basis dir=$pwd_debian
+
+#echo "md5sum test all iso ------------------------------------------"
+#md5sum -cv md5sums
+
+echo create dir to path - "$1"
+mkdir "$1"
+
+for i in 1 2 3 4 5 6 7 8 9 10 11 12 13 14
+do
+    echo $i----------------------------------------------------------
+    mount -oloop debian-31r0a-i386-binary-$i.iso /cdrom
+    mkdir $1/d$i
+    ls $1
+    cp -r /cdrom/.disk $1/d$i
+    cp -r /cdrom/* $1/d$i
+    echo md5sum -c md5sum.txt
+    cd $1/d$i; md5sum -c md5sum.txt; cd $pwd_debian 
+    umount /cdrom
+done
+echo create a new md5sum.txt in $1 ----------------------
+cd $1
+find .  -xdev  -type f  -exec  md5sum  {} ';'>md5sum.txt
+sync
+echo chek the new md5sums in $1 -----------------------
+echo go
+cd $1; md5sum -c md5sum.txt; cd $pwd_debian
+
+#echo add pathes to source.list ----------------------------------
+#for i in 1 2 3 4 5 6 7 8 9 10 11 12 13 14
+#do
+#    echo deb file:$1/d$i stable main  contrib>>/etc/apt/sources.list
+#done
+sync
+#apt-get update

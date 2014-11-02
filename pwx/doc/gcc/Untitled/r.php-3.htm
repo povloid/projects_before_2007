@@ -1,0 +1,93 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1251"><title>www.ПЕРВЫЕ ШАГИ.ru :: Шаг 3 - Компиляция нескольких файлов</title></head><link rel=stylesheet type=text/css href="2.css" tppabs="http://www.firststeps.ru/2.css"><body text=black bgcolor=white link=blue vlink=blue alink=red><h2>Шаг 3 - Компиляция нескольких файлов</h2><div style="margin:10px;"><p>Обычно простые программы состоят из одного исходного файла. Дело обстоит несколько сложнее, если эта программа становится большой. При работе с такой программой может возникнуть несколько достаточно серьезных проблем:
+<ul>
+<li>Файл, становясь большим, увеличивает время компиляции, и малейшие изменения в исходном тексте автоматически вынуждают тратить время программиста на перекомпиляцию программы.
+<li>Если над программой работает много человек, то практически невозможно отследить сделанные изменения.
+<li>Процесс правки и само ориентирование при большом исходном тексте становится сложным и поиск небольшой ошибки может повлечь за собой вынужденное "изучение" кода заново.
+</ul>
+<p>Это далеко не все пробемы, которые могут возникнуть при наличии программы "монстра". Поэтому при разработке программ рекомендуется их разбивать на куски, которые функционально ограничены и закончены. В этом значительно помогает сам язык <b>C++</b>, предоставляя свой богатый синтаксис.
+<p>Для того, чтобы вынести функцию или переменную в отдельный файл надо перед ней поставить зарезервированное слово <b>extern</b>. Давайте для примера создадим программу из нескольких файлов. Сначала создадим главную программу, в которой будут две внешние процедуры. Назовем этот файл <b>main.c</b>:
+<pre>
+#include &lt;stdio.h&gt;
+
+<i>// описываем функцию f1() как внешнюю</i>
+extern int f1();
+
+<i>// описываем функцию f2() как внешнюю</i>
+extern int f2();
+
+int main()
+{
+	int n1, n2;
+
+	n1 = f1();
+	n2 = f2();
+
+	printf("f1() = %d\n",n1);
+	printf("f2() = %d\n",n2);
+
+	return 0;
+}
+</pre>
+<p>Теперь создаем два файла, каждый из которых будет содержать полное определение внешней функции из главной программы. Файлы назовем <b>f1.c</b> и <b>f2.c</b>:
+<pre>
+<i>// файл f1.c</i>
+int f1()
+{
+	return 2;
+}
+
+<i>// файл f2.c</i>
+int f2()
+{
+	return 10;
+}
+</pre>
+<p>После этого процесс компиляции программы с помощью <b>gcc</b> будет выглядеть несколько иначе от описанного в <a href="r.php-1.htm" tppabs="http://www.firststeps.ru/linux/r.php?1">"Шаг 1 - Компиляция программ на языке C/C++"</a>.
+<p>Компилировать можно все файлы одновременно одной командой, перечисляя составные файлы через пробел после ключа <b>-c</b>:
+<pre>
+gcc -c main.c f1.c f2.c
+</pre>
+<p>Или каждый файл в отдельности:
+<pre>
+gcc -c f1.c
+gcc -c f2.c
+gcc -c main.c
+</pre>
+<p>В результате работы компилятора мы получим три отдельных объектных файла:
+<pre>
+main.o
+f1.o
+f2.o
+</pre>
+<p>Чтобы их собрать в один файл с помощью <b>gcc</b> надо использовать ключ <b>-o</b>, при этом линкер соберет все файлы в один:
+<pre>
+gcc main.o f1.o f2.o -o rezult
+</pre>
+<p>В результате вызова полученной программы <b>rezult</b> командой:
+<pre>
+./rezult
+</pre>
+<p>На экране появится результат работы:
+<pre>
+dron:~# ./rezult
+<i>f1() = 2
+f2() = 10</i>
+dron:~#
+</pre>
+<p>Теперь, если мы изменим какую-то из процедур, например <b>f1()</b>:
+<pre>
+int f1()
+{
+	return 25;
+}
+</pre>
+<p>То компилировать заново все файлы не придется, а понадобится лишь скомпилировать измененный файл и собрать результирующий файл из кусков:
+<pre>
+dron:~# gcc -c f1.c
+dron:~# gcc main.o f1.o f2.o -o rezult2
+dron:~# ./rezult2
+<i>f1() = 25
+f2() = 10</i>
+dron:~#
+</pre>
+<p>Таким образом можно создавать большие проекты, которые больше не будут отнимать много времени на компиляцию и поиск ошибок. Однако помните, не стоит также черезчур разбивать программу, иначе у Вас получится несколько десятков файлов, в которых Вы сами рано или поздно запутаетесь. Найдите "золотую середину", например в отдельные файлы помещайте те функции или классы, с которыми Вам приходится больше всего работать при отладке. После того, как функция будет окончательно отлажена, ее вполне можно перенести в более крупный файл.</div><center><hr><a href="r.php-2.htm" tppabs="http://www.firststeps.ru/linux/r.php?2">Предыдущий Шаг</a> | <a href="r.php-4.htm" tppabs="http://www.firststeps.ru/linux/r.php?4">Следующий Шаг</a> | <a href="general1.html" tppabs="http://www.firststeps.ru/linux/general1.html">Оглавление</a><br>Автор <a href="mailto:kuzinandrey@yandex.ru?SUBJECT=From_part_general#3'_on_[www.firststeps.ru]">Кузин Андрей</a>.<hr><iframe src="javascript:if(confirm('http://ad.adriver.ru/cgi-bin/erle.cgi?sid=9595&target=blank&bt=1&pz=0&rnd=12391  \n\nThis file was not retrieved by Teleport Pro, because it did not meet the project\'s file type specifications.  \n\nDo you want to open it from the server?'))window.location='http://ad.adriver.ru/cgi-bin/erle.cgi?sid=9595&target=blank&bt=1&pz=0&rnd=12391'" tppabs="http://ad.adriver.ru/cgi-bin/erle.cgi?sid=9595&target=blank&bt=1&pz=0&rnd=12391" frameborder=0 vspace=0 hspace=0 width=468 height=60 marginwidth=0 marginheight=0 scrolling=no><a href="javascript:if(confirm('http://ad.adriver.ru/cgi-bin/click.cgi?sid=9595&bt=1&pz=0&rnd=12391  \n\nThis file was not retrieved by Teleport Pro, because it is addressed on a domain or path outside the boundaries set for its Starting Address.  \n\nDo you want to open it from the server?'))window.location='http://ad.adriver.ru/cgi-bin/click.cgi?sid=9595&bt=1&pz=0&rnd=12391'" tppabs="http://ad.adriver.ru/cgi-bin/click.cgi?sid=9595&bt=1&pz=0&rnd=12391" target=_blank><img src="rle.cgi-sid=9595&bt=1&pz=0&rnd=12391" tppabs="http://ad.adriver.ru/cgi-bin/rle.cgi?sid=9595&bt=1&pz=0&rnd=12391" alt="-AdRiver-" border=0 width=468 height=60></a></iframe></center><br><br>

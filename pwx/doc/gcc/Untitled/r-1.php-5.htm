@@ -1,0 +1,63 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1251"><title>www.ПЕРВЫЕ ШАГИ.ru :: Шаг 5 - Улучшенный hello world</title></head><link rel=stylesheet type=text/css href="2.css" tppabs="http://www.firststeps.ru/2.css"><body text=black bgcolor=white link=blue vlink=blue alink=red><h2>Шаг 5 - Улучшенный hello world</h2><div style="margin:10px;"><p>Вообще-то, первый проект <b>hello world</b> не полностью функционален. Закрыть его можно было только "убивством" из шела, ну и вообще. Значит, меняем.
+<pre>
+#include &lt;gtk/gtk.h&gt;
+
+void hello( GtkWidget *widget,
+	gpointer data)
+{
+	g_print ("Здравствуй, мир!\n");
+		<i>// наглость написания по русски приветствия
+		// можно себе позволить только с нормально русифицированной консолью</i>
+}
+
+gint delete_event( GtkWidget *widget,
+	GdkEvent *event,
+	gpointer data )
+{
+	g_print ("delete event!!!!!!\n");
+	return (TRUE); 
+}
+
+void destroy( GtkWidget *widget,
+	gpointer data )
+{
+	gtk_main_quit ();
+		<i>// это для того, чтобы программу можно было закрыть с кнопки на окне
+		//</i>
+}
+
+int main( int argc,
+	char *argv[] )
+{
+	GtkWidget *window;
+	GtkWidget *button;
+
+	gtk_init (&amp;argc, &amp;argv);
+
+	window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
+
+	gtk_signal_connect (GTK_OBJECT (window), "delete_event",
+		GTK_SIGNAL_FUNC (delete_event), NULL);
+	gtk_signal_connect (GTK_OBJECT (window), "destroy",
+		GTK_SIGNAL_FUNC (destroy), NULL);
+
+	gtk_container_set_border_width (GTK_CONTAINER (window), 10);
+
+	button = gtk_button_new_with_label ("Здорово, Мир!");
+
+	gtk_signal_connect (GTK_OBJECT (button), "clicked",
+		GTK_SIGNAL_FUNC (hello), NULL);
+	gtk_signal_connect_object (GTK_OBJECT (button), "clicked",
+		GTK_SIGNAL_FUNC (gtk_widget_destroy),
+		GTK_OBJECT (window));
+
+	gtk_container_add (GTK_CONTAINER (window), button);
+
+	gtk_widget_show (button);
+	gtk_widget_show (window);
+	gtk_main();
+	return 0;
+}
+</pre>
+<p>Некоторые замечания. Как, наверно, читатель заметил, здесь довольно часто использовались русско-кодированные слова. Ну, с консолью у меня (xterm) давно все в порядке, а вот надпись на кнопке отобразилась поначалу кривовато. Ну, чтоб все было нормально, необходимо шрифт на заказ в <b>Gnome Control Center</b> поставить. Например, отлично смотрится <b>Helvetica-Cronyx</b>.
+<p>По поводу сигналов. Все то, что использовалось в этом примере, проходилось в предыдущем шаге. Новым здесь является <b>gtk_container</b>. Теорию контейнеров мы рассмотрим в <a href="r-1.php-6.htm" tppabs="http://www.firststeps.ru/linux/gtk/r.php?6">следующем шаге</a>.</div><center><hr><a href="javascript:if(confirm('http://www.firststeps.ru/linux/gtk/prog/5.zip  \n\nThis file was not retrieved by Teleport Pro, because it did not meet the project\'s file type specifications.  \n\nDo you want to open it from the server?'))window.location='http://www.firststeps.ru/linux/gtk/prog/5.zip'" tppabs="http://www.firststeps.ru/linux/gtk/prog/5.zip">Загрузить проект</a> | <a href="r-2.php-4.htm" tppabs="http://www.firststeps.ru/linux/gtk/r.php?4">Предыдущий Шаг</a> | <a href="r-1.php-6.htm" tppabs="http://www.firststeps.ru/linux/gtk/r.php?6">Следующий Шаг</a> | <a href="gtk1.html" tppabs="http://www.firststeps.ru/linux/gtk/gtk1.html">Оглавление</a><br>Автор <a href="mailto:seavan@yandex.ru?SUBJECT=From_part_gtk#5'_on_[www.firststeps.ru]">Аванесов Самвел</a>.<hr><iframe src="javascript:if(confirm('http://ad.adriver.ru/cgi-bin/erle.cgi?sid=9595&target=blank&bt=1&pz=0&rnd=10467  \n\nThis file was not retrieved by Teleport Pro, because it did not meet the project\'s file type specifications.  \n\nDo you want to open it from the server?'))window.location='http://ad.adriver.ru/cgi-bin/erle.cgi?sid=9595&target=blank&bt=1&pz=0&rnd=10467'" tppabs="http://ad.adriver.ru/cgi-bin/erle.cgi?sid=9595&target=blank&bt=1&pz=0&rnd=10467" frameborder=0 vspace=0 hspace=0 width=468 height=60 marginwidth=0 marginheight=0 scrolling=no><a href="javascript:if(confirm('http://ad.adriver.ru/cgi-bin/click.cgi?sid=9595&bt=1&pz=0&rnd=10467  \n\nThis file was not retrieved by Teleport Pro, because it is addressed on a domain or path outside the boundaries set for its Starting Address.  \n\nDo you want to open it from the server?'))window.location='http://ad.adriver.ru/cgi-bin/click.cgi?sid=9595&bt=1&pz=0&rnd=10467'" tppabs="http://ad.adriver.ru/cgi-bin/click.cgi?sid=9595&bt=1&pz=0&rnd=10467" target=_blank><img src="rle.cgi-sid=9595&bt=1&pz=0&rnd=10467" tppabs="http://ad.adriver.ru/cgi-bin/rle.cgi?sid=9595&bt=1&pz=0&rnd=10467" alt="-AdRiver-" border=0 width=468 height=60></a></iframe></center><br><br>

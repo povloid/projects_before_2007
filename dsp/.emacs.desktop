@@ -1,0 +1,688 @@
+;; -*- mode: emacs-lisp; coding: emacs-mule; -*-
+;; --------------------------------------------------------------------------
+;; Desktop File for Emacs
+;; --------------------------------------------------------------------------
+;; Created Thu Sep 21 09:42:52 2006
+;; Desktop file format version 206
+;; Emacs version 22.0.50.1
+
+;; Global section:
+(setq desktop-missing-file-warning nil)
+(setq tags-file-name nil)
+(setq tags-table-list nil)
+(setq search-ring '("sort" "f6" "colo" "focu" "koi8-u" "font" "cu" "curr" "db" "conn" "connct" "bol" "setM" "margin" "margi" "ma"))
+(setq regexp-search-ring nil)
+(setq register-alist nil)
+
+;; Buffer section -- buffers listed in same order as in buffer list:
+(desktop-create-buffer 206
+  "/home/povlo/src/c/dsp/s_vyr_dbtable.h"
+  "s_vyr_dbtable.h"
+  'c++-mode
+  '(abbrev-mode)
+  29
+  '(nil nil)
+  nil
+  nil
+  '((buffer-file-coding-system . mule-utf-8-unix) (overwrite-mode)))
+
+(desktop-create-buffer 206
+  "/home/povlo/src/c/dsp/s_syr_dbtable.h"
+  "s_syr_dbtable.h"
+  'c++-mode
+  '(abbrev-mode)
+  1
+  '(nil nil)
+  nil
+  nil
+  '((buffer-file-coding-system . mule-utf-8-unix)))
+
+(desktop-create-buffer 206
+  "/home/povlo/src/c/dsp/s_prod_dbtable.h"
+  "s_prod_dbtable.h"
+  'c++-mode
+  '(abbrev-mode)
+  1
+  '(nil nil)
+  nil
+  nil
+  '((buffer-file-coding-system . mule-utf-8-unix)))
+
+(desktop-create-buffer 206
+  "/home/povlo/src/c/dsp/s_pprost_dbtable.h"
+  "s_pprost_dbtable.h"
+  'c++-mode
+  '(abbrev-mode)
+  1
+  '(nil nil)
+  nil
+  nil
+  '((buffer-file-coding-system . undecided-unix)))
+
+(desktop-create-buffer 206
+  "/home/povlo/src/c/dsp/s_potr_dbtable.h"
+  "s_potr_dbtable.h"
+  'c++-mode
+  '(abbrev-mode)
+  1
+  '(nil nil)
+  nil
+  nil
+  '((buffer-file-coding-system . undecided-unix)))
+
+(desktop-create-buffer 206
+  "/home/povlo/src/c/dsp/s_post_dbtable.h"
+  "s_post_dbtable.h"
+  'c++-mode
+  '(abbrev-mode)
+  1
+  '(nil nil)
+  nil
+  nil
+  '((buffer-file-coding-system . undecided-unix)))
+
+(desktop-create-buffer 206
+  "/home/povlo/src/c/dsp/s_ob_dbtable.h"
+  "s_ob_dbtable.h"
+  'c++-mode
+  '(abbrev-mode)
+  1
+  '(nil nil)
+  nil
+  nil
+  '((buffer-file-coding-system . mule-utf-8-unix)))
+
+(desktop-create-buffer 206
+  "/home/povlo/src/c/dsp/s_ed_mass_dbtable.h"
+  "s_ed_mass_dbtable.h"
+  'c++-mode
+  '(abbrev-mode)
+  1
+  '(nil nil)
+  nil
+  nil
+  '((buffer-file-coding-system . undecided-unix)))
+
+(desktop-create-buffer 206
+  "/home/povlo/src/c/dsp/s_dep_dbtable.h"
+  "s_dep_dbtable.h"
+  'c++-mode
+  '(abbrev-mode)
+  1
+  '(nil nil)
+  nil
+  nil
+  '((buffer-file-coding-system . undecided-unix)))
+
+(desktop-create-buffer 206
+  "/home/povlo/src/c/dsp/s_bal_dbtable.h"
+  "s_bal_dbtable.h"
+  'c++-mode
+  '(abbrev-mode)
+  1
+  '(nil nil)
+  nil
+  nil
+  '((buffer-file-coding-system . undecided-unix)))
+
+(desktop-create-buffer 206
+  "/home/povlo/src/c/dsp/r_infoforday.h"
+  "r_infoforday.h"
+  'c++-mode
+  '(abbrev-mode)
+  1
+  '(nil nil)
+  nil
+  nil
+  '((buffer-file-coding-system . undecided-unix)))
+
+(desktop-create-buffer 206
+  "/home/povlo/src/c/dsp/r_allproductionbalance.h"
+  "r_allproductionbalance.h"
+  'c++-mode
+  '(abbrev-mode)
+  1
+  '(nil nil)
+  nil
+  nil
+  '((buffer-file-coding-system . undecided-unix)))
+
+(desktop-create-buffer 206
+  "/home/povlo/src/c/dsp/ptableview.h"
+  "ptableview.h"
+  'c++-mode
+  '(abbrev-mode)
+  1
+  '(nil nil)
+  nil
+  nil
+  '((buffer-file-coding-system . undecided-unix)))
+
+(desktop-create-buffer 206
+  "/home/povlo/src/c/dsp/precdialog.h"
+  "precdialog.h"
+  'c++-mode
+  '(abbrev-mode)
+  1
+  '(nil nil)
+  nil
+  nil
+  '((buffer-file-coding-system . mule-utf-8-unix)))
+
+(desktop-create-buffer 206
+  "/home/povlo/src/c/dsp/pone_field.h"
+  "pone_field.h"
+  'c++-mode
+  '(abbrev-mode)
+  1
+  '(nil nil)
+  nil
+  nil
+  '((buffer-file-coding-system . mule-utf-8-unix)))
+
+(desktop-create-buffer 206
+  "/home/povlo/src/c/dsp/pmuffledobject.h"
+  "pmuffledobject.h"
+  'c++-mode
+  '(abbrev-mode)
+  1
+  '(nil nil)
+  nil
+  nil
+  '((buffer-file-coding-system . mule-utf-8-unix)))
+
+(desktop-create-buffer 206
+  "/home/povlo/src/c/dsp/pdialog.h"
+  "pdialog.h"
+  'c++-mode
+  '(abbrev-mode)
+  1
+  '(nil nil)
+  nil
+  nil
+  '((buffer-file-coding-system . undecided-unix)))
+
+(desktop-create-buffer 206
+  "/home/povlo/src/c/dsp/pdatepicker.h"
+  "pdatepicker.h"
+  'c++-mode
+  '(abbrev-mode)
+  1
+  '(nil nil)
+  nil
+  nil
+  '((buffer-file-coding-system . undecided-unix)))
+
+(desktop-create-buffer 206
+  "/home/povlo/src/c/dsp/pabstractraport.h"
+  "pabstractraport.h"
+  'c++-mode
+  '(abbrev-mode)
+  1
+  '(nil nil)
+  nil
+  nil
+  '((buffer-file-coding-system . undecided-unix)))
+
+(desktop-create-buffer 206
+  "/home/povlo/src/c/dsp/pabstractdbtable.h"
+  "pabstractdbtable.h"
+  'c++-mode
+  '(abbrev-mode)
+  1
+  '(nil nil)
+  nil
+  nil
+  '((buffer-file-coding-system . undecided-unix)))
+
+(desktop-create-buffer 206
+  "/home/povlo/src/c/dsp/ow_producing.h"
+  "ow_producing.h"
+  'c++-mode
+  '(abbrev-mode)
+  1
+  '(nil nil)
+  nil
+  nil
+  '((buffer-file-coding-system . undecided-unix)))
+
+(desktop-create-buffer 206
+  "/home/povlo/src/c/dsp/ow_prod_phos_tablo.h"
+  "ow_prod_phos_tablo.h"
+  'c++-mode
+  '(abbrev-mode)
+  1
+  '(nil nil)
+  nil
+  nil
+  '((buffer-file-coding-system . mule-utf-8-unix)))
+
+(desktop-create-buffer 206
+  "/home/povlo/src/c/dsp/ow_prod_phos_pump_dialog.h"
+  "ow_prod_phos_pump_dialog.h"
+  'c++-mode
+  '(abbrev-mode)
+  1
+  '(nil nil)
+  nil
+  nil
+  '((buffer-file-coding-system . undecided-unix)))
+
+(desktop-create-buffer 206
+  "/home/povlo/src/c/dsp/ow_prod_phos.h"
+  "ow_prod_phos.h"
+  'c++-mode
+  '(abbrev-mode)
+  1
+  '(nil nil)
+  nil
+  nil
+  '((buffer-file-coding-system . undecided-unix)))
+
+(desktop-create-buffer 206
+  "/home/povlo/src/c/dsp/ow_prod_phos_addedit_dialog.h"
+  "ow_prod_phos_addedit_dialog.h"
+  'c++-mode
+  '(abbrev-mode)
+  1
+  '(nil nil)
+  nil
+  nil
+  '((buffer-file-coding-system . undecided-unix)))
+
+(desktop-create-buffer 206
+  "/home/povlo/src/c/dsp/ow_outcome.h"
+  "ow_outcome.h"
+  'c++-mode
+  '(abbrev-mode)
+  1
+  '(nil nil)
+  nil
+  nil
+  '((buffer-file-coding-system . mule-utf-8-unix)))
+
+(desktop-create-buffer 206
+  "/home/povlo/src/c/dsp/ow_income.h"
+  "ow_income.h"
+  'c++-mode
+  '(abbrev-mode)
+  1
+  '(nil nil)
+  nil
+  nil
+  '((buffer-file-coding-system . mule-utf-8-unix)))
+
+(desktop-create-buffer 206
+  "/home/povlo/src/c/dsp/ow_depot.h"
+  "ow_depot.h"
+  'c++-mode
+  '(abbrev-mode)
+  1
+  '(nil nil)
+  nil
+  nil
+  '((buffer-file-coding-system . mule-utf-8-unix)))
+
+(desktop-create-buffer 206
+  "/home/povlo/src/c/dsp/ow_abstractaccumulate.h"
+  "ow_abstractaccumulate.h"
+  'c++-mode
+  '(abbrev-mode)
+  1
+  '(nil nil)
+  nil
+  nil
+  '((buffer-file-coding-system . undecided-unix)))
+
+(desktop-create-buffer 206
+  "/home/povlo/src/c/dsp/dsp.h"
+  "dsp.h"
+  'c++-mode
+  '(abbrev-mode)
+  1
+  '(nil nil)
+  nil
+  nil
+  '((buffer-file-coding-system . undecided-unix)))
+
+(desktop-create-buffer 206
+  "/home/povlo/src/c/dsp/dspconst.h"
+  "dspconst.h"
+  'c++-mode
+  '(abbrev-mode)
+  1
+  '(nil nil)
+  nil
+  nil
+  '((buffer-file-coding-system . mule-utf-8-unix)))
+
+(desktop-create-buffer 206
+  "/home/povlo/src/c/dsp/s_vyr_dbtable.cpp"
+  "s_vyr_dbtable.cpp"
+  'c++-mode
+  '(abbrev-mode)
+  1
+  '(nil nil)
+  nil
+  nil
+  '((buffer-file-coding-system . mule-utf-8-unix)))
+
+(desktop-create-buffer 206
+  "/home/povlo/src/c/dsp/s_syr_dbtable.cpp"
+  "s_syr_dbtable.cpp"
+  'c++-mode
+  '(abbrev-mode)
+  1
+  '(nil nil)
+  nil
+  nil
+  '((buffer-file-coding-system . mule-utf-8-unix)))
+
+(desktop-create-buffer 206
+  "/home/povlo/src/c/dsp/s_prod_dbtable.cpp"
+  "s_prod_dbtable.cpp"
+  'c++-mode
+  '(abbrev-mode)
+  1
+  '(nil nil)
+  nil
+  nil
+  '((buffer-file-coding-system . mule-utf-8-unix)))
+
+(desktop-create-buffer 206
+  "/home/povlo/src/c/dsp/s_pprost_dbtable.cpp"
+  "s_pprost_dbtable.cpp"
+  'c++-mode
+  '(abbrev-mode)
+  1
+  '(nil nil)
+  nil
+  nil
+  '((buffer-file-coding-system . mule-utf-8-unix)))
+
+(desktop-create-buffer 206
+  "/home/povlo/src/c/dsp/s_potr_dbtable.cpp"
+  "s_potr_dbtable.cpp"
+  'c++-mode
+  '(abbrev-mode)
+  1
+  '(nil nil)
+  nil
+  nil
+  '((buffer-file-coding-system . mule-utf-8-unix)))
+
+(desktop-create-buffer 206
+  "/home/povlo/src/c/dsp/s_post_dbtable.cpp"
+  "s_post_dbtable.cpp"
+  'c++-mode
+  '(abbrev-mode)
+  1
+  '(nil nil)
+  nil
+  nil
+  '((buffer-file-coding-system . mule-utf-8-unix)))
+
+(desktop-create-buffer 206
+  "/home/povlo/src/c/dsp/s_ob_dbtable.cpp"
+  "s_ob_dbtable.cpp"
+  'c++-mode
+  '(abbrev-mode)
+  1
+  '(nil nil)
+  nil
+  nil
+  '((buffer-file-coding-system . mule-utf-8-unix)))
+
+(desktop-create-buffer 206
+  "/home/povlo/src/c/dsp/s_ed_mass_dbtable.cpp"
+  "s_ed_mass_dbtable.cpp"
+  'c++-mode
+  '(abbrev-mode)
+  1
+  '(nil nil)
+  nil
+  nil
+  '((buffer-file-coding-system . mule-utf-8-unix)))
+
+(desktop-create-buffer 206
+  "/home/povlo/src/c/dsp/s_dep_dbtable.cpp"
+  "s_dep_dbtable.cpp"
+  'c++-mode
+  '(abbrev-mode)
+  1
+  '(nil nil)
+  nil
+  nil
+  '((buffer-file-coding-system . mule-utf-8-unix)))
+
+(desktop-create-buffer 206
+  "/home/povlo/src/c/dsp/s_bal_dbtable.cpp"
+  "s_bal_dbtable.cpp"
+  'c++-mode
+  '(abbrev-mode)
+  1
+  '(nil nil)
+  nil
+  nil
+  '((buffer-file-coding-system . mule-utf-8-unix)))
+
+(desktop-create-buffer 206
+  "/home/povlo/src/c/dsp/r_infoforday.cpp"
+  "r_infoforday.cpp"
+  'c++-mode
+  '(abbrev-mode)
+  1
+  '(nil nil)
+  nil
+  nil
+  '((buffer-file-coding-system . mule-utf-8-unix)))
+
+(desktop-create-buffer 206
+  "/home/povlo/src/c/dsp/r_allproductionbalance.cpp"
+  "r_allproductionbalance.cpp"
+  'c++-mode
+  '(abbrev-mode)
+  1
+  '(nil nil)
+  nil
+  nil
+  '((buffer-file-coding-system . mule-utf-8-unix)))
+
+(desktop-create-buffer 206
+  "/home/povlo/src/c/dsp/ptableview.cpp"
+  "ptableview.cpp"
+  'c++-mode
+  '(abbrev-mode)
+  1
+  '(nil nil)
+  nil
+  nil
+  '((buffer-file-coding-system . mule-utf-8-unix)))
+
+(desktop-create-buffer 206
+  "/home/povlo/src/c/dsp/precdialog.cpp"
+  "precdialog.cpp"
+  'c++-mode
+  '(abbrev-mode)
+  729
+  '(729 nil)
+  nil
+  nil
+  '((buffer-file-coding-system . mule-utf-8-unix) (overwrite-mode)))
+
+(desktop-create-buffer 206
+  "/home/povlo/src/c/dsp/pone_field.cpp"
+  "pone_field.cpp"
+  'c++-mode
+  '(abbrev-mode)
+  1
+  '(nil nil)
+  nil
+  nil
+  '((buffer-file-coding-system . mule-utf-8-unix)))
+
+(desktop-create-buffer 206
+  "/home/povlo/src/c/dsp/pdialog.cpp"
+  "pdialog.cpp"
+  'c++-mode
+  '(abbrev-mode)
+  1
+  '(nil nil)
+  nil
+  nil
+  '((buffer-file-coding-system . mule-utf-8-unix)))
+
+(desktop-create-buffer 206
+  "/home/povlo/src/c/dsp/pdatepicker.cpp"
+  "pdatepicker.cpp"
+  'c++-mode
+  '(abbrev-mode)
+  1
+  '(nil nil)
+  nil
+  nil
+  '((buffer-file-coding-system . mule-utf-8-unix)))
+
+(desktop-create-buffer 206
+  "/home/povlo/src/c/dsp/pabstractraport.cpp"
+  "pabstractraport.cpp"
+  'c++-mode
+  '(abbrev-mode)
+  853
+  '(853 nil)
+  nil
+  nil
+  '((buffer-file-coding-system . mule-utf-8-unix) (overwrite-mode)))
+
+(desktop-create-buffer 206
+  "/home/povlo/src/c/dsp/pabstractdbtable.cpp"
+  "pabstractdbtable.cpp"
+  'c++-mode
+  '(abbrev-mode)
+  1
+  '(nil nil)
+  nil
+  nil
+  '((buffer-file-coding-system . mule-utf-8-unix)))
+
+(desktop-create-buffer 206
+  "/home/povlo/src/c/dsp/ow_producing.cpp"
+  "ow_producing.cpp"
+  'c++-mode
+  '(abbrev-mode)
+  1
+  '(nil nil)
+  nil
+  nil
+  '((buffer-file-coding-system . mule-utf-8-unix)))
+
+(desktop-create-buffer 206
+  "/home/povlo/src/c/dsp/ow_prod_phos_tablo.cpp"
+  "ow_prod_phos_tablo.cpp"
+  'c++-mode
+  '(abbrev-mode)
+  1
+  '(nil nil)
+  nil
+  nil
+  '((buffer-file-coding-system . mule-utf-8-unix)))
+
+(desktop-create-buffer 206
+  "/home/povlo/src/c/dsp/ow_prod_phos_pump_dialog.cpp"
+  "ow_prod_phos_pump_dialog.cpp"
+  'c++-mode
+  '(abbrev-mode)
+  1
+  '(nil nil)
+  nil
+  nil
+  '((buffer-file-coding-system . mule-utf-8-unix)))
+
+(desktop-create-buffer 206
+  "/home/povlo/src/c/dsp/ow_prod_phos.cpp"
+  "ow_prod_phos.cpp"
+  'c++-mode
+  '(abbrev-mode)
+  925
+  '(1204 nil)
+  nil
+  nil
+  '((buffer-file-coding-system . mule-utf-8-unix) (overwrite-mode)))
+
+(desktop-create-buffer 206
+  "/home/povlo/src/c/dsp/ow_prod_phos_addedit_dialog.cpp"
+  "ow_prod_phos_addedit_dialog.cpp"
+  'c++-mode
+  '(abbrev-mode)
+  1
+  '(nil nil)
+  nil
+  nil
+  '((buffer-file-coding-system . mule-utf-8-unix)))
+
+(desktop-create-buffer 206
+  "/home/povlo/src/c/dsp/ow_outcome.cpp"
+  "ow_outcome.cpp"
+  'c++-mode
+  '(abbrev-mode)
+  2117
+  '(2188 nil)
+  nil
+  nil
+  '((buffer-file-coding-system . mule-utf-8-unix) (overwrite-mode)))
+
+(desktop-create-buffer 206
+  "/home/povlo/src/c/dsp/ow_income.cpp"
+  "ow_income.cpp"
+  'c++-mode
+  '(abbrev-mode)
+  1
+  '(nil nil)
+  nil
+  nil
+  '((buffer-file-coding-system . mule-utf-8-unix)))
+
+(desktop-create-buffer 206
+  "/home/povlo/src/c/dsp/ow_depot.cpp"
+  "ow_depot.cpp"
+  'c++-mode
+  '(abbrev-mode)
+  1
+  '(nil nil)
+  nil
+  nil
+  '((buffer-file-coding-system . mule-utf-8-unix)))
+
+(desktop-create-buffer 206
+  "/home/povlo/src/c/dsp/ow_abstractaccumulate.cpp"
+  "ow_abstractaccumulate.cpp"
+  'c++-mode
+  '(abbrev-mode)
+  1
+  '(nil nil)
+  nil
+  nil
+  '((buffer-file-coding-system . mule-utf-8-unix)))
+
+(desktop-create-buffer 206
+  "/home/povlo/src/c/dsp/main.cpp"
+  "main.cpp"
+  'c++-mode
+  '(abbrev-mode)
+  1
+  '(nil nil)
+  nil
+  nil
+  '((buffer-file-coding-system . mule-utf-8-unix)))
+
+(desktop-create-buffer 206
+  "/home/povlo/src/c/dsp/dsp.cpp"
+  "dsp.cpp"
+  'c++-mode
+  '(abbrev-mode)
+  7148
+  '(nil nil)
+  nil
+  nil
+  '((buffer-file-coding-system . mule-utf-8-unix) (overwrite-mode)))
+

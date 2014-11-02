@@ -1,0 +1,93 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1251"><title>www.ПЕРВЫЕ ШАГИ.ru :: Шаг 14 - Указатели в смысле картинок</title></head><link rel=stylesheet type=text/css href="2.css" tppabs="http://www.firststeps.ru/2.css"><body text=black bgcolor=white link=blue vlink=blue alink=red><h2>Шаг 14 - Указатели в смысле картинок</h2><div style="margin:10px;"><p>Своеобразный виджет... Отображает в пространстве родителя стрелку. Для работы со стрелками используются функции:
+<pre>
+GtkWidget *gtk_arrow_new( GtkArrowType arrow_type,
+	GtkShadowType shadow_type );
+
+void gtk_arrow_set( GtkArrow *arrow,
+	GtkArrowType arrow_type,
+	GtkShadowType shadow_type );
+</pre>
+<p>Параметр <b>arrow_type</b> обозначает направление стрелки и принимает следующие значения:
+<ul>
+<li>GTK_ARROW_UP
+<li>GTK_ARROW_DOWN
+<li>GTK_ARROW_RIGHT
+<li>GTK_ARROW_LEFT
+</ul>
+<p>В общем понятно... Стиль тени может быть следующим:
+<ul>
+<li>GTK_SHADOW_IN
+<li>GTK_SHADOW_OUT
+<li>GTK_SHADOW_ETCHED_IN
+<li>GTK_SHADOW_ETCHED_OUT
+</ul>
+<p>Для демонстрации возможностей используется следующая стандартная программка. В ней описывается довольно полезная функция создания кнопок со стрелками:
+<pre>
+#include &lt;gtk/gtk.h&gt;
+
+<i>/* Та самая полезная функция... */</i>
+GtkWidget *create_arrow_button( GtkArrowType arrow_type,
+	GtkShadowType shadow_type )
+{
+	GtkWidget *button;
+	GtkWidget *arrow;
+
+	button = gtk_button_new();
+	arrow = gtk_arrow_new (arrow_type, shadow_type);
+
+	gtk_container_add (GTK_CONTAINER (button), arrow);
+
+	gtk_widget_show(button);
+	gtk_widget_show(arrow);
+
+	return(button);
+}
+
+int main( int argc, char *argv[] )
+{
+	GtkWidget *window;
+	GtkWidget *button;
+	GtkWidget *box;
+
+	<i>/* Инициализация */</i>
+	gtk_init (&argc, &argv);
+
+	<i>/* Новое окно */</i>
+	window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
+
+	gtk_window_set_title (GTK_WINDOW (window), "Arrow Buttons");
+
+	gtk_signal_connect (GTK_OBJECT (window), "destroy",
+		GTK_SIGNAL_FUNC (gtk_main_quit), NULL);
+
+	gtk_container_set_border_width (GTK_CONTAINER (window), 10);
+
+	<i>/* Контейнер для кнопок со стрелками */</i>
+	box = gtk_hbox_new (FALSE, 0);
+	gtk_container_set_border_width (GTK_CONTAINER (box), 2);
+	gtk_container_add (GTK_CONTAINER (window), box);
+
+	gtk_widget_show(box);
+
+	button = create_arrow_button(GTK_ARROW_UP, GTK_SHADOW_IN);
+	gtk_box_pack_start (GTK_BOX (box), button, FALSE, FALSE, 3);
+
+	button = create_arrow_button(GTK_ARROW_DOWN, GTK_SHADOW_OUT);
+	gtk_box_pack_start (GTK_BOX (box), button, FALSE, FALSE, 3);
+  
+	button = create_arrow_button(GTK_ARROW_LEFT, GTK_SHADOW_ETCHED_IN);
+	gtk_box_pack_start (GTK_BOX (box), button, FALSE, FALSE, 3);
+  
+	button = create_arrow_button(GTK_ARROW_RIGHT, GTK_SHADOW_ETCHED_OUT);
+	gtk_box_pack_start (GTK_BOX (box), button, FALSE, FALSE, 3);
+  
+	gtk_widget_show (window);
+  
+	<i>/* Поехали! */</i>
+	gtk_main ();
+  
+	return(0);
+}
+</pre>
+<p>Вот так эти ужасы у меня выглядели:
+<p><img src="14_1.gif" tppabs="http://www.firststeps.ru/linux/gtk/gif/14_1.gif" alt="gif/14_1.gif (2432 b)" border=2></p></div><center><hr><a href="r-1.php-13.htm" tppabs="http://www.firststeps.ru/linux/gtk/r.php?13">Предыдущий Шаг</a> | <a href="r-1.php-15.htm" tppabs="http://www.firststeps.ru/linux/gtk/r.php?15">Следующий Шаг</a> | <a href="gtk1.html" tppabs="http://www.firststeps.ru/linux/gtk/gtk1.html">Оглавление</a><br>Автор <a href="mailto:seavan@yandex.ru?SUBJECT=From_part_gtk#14'_on_[www.firststeps.ru]">Аванесов Самвел</a>.<hr><iframe src="javascript:if(confirm('http://ad.adriver.ru/cgi-bin/erle.cgi?sid=9595&target=blank&bt=1&pz=0&rnd=15534  \n\nThis file was not retrieved by Teleport Pro, because it did not meet the project\'s file type specifications.  \n\nDo you want to open it from the server?'))window.location='http://ad.adriver.ru/cgi-bin/erle.cgi?sid=9595&target=blank&bt=1&pz=0&rnd=15534'" tppabs="http://ad.adriver.ru/cgi-bin/erle.cgi?sid=9595&target=blank&bt=1&pz=0&rnd=15534" frameborder=0 vspace=0 hspace=0 width=468 height=60 marginwidth=0 marginheight=0 scrolling=no><a href="javascript:if(confirm('http://ad.adriver.ru/cgi-bin/click.cgi?sid=9595&bt=1&pz=0&rnd=15534  \n\nThis file was not retrieved by Teleport Pro, because it is addressed on a domain or path outside the boundaries set for its Starting Address.  \n\nDo you want to open it from the server?'))window.location='http://ad.adriver.ru/cgi-bin/click.cgi?sid=9595&bt=1&pz=0&rnd=15534'" tppabs="http://ad.adriver.ru/cgi-bin/click.cgi?sid=9595&bt=1&pz=0&rnd=15534" target=_blank><img src="rle.cgi-sid=9595&bt=1&pz=0&rnd=15534" tppabs="http://ad.adriver.ru/cgi-bin/rle.cgi?sid=9595&bt=1&pz=0&rnd=15534" alt="-AdRiver-" border=0 width=468 height=60></a></iframe></center><br><br>

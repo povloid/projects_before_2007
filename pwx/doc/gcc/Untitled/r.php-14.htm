@@ -1,0 +1,75 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1251"><title>www.ПЕРВЫЕ ШАГИ.ru :: Шаг 14 - Получение данных из shadow password</title></head><link rel=stylesheet type=text/css href="2.css" tppabs="http://www.firststeps.ru/2.css"><body text=black bgcolor=white link=blue vlink=blue alink=red><h2>Шаг 14 - Получение данных из shadow password</h2><div style="margin:10px;"><p>В <a href="r.php-13.htm" tppabs="http://www.firststeps.ru/linux/r.php?13">прошлый раз</a> мы с Вами разобрались с тем, как получать информацию о пользователе из файла <b>/etc/passwd</b>, но как оказалось получить пароль нам не удастся, потому что его там нет. А как быть, если он Вам нужен ? Ну, например, Вы решили написать собственный сервер <b>POP3</b>, который для авторизации требует наличие пароля.
+<p>Для работы со скрытыми паролями надо подключить файл <b>shadow.h</b> и вам станут доступны аналогичные процедуры:
+<pre>
+#include &lt;shadow.h&gt;
+
+struct spwd *getspnam (const char *name);
+</pre>
+<p>Обратите внимание, что в файле <b>shadow.h</b> нет определения функции получения информации о пользователе по его <b>UID</b>. Т.е. для работы нужно знать имя пользователя, соответственно сначала нужно воспользоваться функцией <b>getpwuid()</b>, чтобы по <b>UID</b> получить имя.
+<p>Функция <b>getspnam()</b> возвращает структуру <b>struct spwd</b>, либо <b>NULL</b> в случае неудачи. Данная структура определена следующим образом:
+<pre>
+struct spwd
+{
+	char *sp_namp;              /* Login name.  */
+	char *sp_pwdp;              /* Encrypted password. */
+	long int sp_lstchg;         /* Date of last change. */
+	long int sp_min;            /* Minimum number of days between changes. */
+	long int sp_max;            /* Maximum number of days between changes. */
+	long int sp_warn;           /* Number of days to warn user to change
+                                   the password. */
+	long int sp_inact;          /* Number of days the account may be
+                                   inactive. */
+	long int sp_expire;         /* Number of days since 1970-01-01 until
+                                   account expires. */
+	unsigned long int sp_flag;  /* Reserved.  */
+};
+</pre>
+<p>Как видите структура гораздо больше, чем <b>passwd</b>. Большинство полей отвечает за временные параметры пароля, такие как его минимальное и максимальное время жизни, а также время жизни всего аккаунта.
+<p>И наверняка Вы заметили, что я немного соврал Вам в прошлый раз, когда сказал, что <b>/etc/shadow</b> содержит информацию аналогичную <b>/etc/passwd</b>. Получается, что кроме логина и пароля Вы тут не найдете домашней директории и шелла. В принципе верно, зачем хранить одно и тоже в нескольких местах ?! Выходит, что нам не удастся "отбиться от коллектива" и придется пользоваться обоими файлами.
+<p>Давайте посмотрим, как работает эта функция. Напишем маленькую программку <b>shadowtest.c</b>:
+<pre>
+#include &lt;stdlib.h&gt;
+#include &lt;unistd.h&gt;
+#include &lt;sys/types.h&gt;
+#include &lt;pwd.h&gt;
+#include &lt;shadow.h&gt;
+
+int main(){
+	struct passwd *userinfo;
+	struct spwd *passw;
+	uid_t userid;     	
+
+	userid = getuid();
+	userinfo = getpwuid(userid);
+
+	if (userinfo != NULL){
+
+		passw = getspnam(userinfo-&gt;pw_name);
+
+		if (passw != NULL){
+			printf("user login: %s\n",userinfo-&gt;pw_name);
+			printf("user home: %s\n",userinfo-&gt;pw_dir);
+			printf("user shell: %s\n",userinfo-&gt;pw_shell);
+			printf("user password: %s\n",userinfo-&gt;pw_passwd);
+			printf("user shadow password: %s\n",passw-&gt;sp_pwdp);
+			printf("user last change: %ld\n",passw-&gt;sp_lstchg);
+		};
+
+	};
+
+	return 0;
+};
+</pre>
+<p>Компилируем и запускаем:
+<pre>
+dron~# ./gcc shadowtest.c -o shadowtest
+dron~# ./shadowtest
+user login: root
+user home: /root
+user shell: /bin/bash
+user password: x
+user shadow password: $1$02p9xyDo$gnkh4vts/rArhJselceTV1
+user last change: 12028
+</pre>
+<p>Как видите пароль нам получить удалось только из структуры <b>struct spwd</b>. Но он зашифрованный алгоритмом MD5, в данном случае настоящий пароль 12345678 (можете не мучаться над взломом :). Тут кстати следует поговорить о том, как хранятся пароли. Понятное дело, что если пароли будут храниться в виде <b>plain text</b>, т.е. в виде текста "как есть", то можно будет узнать пароль для любого пользователя совершенно спокойно. Современные правила безопасности вообще не разрешают хранить пароль в таком виде. Вместо этого пароль хранится в виде хеша от настояшего пароля. Функция вырабатывающая хеш берет настоящий пароль и вырабатывает на его основе уникальную последовательность чисел, которую не возможно обратно преобразовать в пароль, потому что математические функции работающие над выработкой пароля специально создаются однонаправленными. Создание таких процедур является сложной криптографической задачей и порой под силу только крупным научно-исследовательским институтам. К примеру у нас в России существуют засекреченные алгоритмы, некоторые из которых разрабатывались в течение 10 лет, так вот представьте каких трудов это стоит и представьте какие эти алгоритмы совершенные. Взять к примеру наш алгоритм шифрования ГОСТ 28147-89, который существует с 89 года и до сих пор остается одним из самых защищенных (он может иметь длину ключа 256 бит, в то время как DES имеет всего 56 бит и при нынешнем развитии компьютеров является чрезвычайно устаревшим). Однако для выработки хеша в системах <b>Linux</b> используются в основном алгоритмы <b>DES</b> и <b>MD5</b>, хотя первый уже используется крайне редко.
+<p>Так вот, сравнение правильности пароля происходит следующим образом. Программа получает настоящий пароль от пользователя, потом вырабатывает на его основе хеш и сравнивает его с тем, который она получила из файла <b>/etc/shadow</b>. Если хеши не совпадают, то значит пароли разные.</div><center><hr><a href="r.php-13.htm" tppabs="http://www.firststeps.ru/linux/r.php?13">Предыдущий Шаг</a> | <a href="r.php-15.htm" tppabs="http://www.firststeps.ru/linux/r.php?15">Следующий Шаг</a> | <a href="general1.html" tppabs="http://www.firststeps.ru/linux/general1.html">Оглавление</a><br>Автор <a href="mailto:kuzinandrey@yandex.ru?SUBJECT=From_part_general#14'_on_[www.firststeps.ru]">Кузин Андрей</a>.<hr><iframe src="javascript:if(confirm('http://ad.adriver.ru/cgi-bin/erle.cgi?sid=9595&target=blank&bt=1&pz=0&rnd=17232  \n\nThis file was not retrieved by Teleport Pro, because it did not meet the project\'s file type specifications.  \n\nDo you want to open it from the server?'))window.location='http://ad.adriver.ru/cgi-bin/erle.cgi?sid=9595&target=blank&bt=1&pz=0&rnd=17232'" tppabs="http://ad.adriver.ru/cgi-bin/erle.cgi?sid=9595&target=blank&bt=1&pz=0&rnd=17232" frameborder=0 vspace=0 hspace=0 width=468 height=60 marginwidth=0 marginheight=0 scrolling=no><a href="javascript:if(confirm('http://ad.adriver.ru/cgi-bin/click.cgi?sid=9595&bt=1&pz=0&rnd=17232  \n\nThis file was not retrieved by Teleport Pro, because it is addressed on a domain or path outside the boundaries set for its Starting Address.  \n\nDo you want to open it from the server?'))window.location='http://ad.adriver.ru/cgi-bin/click.cgi?sid=9595&bt=1&pz=0&rnd=17232'" tppabs="http://ad.adriver.ru/cgi-bin/click.cgi?sid=9595&bt=1&pz=0&rnd=17232" target=_blank><img src="rle.cgi-sid=9595&bt=1&pz=0&rnd=17232" tppabs="http://ad.adriver.ru/cgi-bin/rle.cgi?sid=9595&bt=1&pz=0&rnd=17232" alt="-AdRiver-" border=0 width=468 height=60></a></iframe></center><br><br>

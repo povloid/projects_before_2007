@@ -1,0 +1,5 @@
+g++ -c pwx-last-3-time.cpp
+g++ pwx-last-3-time.o -L /usr/lib/ -lgds -o pwx-last-3-time
+
+./pwx-last-3-time>list.txt
+tail list.txt

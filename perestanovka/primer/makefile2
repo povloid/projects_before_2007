@@ -1,0 +1,7 @@
+all: dp83815.o
+
+dp83815.o: dp83815.c dp83815.h
+	gcc -D__KERNEL__ -DMODULE -Wall -Wstrict-prototypes -O -m486 -c dp83815.c
+
+clean: 
+	rm -f core *.o

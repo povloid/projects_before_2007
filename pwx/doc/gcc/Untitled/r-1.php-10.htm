@@ -1,0 +1,109 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1251"><title>www.ПЕРВЫЕ ШАГИ.ru :: Шаг 10 - Больше виджетов... разных и нужных</title></head><link rel=stylesheet type=text/css href="2.css" tppabs="http://www.firststeps.ru/2.css"><body text=black bgcolor=white link=blue vlink=blue alink=red><h2>Шаг 10 - Больше виджетов... разных и нужных</h2><div style="margin:10px;"><p>Мы уже довольно много раз применяли разного рода виджеты, создавали их, отображали и т.д. и т.п. Немного обобщу...
+<p>Все виджеты создаются функциями вида <b>gtk_*_new</b>. После этого устанавливаются обработчики событий, внешний вид виджета, виджет упаковывается в котейнер, (<b>gtk_container_add</b> или <b>gtk_box_pack_*</b>). После этого виджет отображается в окне функцией <b>gtk_widget_show</b>.
+<p>Теперь по поводу объектно-ориентированности ГТК. Эта библиотека заранее проектировалась так, чтобы быть доступной из не-объектно-ориентированных языков... Но тем не менее в ней есть иерархия классов! Эта иерархия поддерживается встроенными функцйиями... Если в <b>C</b> без плюсиков нет необходимости делать приведение типов, то с помощью макросов в <b>C++</b> можно такое приведение выполнить... Впрочем, как залог безошибочного выполнения программы, рекомендую приведение делать всегда.
+<p>Вот примеры наиболее распространенных макросов:
+<ul>
+<li>GTK_WIDGET(widget)
+<li>GTK_OBJECT(object)
+<li>GTK_SIGNAL_FUNC(function)
+<li>GTK_CONTAINER(container)
+<li>GTK_WINDOW(window)
+<li>GTK_BOX(box)
+</ul>
+<p>Как я уже сказал, в ГТК есть иерархия классов. Кроме этой иерархии, есть еще надстройка над ГТК - <b>GTK+</b>, которая вообще работает только в объектных языках... Поэтому я здесь ее и не рассматриваю.. А вот иерархия:
+<pre>
+ GtkObject
+  +GtkWidget
+  | +GtkMisc
+  | | +GtkLabel
+  | | | +GtkAccelLabel
+  | | | `GtkTipsQuery
+  | | +GtkArrow
+  | | +GtkImage
+  | | `GtkPixmap
+  | +GtkContainer
+  | | +GtkBin
+  | | | +GtkAlignment
+  | | | +GtkFrame
+  | | | | `GtkAspectFrame
+  | | | +GtkButton
+  | | | | +GtkToggleButton
+  | | | | | `GtkCheckButton
+  | | | | |   `GtkRadioButton
+  | | | | `GtkOptionMenu
+  | | | +GtkItem
+  | | | | +GtkMenuItem
+  | | | | | +GtkCheckMenuItem
+  | | | | | | `GtkRadioMenuItem
+  | | | | | `GtkTearoffMenuItem
+  | | | | +GtkListItem
+  | | | | `GtkTreeItem
+  | | | +GtkWindow
+  | | | | +GtkColorSelectionDialog
+  | | | | +GtkDialog
+  | | | | | `GtkInputDialog
+  | | | | +GtkDrawWindow
+  | | | | +GtkFileSelection
+  | | | | +GtkFontSelectionDialog
+  | | | | `GtkPlug
+  | | | +GtkEventBox
+  | | | +GtkHandleBox
+  | | | +GtkScrolledWindow
+  | | | `GtkViewport
+  | | +GtkBox
+  | | | +GtkButtonBox
+  | | | | +GtkHButtonBox
+  | | | | `GtkVButtonBox
+  | | | +GtkVBox
+  | | | | +GtkColorSelection
+  | | | | `GtkGammaCurve
+  | | | `GtkHBox
+  | | |   +GtkCombo
+  | | |   `GtkStatusbar
+  | | +GtkCList
+  | | | `GtkCTree
+  | | +GtkFixed
+  | | +GtkNotebook
+  | | | `GtkFontSelection
+  | | +GtkPaned
+  | | | +GtkHPaned
+  | | | `GtkVPaned
+  | | +GtkLayout
+  | | +GtkList
+  | | +GtkMenuShell
+  | | | +GtkMenuBar
+  | | | `GtkMenu
+  | | +GtkPacker
+  | | +GtkSocket
+  | | +GtkTable
+  | | +GtkToolbar
+  | | `GtkTree
+  | +GtkCalendar
+  | +GtkDrawingArea
+  | | `GtkCurve
+  | +GtkEditable
+  | | +GtkEntry
+  | | | `GtkSpinButton
+  | | `GtkText
+  | +GtkRuler
+  | | +GtkHRuler
+  | | `GtkVRuler
+  | +GtkRange
+  | | +GtkScale
+  | | | +GtkHScale
+  | | | `GtkVScale
+  | | `GtkScrollbar
+  | |   +GtkHScrollbar
+  | |   `GtkVScrollbar
+  | +GtkSeparator
+  | | +GtkHSeparator
+  | | `GtkVSeparator
+  | +GtkPreview
+  | `GtkProgress
+  |   `GtkProgressBar
+  +GtkData
+  | +GtkAdjustment
+  | `GtkTooltips
+  `GtkItemFactory
+</pre>
+<p>Выглядит впечатляюще, а? Как Вавилонская башня после ее редактирования сумасшедшим программистом в <b>EMACS</b>. Надеюсь, читатель мне простит, если все это мы рассматривать не будем, а только самое нужное...</div><center><hr><a href="r-1.php-9.htm" tppabs="http://www.firststeps.ru/linux/gtk/r.php?9">Предыдущий Шаг</a> | <a href="r-1.php-11.htm" tppabs="http://www.firststeps.ru/linux/gtk/r.php?11">Следующий Шаг</a> | <a href="gtk1.html" tppabs="http://www.firststeps.ru/linux/gtk/gtk1.html">Оглавление</a><br>Автор <a href="mailto:seavan@yandex.ru?SUBJECT=From_part_gtk#10'_on_[www.firststeps.ru]">Аванесов Самвел</a>.<hr><iframe src="javascript:if(confirm('http://ad.adriver.ru/cgi-bin/erle.cgi?sid=9595&target=blank&bt=1&pz=0&rnd=12279  \n\nThis file was not retrieved by Teleport Pro, because it did not meet the project\'s file type specifications.  \n\nDo you want to open it from the server?'))window.location='http://ad.adriver.ru/cgi-bin/erle.cgi?sid=9595&target=blank&bt=1&pz=0&rnd=12279'" tppabs="http://ad.adriver.ru/cgi-bin/erle.cgi?sid=9595&target=blank&bt=1&pz=0&rnd=12279" frameborder=0 vspace=0 hspace=0 width=468 height=60 marginwidth=0 marginheight=0 scrolling=no><a href="javascript:if(confirm('http://ad.adriver.ru/cgi-bin/click.cgi?sid=9595&bt=1&pz=0&rnd=12279  \n\nThis file was not retrieved by Teleport Pro, because it is addressed on a domain or path outside the boundaries set for its Starting Address.  \n\nDo you want to open it from the server?'))window.location='http://ad.adriver.ru/cgi-bin/click.cgi?sid=9595&bt=1&pz=0&rnd=12279'" tppabs="http://ad.adriver.ru/cgi-bin/click.cgi?sid=9595&bt=1&pz=0&rnd=12279" target=_blank><img src="rle.cgi-sid=9595&bt=1&pz=0&rnd=12279" tppabs="http://ad.adriver.ru/cgi-bin/rle.cgi?sid=9595&bt=1&pz=0&rnd=12279" alt="-AdRiver-" border=0 width=468 height=60></a></iframe></center><br><br>

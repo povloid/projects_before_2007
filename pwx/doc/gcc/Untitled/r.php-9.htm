@@ -1,0 +1,102 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1251"><title>www.ПЕРВЫЕ ШАГИ.ru :: Шаг 9 - Инициализация динамических библиотек</title></head><link rel=stylesheet type=text/css href="2.css" tppabs="http://www.firststeps.ru/2.css"><body text=black bgcolor=white link=blue vlink=blue alink=red><h2>Шаг 9 - Инициализация динамических библиотек</h2><div style="margin:10px;"><p>До сих пор мы писали с Вами простые динамические библиотеки, поэтому у нас не болела голова об инициализации внутренних переменных. А представьте себе более сложную ситуацию, когда функции библиотеки для работы требуют правильно инициализированные переменные. Ну, например, для работы функции нужен буфер или массив.
+<p>Специально для таких случаев в библиотеках можно задавать инициализирующую и деинициализирующую функции:
+<ul>
+<li><b>void _init()</b> - инициализация
+<li><b>void _fini()</b> - деинициализация
+</ul>
+<p>Чтобы понять, что к чему, введем в нашей библиотеке <b>lib.c</b> переменную <b>test</b> и возвращающую ее функцию:
+<pre>
+char *test;
+
+char *ret_test(){
+	return test;
+};
+</pre>
+<p>Пишем основную программу <b>main.c</b>. Она очень похожа на предыдущий наш проект, поэтому можете его модифицировать:
+<pre>
+#include &lt;stdio.h&gt;
+#include &lt;dlfcn.h&gt;
+
+int main(){
+
+	void *ext_library;
+	double value=0;
+	char * (*ret_test)();
+
+	ext_library = dlopen("libtest.so",RTLD_LAZY);
+	if (!ext_library){
+		fprintf(stderr,"dlopen() error: %s\n", dlerror());
+		return 1;
+	};
+
+	ret_test = dlsym(ext_library,"ret_test");	
+
+	printf("Return of ret_test: \"%s\" [%p]\n",(*ret_test)(),(*ret_test)());
+
+	dlclose(ext_library);
+};
+</pre>
+<p>После компиляции всего этого хозяйства мы получим результат:
+<pre>
+dron:~# gcc -c lib.c -fPIC
+dron:~# gcc -shared lib.o -o libtest.so
+dron:~# gcc -o main main.c -ldl
+dron:~# ./main
+Return of ret_test: "(null)" [(nil)]
+dron:~#
+</pre>
+<p>Как видите переменная <b>test</b> оказалась равной <b>NULL</b>, а нам бы хотелось нечто другое. Ну, так давайте посмотрим как работают функции <b>_init()</b> и <b>_fini()</b>. Создадим вторую библиотеку <b>lib1.c</b>:
+<pre>
+#include &lt;stdlib.h&gt;
+
+char *test;
+
+char *ret_test(){
+	return test;
+};
+
+void _init(){
+	test=(char *)malloc(6);
+	if (test!=NULL){
+		*(test+0)='d';
+		*(test+1)='r';
+		*(test+2)='o';
+		*(test+3)='n';
+		*(test+4)='!';
+		*(test+5)=0;
+	};
+	printf("_init() executed...\n");
+};
+
+void _fini(){
+	if (test!=NULL) free(test);	
+	printf("_fini() executed...\n");
+};
+</pre>
+<p>Теперь пробуем компилировать:
+<pre>
+dron:~# gcc -c lib1.c -fPIC
+dron:~# gcc -shared lib1.o -o libtest.so
+lib1.o: In function `_init':
+lib1.o(.text+0x24): multiple definition of `_init'
+/usr/lib/crti.o(.init+0x0): first defined here
+lib1.o: In function `_fini':
+lib1.o(.text+0xc0): multiple definition of `_fini'
+/usr/lib/crti.o(.fini+0x0): first defined here
+collect2: ld returned 1 exit status
+dron:~#
+</pre>
+<p>Опаньки... Облом. Что же это такое ?! Оказывается кто-то уже использовал эти функции до нас и программа не может слинковаться. После долгого копания в нескольких чужих исходниках я получил ответ на этот вопрос. Оказывается, чтобы избавиться от мешающей библиотеки надо использовать ключ компилятора <b>-nostdlib</b>. Попробуем:
+<pre>
+dron:~# gcc -shared -nostdlib lib1.o -o libtest.so
+dron:~#
+</pre>
+<p>Смотрите-ка, все прекрасно скомилировалось. Теперь попробуем запустить <b>main</b>:
+<pre>
+dron:~# ./main
+_init() executed...
+Return of ret_test: "dron!" [0x8049c20]
+_fini() executed...
+dron:~#
+</pre>
+<p>Ну как ? Помоему классно. Теперь можно спокойно создавать для работы библиотеки правильно инициализированные переменные. Однако классные эти штуки - динамические библиотеки ! А Вы что хотели ? Тот же <b>Windows</b> только на своих <b>DLL</b> и живет. А <b>Linux</b> ничем не хуже...</div><center><hr><a href="javascript:if(confirm('http://www.firststeps.ru/linux/prog/9.zip  \n\nThis file was not retrieved by Teleport Pro, because it did not meet the project\'s file type specifications.  \n\nDo you want to open it from the server?'))window.location='http://www.firststeps.ru/linux/prog/9.zip'" tppabs="http://www.firststeps.ru/linux/prog/9.zip">Загрузить проект</a> | <a href="r.php-8.htm" tppabs="http://www.firststeps.ru/linux/r.php?8">Предыдущий Шаг</a> | <a href="r.php-10.htm" tppabs="http://www.firststeps.ru/linux/r.php?10">Следующий Шаг</a> | <a href="general1.html" tppabs="http://www.firststeps.ru/linux/general1.html">Оглавление</a><br>Автор <a href="mailto:kuzinandrey@yandex.ru?SUBJECT=From_part_general#9'_on_[www.firststeps.ru]">Кузин Андрей</a>.<hr><iframe src="javascript:if(confirm('http://ad.adriver.ru/cgi-bin/erle.cgi?sid=9595&target=blank&bt=1&pz=0&rnd=5395  \n\nThis file was not retrieved by Teleport Pro, because it did not meet the project\'s file type specifications.  \n\nDo you want to open it from the server?'))window.location='http://ad.adriver.ru/cgi-bin/erle.cgi?sid=9595&target=blank&bt=1&pz=0&rnd=5395'" tppabs="http://ad.adriver.ru/cgi-bin/erle.cgi?sid=9595&target=blank&bt=1&pz=0&rnd=5395" frameborder=0 vspace=0 hspace=0 width=468 height=60 marginwidth=0 marginheight=0 scrolling=no><a href="javascript:if(confirm('http://ad.adriver.ru/cgi-bin/click.cgi?sid=9595&bt=1&pz=0&rnd=5395  \n\nThis file was not retrieved by Teleport Pro, because it is addressed on a domain or path outside the boundaries set for its Starting Address.  \n\nDo you want to open it from the server?'))window.location='http://ad.adriver.ru/cgi-bin/click.cgi?sid=9595&bt=1&pz=0&rnd=5395'" tppabs="http://ad.adriver.ru/cgi-bin/click.cgi?sid=9595&bt=1&pz=0&rnd=5395" target=_blank><img src="rle.cgi-sid=9595&bt=1&pz=0&rnd=5395" tppabs="http://ad.adriver.ru/cgi-bin/rle.cgi?sid=9595&bt=1&pz=0&rnd=5395" alt="-AdRiver-" border=0 width=468 height=60></a></iframe></center><br><br>

@@ -1,0 +1,61 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1251"><title>www.ПЕРВЫЕ ШАГИ.ru :: Шаг 8 - Использование таблиц контейнеров</title></head><link rel=stylesheet type=text/css href="2.css" tppabs="http://www.firststeps.ru/2.css"><body text=black bgcolor=white link=blue vlink=blue alink=red><h2>Шаг 8 - Использование таблиц контейнеров</h2><div style="margin:10px;"><p>Этот метод является наиболее гибким. Пространство родительского контейнера (чаще всего окна, или формы, как я привык называть этот виджет) заполняется псевдокоординатами, рядами и колонками... Например, вот пример таблицы:
+<pre>
+ 0    1    2    3    5
+0+----+----+----+----+
+ |    |    |    |    |
+1+----+----+----+----+
+ |    |    |    |    |
+2+----+----+----+----+
+</pre>
+<p>Здесь видно, что, как это принято, координаты начинаются с (0;0) левого верхнего угла таблицы.
+<p>Для создания таблицы используется функция:
+<pre>
+GtkWidget *gtk_table_new(
+	gint rows,
+	gint columns,
+	gint homogeneous
+);
+</pre>
+<p>Первый и второй аргументы дожны быть и так понятны :)). Третий аргумент имеет следущий смысл - если он равен <b>TRUE</b>, то ячейки таблицы увеличиваются в соответствии с размером самого большого виджета в таблица. Иначе, для каджого ряда ширина будет равна маскимальной высоте содержащихся в нем виджетов, а для каждого столбца ширина - максимальной шириной виджетов.
+<p>Для добавления виджетов в таблицу используется следующая функция:
+<pre>
+void gtk_table_attach( 
+	GtkTable *table,		<i>//собственно наша таблица</i>
+	GtkWidget *child,		<i>//добавляемый виджет</i>
+	gint left_attach,		<i>/x-координата левой верхней точки зацепления</i>
+	gint right_attach,		<i>//x-координата правой нижней точки зацепления</i>
+	gint top_attach,		<i>//y-координата левой верхней точки зацепления</i>
+	gint bottom_attach,	<i>//y-координата правой нижней точки зацепления</i>
+	gint xoptions,		<i>//опции заполнения по горизонтали</i>
+	gint yoptions,		<i>//опции заполнения по вертикали</i>
+	gint xpadding,		<i>//отступ по горизонтали</i>
+	gint ypadding );		<i>//отступ по вертикали</i>
+</pre>
+<p>Чуть подробнее про опции заполнения. Они могут принимать следующие значения:
+<ul>
+<li><b>GTK_FILL</b> - если в ячеке больше пространства, чем размер виджета, то виджет автоматически увеличивается
+<li><b>GTK_SHRINK</b> - наоборот, если пространства меньше, то виджет усекается
+<li><b>GTK_EXPAND</b> - заставляет таблицу расширяться, чтобы использовать все пространство родительского контейнера.
+</ul>
+<p>Опции могут использоваться одновременно с помощью побитового <b>OR</b>, например <b>GTK_FILL | GTK_EXPAND</b>. Надо помнить, что эти опции используются именно в контексте для <b>X</b> или <b>Y</b>. И относятся они только к соотвественным координатам.
+<p>В качестве сокращенного варианта используется следующий:
+<pre>
+void gtk_table_attach_defaults(
+	GtkTable *table,
+	GtkWidget *widget,
+	gint left_attach,
+	gint right_attach,
+	gint top_attach,
+	gint bottom_attach
+);
+</pre>
+<p>Все то же самое, что и впредыдущей функции, но опции установлены в <b>GTK_FILL | GTK_EXPAND</b>, и отступ равен 0.
+<p>Еще функции позволяют установить расстояние между рядами и столбцами соотвественно. Вот они:
+<pre>
+void gtk_table_set_row_spacing( GtkTable *table, gint row, gint spacing );
+void gtk_table_set_col_spacing ( GtkTable *table, gint column, gint spacing );
+void gtk_table_set_row_spacings( GtkTable *table, gint spacing );
+void gtk_table_set_col_spacings( GtkTable *table, gint spacing );
+</pre>
+<p>Первая пара устанавливает пробелы для каждого столбца и ряда отдельно, вторая для всех сразу. Надо сказать, что для ряда пробел устанавливается под ним, а для столбца с левой стороны.
+<p>Теоретическая подготовка дана... В следующем шаге рассмотрим пример рабочей программы.</div><center><hr><a href="r-1.php-7.htm" tppabs="http://www.firststeps.ru/linux/gtk/r.php?7">Предыдущий Шаг</a> | <a href="r-1.php-9.htm" tppabs="http://www.firststeps.ru/linux/gtk/r.php?9">Следующий Шаг</a> | <a href="gtk1.html" tppabs="http://www.firststeps.ru/linux/gtk/gtk1.html">Оглавление</a><br>Автор <a href="mailto:seavan@yandex.ru?SUBJECT=From_part_gtk#8'_on_[www.firststeps.ru]">Аванесов Самвел</a>.<hr><iframe src="javascript:if(confirm('http://ad.adriver.ru/cgi-bin/erle.cgi?sid=9595&target=blank&bt=1&pz=0&rnd=26155  \n\nThis file was not retrieved by Teleport Pro, because it did not meet the project\'s file type specifications.  \n\nDo you want to open it from the server?'))window.location='http://ad.adriver.ru/cgi-bin/erle.cgi?sid=9595&target=blank&bt=1&pz=0&rnd=26155'" tppabs="http://ad.adriver.ru/cgi-bin/erle.cgi?sid=9595&target=blank&bt=1&pz=0&rnd=26155" frameborder=0 vspace=0 hspace=0 width=468 height=60 marginwidth=0 marginheight=0 scrolling=no><a href="javascript:if(confirm('http://ad.adriver.ru/cgi-bin/click.cgi?sid=9595&bt=1&pz=0&rnd=26155  \n\nThis file was not retrieved by Teleport Pro, because it is addressed on a domain or path outside the boundaries set for its Starting Address.  \n\nDo you want to open it from the server?'))window.location='http://ad.adriver.ru/cgi-bin/click.cgi?sid=9595&bt=1&pz=0&rnd=26155'" tppabs="http://ad.adriver.ru/cgi-bin/click.cgi?sid=9595&bt=1&pz=0&rnd=26155" target=_blank><img src="rle.cgi-sid=9595&bt=1&pz=0&rnd=26155" tppabs="http://ad.adriver.ru/cgi-bin/rle.cgi?sid=9595&bt=1&pz=0&rnd=26155" alt="-AdRiver-" border=0 width=468 height=60></a></iframe></center><br><br>

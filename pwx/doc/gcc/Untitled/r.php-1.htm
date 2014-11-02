@@ -1,0 +1,22 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1251"><title>www.ПЕРВЫЕ ШАГИ.ru :: Шаг 1 - Компиляция программ на языке C/C++</title></head><link rel=stylesheet type=text/css href="2.css" tppabs="http://www.firststeps.ru/2.css"><body text=black bgcolor=white link=blue vlink=blue alink=red><h2>Шаг 1 - Компиляция программ на языке C/C++</h2><div style="margin:10px;"><p>Компилятор превращает код программы на "человеческом" языке в объектный код понятный компьютеру. Компиляторов под <b>Linux</b> существует много, практически для каждого распространенного языка. Большинство самых востребованных компиляторов входит в набор <b>GNU Compiler Collection</b>, известных под названием <b>GCC</b> (<a href="javascript:if(confirm('http://gcc.gnu.org/  \n\nThis file was not retrieved by Teleport Pro, because it is addressed on a domain or path outside the boundaries set for its Starting Address.  \n\nDo you want to open it from the server?'))window.location='http://gcc.gnu.org/'" tppabs="http://gcc.gnu.org/" target=_blank>http://gcc.gnu.org</a>).
+<p>Изначально аббревиатура <b>GCC</b> имела смысл <b>GNU C Compiler</b>, но в апреле 1999 года сообщество <b>GNU</b> решило взять на себя более сложную миссию и начать создание компиляторов для новых языков с новыми методами оптимизации, поддержкой новых платформ, улучшенных <b>runtime</b>-библиотек и других изменений (<a href="javascript:if(confirm('http://gcc.gnu.org/gccmission.html  \n\nThis file was not retrieved by Teleport Pro, because it is addressed on a domain or path outside the boundaries set for its Starting Address.  \n\nDo you want to open it from the server?'))window.location='http://gcc.gnu.org/gccmission.html'" tppabs="http://gcc.gnu.org/gccmission.html" target=_blank>http://gcc.gnu.org/gccmission.html</a>). Поэтому сегодня коллекция содержит в себе компиляторы для языков <b>C</b>, <b>C++</b>, <b>Objective C</b>, <b>Chill</b>, <b>Fortran</b>, <b>Ada</b> и <b>Java</b>, как библиотеки для этих языков (<b>libstdc++</b>, <b>libgcj</b>, ...).
+<p>Компиляция программ производится командой:
+<pre>
+gcc <имя_файла>
+</pre>
+<p>После этого, если процесс компиляции пройдет успешно, то вы получите загружаемый файл <b>a.out</b>, запустить который можно командой:
+<pre>
+./a.out
+</pre>
+<p>Для примера давайте напишем маленькую простейшую программку:
+<pre>
+#include &lt;stdio.h&gt;
+
+int main(){
+	printf("[http://linux.firststeps.ru]\n");
+	printf("Our first program for Linux.\n");
+	return 0;
+};
+</pre>
+<p>И запустим ее:
+<p><img src="1_1.gif" tppabs="http://www.firststeps.ru/linux/1_1.gif" alt="1_1.gif (957 b)" border=2></p></div><center><hr><a href="javascript:if(confirm('http://www.firststeps.ru/linux/prog/1.zip  \n\nThis file was not retrieved by Teleport Pro, because it did not meet the project\'s file type specifications.  \n\nDo you want to open it from the server?'))window.location='http://www.firststeps.ru/linux/prog/1.zip'" tppabs="http://www.firststeps.ru/linux/prog/1.zip">Загрузить проект</a> | <a href="r.php-2.htm" tppabs="http://www.firststeps.ru/linux/r.php?2">Следующий Шаг</a> | <a href="general1.html" tppabs="http://www.firststeps.ru/linux/general1.html">Оглавление</a><br>Автор <a href="mailto:kuzinandrey@yandex.ru?SUBJECT=From_part_general#1'_on_[www.firststeps.ru]">Кузин Андрей</a>.<hr><iframe src="javascript:if(confirm('http://ad.adriver.ru/cgi-bin/erle.cgi?sid=9595&target=blank&bt=1&pz=0&rnd=23990  \n\nThis file was not retrieved by Teleport Pro, because it did not meet the project\'s file type specifications.  \n\nDo you want to open it from the server?'))window.location='http://ad.adriver.ru/cgi-bin/erle.cgi?sid=9595&target=blank&bt=1&pz=0&rnd=23990'" tppabs="http://ad.adriver.ru/cgi-bin/erle.cgi?sid=9595&target=blank&bt=1&pz=0&rnd=23990" frameborder=0 vspace=0 hspace=0 width=468 height=60 marginwidth=0 marginheight=0 scrolling=no><a href="javascript:if(confirm('http://ad.adriver.ru/cgi-bin/click.cgi?sid=9595&bt=1&pz=0&rnd=23990  \n\nThis file was not retrieved by Teleport Pro, because it is addressed on a domain or path outside the boundaries set for its Starting Address.  \n\nDo you want to open it from the server?'))window.location='http://ad.adriver.ru/cgi-bin/click.cgi?sid=9595&bt=1&pz=0&rnd=23990'" tppabs="http://ad.adriver.ru/cgi-bin/click.cgi?sid=9595&bt=1&pz=0&rnd=23990" target=_blank><img src="rle.cgi-sid=9595&bt=1&pz=0&rnd=23990" tppabs="http://ad.adriver.ru/cgi-bin/rle.cgi?sid=9595&bt=1&pz=0&rnd=23990" alt="-AdRiver-" border=0 width=468 height=60></a></iframe></center><br><br>

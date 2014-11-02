@@ -1,0 +1,31 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1251"><title>www.ПЕРВЫЕ ШАГИ.ru :: Шаг 2 - Попробуем что-нибудь запустить</title></head><link rel=stylesheet type=text/css href="2.css" tppabs="http://www.firststeps.ru/2.css"><body text=black bgcolor=white link=blue vlink=blue alink=red><h2>Шаг 2 - Попробуем что-нибудь запустить</h2><div style="margin:10px;"><p>Предполагается, что у Вас уже все скачано, установлено и работает. Для начала... Для начала сделаем приложение, которое просто открывает окно. Без кнопок, без ничего. Код такой:
+<pre>
+<i>//---step2.c</i>
+#include &lt;gtk/gtk.h&gt;
+
+int main(int argc,
+	char *argv[])
+{
+	GtkWidget *window;
+
+	gtk_init (&argc, &argv);
+
+	window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
+	gtk_widget_show  (window);
+
+	gtk_main ();
+
+	return(0);
+}
+</pre>
+<p>Компилируется все это безобразной строкой вида:
+<pre>
+gcc -Wall -g step2.c -o step2 `gtk-config --cflags --libs`
+</pre>
+<p>Почему, я поясню позже. Так вот, откомпилировали, на выходе получили файл <b>step2</b>, и запускаем его. Должно изобразиться что-нибудь вроде этого:
+<p><img src="2_1.gif" tppabs="http://www.firststeps.ru/linux/gtk/gif/2_1.gif" alt="gif/2_1.gif (2191 b)" border=2></p>
+<p>Теперь немного поясню. Ну для начала, как обычно, включаем заголовочный файл. Надо сказать, в обычной директории <b>/usr/include</b> вы его не найдете, то есть найдете, но у кого-то он в <b>gtk1.2/gtk/</b>, у кого-то в <b>/usr/local/gtk/</b>. От фантазии компилировавшего зависит. Но, честно говоря, нам это абсолютно все равно. Ведь в команде компиляции то, что заключено в обратных кавычках <b>` `</b> предсталяет собой команду, результат выполнения которой подставляется в текст. Очень удобно. В свою очередь, скрипт <b>gtk-config</b> выдает именно то, что нужно - пути <b>include</b>, пути для компоновки библиотек и тому подобное.
+<p>Это по поводу компиляции. Теперь насчет собственно программы. Одним из основополагающих понятий <b>GTK</b> является виджет. Каким-то образом в терминологии <b>X Windowing System</b> утвердилось понятие "элементы пользовательского интерфейса" - <b>"gadgets and widgets"</b>. Виджет сродни понятию элемента управления в <b>Windows</b>. Так вот. К виджетам относится все, что мы видим на экране - кнопки управления окном, собственно окна, кнопки и прочее.
+<p><b>GtkWidget</b> - не класс, как можно было подумать. Хотя в общем-то <b>Gtk</b> - объектно-ориентированная библиотека, но это запись. Для совместимости с <b>C</b>. Таким образом, в программе любой виджет можно приравнять <b>GtkWidget</b>. Переменная <b>window</b> - окно, которое мы собираемся отобразить. После его объявленияпроизводится начальная инициализация <b>Gtk</b> вызовом <b>gtk_init</b> с параметрами, переданными программе. Затем создается само окно верхнего уровня, отображается на экране, и управление передается функции <b>gtk_main</b>.
+<p>Немного о <b>gtk_main</b>. Так же, как и <b>Windows</b> - <b>X Windows</b>, интерактивная среда, управялемая событиями. Поэтому для каждого виджета определяются обработчики событий. Мы их рассмотрим в следующих шагах. Таким образом, это помогает сохранить бесценные ресурсы процессора. Функция <b>gtk_main</b> отслеживает события графической подсистемы, и при необходимости передает управление зарегистрированным окнам. Ну, окна автоматически регистрируются после создания.
+<p>Вроде бы пока все.</div><center><hr><a href="r-3.php-1.htm" tppabs="http://www.firststeps.ru/linux/gtk/r.php?1">Предыдущий Шаг</a> | <a href="r-2.php-3.htm" tppabs="http://www.firststeps.ru/linux/gtk/r.php?3">Следующий Шаг</a> | <a href="gtk1.html" tppabs="http://www.firststeps.ru/linux/gtk/gtk1.html">Оглавление</a><br>Автор <a href="mailto:seavan@yandex.ru?SUBJECT=From_part_gtk#2'_on_[www.firststeps.ru]">Аванесов Самвел</a>.<hr><iframe src="javascript:if(confirm('http://ad.adriver.ru/cgi-bin/erle.cgi?sid=9595&target=blank&bt=1&pz=0&rnd=15816  \n\nThis file was not retrieved by Teleport Pro, because it did not meet the project\'s file type specifications.  \n\nDo you want to open it from the server?'))window.location='http://ad.adriver.ru/cgi-bin/erle.cgi?sid=9595&target=blank&bt=1&pz=0&rnd=15816'" tppabs="http://ad.adriver.ru/cgi-bin/erle.cgi?sid=9595&target=blank&bt=1&pz=0&rnd=15816" frameborder=0 vspace=0 hspace=0 width=468 height=60 marginwidth=0 marginheight=0 scrolling=no><a href="javascript:if(confirm('http://ad.adriver.ru/cgi-bin/click.cgi?sid=9595&bt=1&pz=0&rnd=15816  \n\nThis file was not retrieved by Teleport Pro, because it is addressed on a domain or path outside the boundaries set for its Starting Address.  \n\nDo you want to open it from the server?'))window.location='http://ad.adriver.ru/cgi-bin/click.cgi?sid=9595&bt=1&pz=0&rnd=15816'" tppabs="http://ad.adriver.ru/cgi-bin/click.cgi?sid=9595&bt=1&pz=0&rnd=15816" target=_blank><img src="rle.cgi-sid=9595&bt=1&pz=0&rnd=15816" tppabs="http://ad.adriver.ru/cgi-bin/rle.cgi?sid=9595&bt=1&pz=0&rnd=15816" alt="-AdRiver-" border=0 width=468 height=60></a></iframe></center><br><br>

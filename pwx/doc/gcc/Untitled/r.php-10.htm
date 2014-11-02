@@ -1,0 +1,130 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1251"><title>www.ПЕРВЫЕ ШАГИ.ru :: Шаг 10 - Передача опций в программу - getopt</title></head><link rel=stylesheet type=text/css href="2.css" tppabs="http://www.firststeps.ru/2.css"><body text=black bgcolor=white link=blue vlink=blue alink=red><h2>Шаг 10 - Передача опций в программу - getopt</h2><div style="margin:10px;"><p>Почти всем сложным программам для работы требуется входные параметры (опции, аргументы - называйте как хотите), от значения которых строится последовательность работы алгоритма заложенного в программе или используются различные источники данных.
+<p>Вы наверняка знаете, что передача параметров в программу на <b>C/C++</b> осуществляется через массив функции <b>main()</b>. Так повелось, что он называется <b>argv</b> (от <b>arguments values</b> - значения аргументов), но в принципе его можно назвать и по другому. Количество этих параметров передается через переменную <b>argc</b> (от <b>arguments counter</b> - счетчик аргументов).
+<p>Программа, для работы которой требуется набор входных параметров задается при помощи специального определения функции <b>main()</b>:
+<pre>
+int main(int argc, char *argv[]{
+};
+
+int main(int argc, char **argv){
+};
+</pre>
+<p>Давайте напишем маленькую программку, которая выводит значения переданных параметров:
+<pre>
+<i>// программа test.c</i>
+
+#include &lt;stdio.h&gt;
+int main(int argc, char *argv[]){
+	int i=0;
+	for (i=0;i&lt;argc;i++){
+		printf("Argument %d: %s\n",i,argv[i]);
+	};
+};
+</pre>
+<p>Сохраняем в файл <b>test.c</b> и компилируем:
+<pre>
+dron:~# gcc test.c -o test
+</pre>
+<p>После этого попробуем запустить программу:
+<pre>
+dron:~# ./test
+Argument 0: ./test
+</pre>
+<p>Передадим несколько параметров:
+<pre>
+dron:~# ./test qwe sdf fgh hjk kl 123 --help
+Argument 0: ./test
+Argument 1: qwe
+Argument 2: sdf
+Argument 3: fgh
+Argument 4: hjk
+Argument 5: kl
+Argument 6: 123
+Argument 7: --help
+</pre>
+<p>В качестве первого параметра программе всегда передается ее имя и таким образом программа может узнать свое название, т.е. имя файла, в котором она содержится.
+<p>Но моя цель не говорить о том, как передаются параметры, а как с ними работать. Для начала надо вспомнить, что в системе <b>Linux</b> существует два вида параметров: короткие и длинные. Короткие параметры начинаются с одного дефиса и имеют длину в один символ, их просто и быстро набирать в командной строке. Длинные параметры начинаются с двух дефисов и могут иметь длинное имя, которое целесообразно использовать в скриптах (чтобы потом можно было вспомнить, что и как происходит). Кроме этого любой параметр может иметь значение, а может и не иметь. Приведу для примера несколько параметров:
+<pre>
+-h       - короткий параметр
+--help   - длинный параметр
+
+-s 10    - параметры со значениями
+--size 10
+--size=10
+</pre>
+<p>Так вот, существует несколько специальных функций предназначенных для разбора списка переданных параметров:
+<ul>
+<li><b>int getopt(...)</b> - Обрабатывает короткие параметры
+<li><b>int getopt_long(...)</b> - Обрабатывает короткие и длинные параметры
+<li><b>int getopt_long_only(...)</b> - Обрабатывает параметры только как длинные
+</ul>
+<p>Давайте разберемся с работой первой функции - <b>getopt(...)</b>. Ее определение выглядит следующим образом:
+<pre>
+#include &lt;unistd.h&gt;
+
+int getopt(int argc, char * const argv[],
+	const char *optstring);
+
+extern char *optarg;
+extern int optind, opterr, optopt;
+</pre>
+<p>Эта функция последовательно перебирает переданные параметры в программу. Для работы в функцию передается количество параметров <b>argc</b>, массив параметров <b>argv[]</b> и специальная строка <b>optstring</b>, в которой перечисляются названия коротких параметров и признаки того, что параметры должны иметь значение. Например, если программа должна воспринимать три параметра <b>a</b>, <b>b</b>, <b>F</b> , то такая строка бы выглядела как <b>"abF"</b>. Если параметр должен иметь значение, то после буквы параметра ставится двоеточие, например параметр <b>F</b> и <b>d</b> имеют значения, а параметры <b>e</b>, <b>a</b> и <b>b</b> не имеют, тогда эта строка могла бы выглядеть как <b>"eF:ad:b"</b>. Если параметр может иметь (т.е. может и не иметь) значение, то тогда ставится два знака двоеточия, например <b>"a::"</b> (это специальное расширение <b>GNU</b>). Если <b>optstring</b> содержит <b>"W:"</b>, то тогда параметр <b>-W opt</b> переданный в программу, будет восприниматься как длинный параметр <b>--opt</b>. Это связано с тем, что параметр <b>W</b> зарезервирован в <b>POSIX.2</b> для расширения возможностей.
+<p>Для перебора параметров функцию <b>getopt()</b> надо вызывать в цикле. В качестве результата возвращется буква названия параметра, если же параметры кончились, то функция возвращает <b>-1</b>. Индекс текущего параметра хранится в <b>optind</b>, а значение параметра помещается в <b>optarg</b> (указатель просто указывает на элемент массива <b>argv[]</b>). Если функция находит параметр не перечисленный в списке, то выводится сообщение об ошибке в <b>stderr</b> и код ошибки сохраняется в <b>opterr</b>, при этом в качестве значения возврящается <b>"?"</b>. Вывод ошибки можно запретить, если установить <b>opterr</b> в <b>0</b>.
+<pre>
+#include &lt;stdio.h&gt;
+#include &lt;unistd.h&gt;
+
+int main(int argc, char *argv[]){
+    int rez=0;
+
+<i>//	opterr=0;</i>
+	while ( (rez = getopt(argc,argv,"ab:C::d")) != -1){
+		switch (rez){
+		case 'a': printf("found argument \"a\".\n"); break;
+		case 'b': printf("found argument \"b = %s\".\n",optarg); break;
+		case 'C': printf("found argument \"C = %s\".\n",optarg); break;
+		case 'd': printf("found argument \"d\"\n"); break;
+		case '?': printf("Error found !\n");break;
+        };
+	};
+
+};
+</pre>
+<p>Попробуем скомпилировать данную программку и запустить:
+<pre>
+dron:~# gcc test.c -o test
+
+dron:~# ./test -a -b -d -C
+found argument "a".
+found argument "b = -d".
+found argument "C = (null)".
+
+dron:~# ./test -a -b -C -d
+found argument "a".
+found argument "b = -C".
+found argument "d"
+
+dron:~# ./test -a -b1 -C -d
+found argument "a".
+found argument "b = 1".
+found argument "C = (null)".
+found argument "d"
+
+dron:~# ./test -b1 -b2 -b 15
+found argument "b = 1".
+found argument "b = 2".
+found argument "b = 15".
+</pre>
+<p>Давайте посмотрим, как функция <b>getopt</b> вылавливает ошибки. Попробуем задать параметр, которого нет в списке:
+<pre>
+dron:~# ./test -h -a
+./test: invalid option -- h
+Error found !
+found argument "a".
+</pre>
+<p>Как я и говорил, функция вывела сообщение об ошибке в <b>stderr</b>. Давайте выключим вывод сообщений, для этого надо где-то в программе перед вызовом функции вставить <b>opterr=0;</b>. Компилируем и запускаем:
+<pre>
+dron:~# ./test -h -a
+Error found !
+found argument "a".
+</pre>
+<p>Теперь, как видите, сообщение больше не выдается, зато как и раньше можно обработать ошибку самому.</div><center><hr><a href="r.php-9.htm" tppabs="http://www.firststeps.ru/linux/r.php?9">Предыдущий Шаг</a> | <a href="r.php-11.htm" tppabs="http://www.firststeps.ru/linux/r.php?11">Следующий Шаг</a> | <a href="general1.html" tppabs="http://www.firststeps.ru/linux/general1.html">Оглавление</a><br>Автор <a href="mailto:kuzinandrey@yandex.ru?SUBJECT=From_part_general#10'_on_[www.firststeps.ru]">Кузин Андрей</a>.<hr><iframe src="javascript:if(confirm('http://ad.adriver.ru/cgi-bin/erle.cgi?sid=9595&target=blank&bt=1&pz=0&rnd=14365  \n\nThis file was not retrieved by Teleport Pro, because it did not meet the project\'s file type specifications.  \n\nDo you want to open it from the server?'))window.location='http://ad.adriver.ru/cgi-bin/erle.cgi?sid=9595&target=blank&bt=1&pz=0&rnd=14365'" tppabs="http://ad.adriver.ru/cgi-bin/erle.cgi?sid=9595&target=blank&bt=1&pz=0&rnd=14365" frameborder=0 vspace=0 hspace=0 width=468 height=60 marginwidth=0 marginheight=0 scrolling=no><a href="javascript:if(confirm('http://ad.adriver.ru/cgi-bin/click.cgi?sid=9595&bt=1&pz=0&rnd=14365  \n\nThis file was not retrieved by Teleport Pro, because it is addressed on a domain or path outside the boundaries set for its Starting Address.  \n\nDo you want to open it from the server?'))window.location='http://ad.adriver.ru/cgi-bin/click.cgi?sid=9595&bt=1&pz=0&rnd=14365'" tppabs="http://ad.adriver.ru/cgi-bin/click.cgi?sid=9595&bt=1&pz=0&rnd=14365" target=_blank><img src="rle.cgi-sid=9595&bt=1&pz=0&rnd=14365" tppabs="http://ad.adriver.ru/cgi-bin/rle.cgi?sid=9595&bt=1&pz=0&rnd=14365" alt="-AdRiver-" border=0 width=468 height=60></a></iframe></center><br><br>

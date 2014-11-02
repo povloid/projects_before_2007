@@ -1,0 +1,34 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1251"><title>www.ПЕРВЫЕ ШАГИ.ru :: Шаг 5 - Создание статической библиотеки</title></head><link rel=stylesheet type=text/css href="2.css" tppabs="http://www.firststeps.ru/2.css"><body text=black bgcolor=white link=blue vlink=blue alink=red><h2>Шаг 5 - Создание статической библиотеки</h2><div style="margin:10px;"><p>Для создания статических библиотек существует специальная простая программа называемая <b>ar</b> (сокр. от <b>archiver</b> - архиватор). Она используется для создания, модификации и просмотра объектных файлов в статических библиотеках, которые в действительности представляют из себя простые архивы.
+<p>Давайте вернемся к проекту из шага <a href="r.php-3.htm" tppabs="http://www.firststeps.ru/linux/r.php?3">"Шаг 3 - Компиляция нескольких файлов"</a> и создадим из файлов <b>f1.c</b> и <b>f2.c</b> отдельную библиотеку. Для начала компилируем эти файлы:
+<pre>
+dron:~# gcc -c f1.c f2.c
+</pre>
+<p>В результате получим, как обычно, два файла - <b>f1.o</b> и  <b>f2.o</b>. Для того, чтобы создать библиотеку из объектых файлов надо вызвать программу <b>ar</b> со следующими параметрами:
+<pre>
+ar rc lib<i>имя_библиотеки</i>.a <i>[список_*.o_файлов]</i>
+</pre>
+<p>Допустим наша библиотека будет называться <b>fs</b>, тогда команда запишется в виде:
+<pre>
+dron:~# ar rc libfs.a f1.o f2.o
+</pre>
+<p>В результате получим файл <b>libfs.a</b>, в котором будут лежать копии объектых файлов <b>f1.o</b> и <b>f2.o</b>. Если файл библиотеки уже существует, то архиватор будет анализировать содержимое архива, он добавит новые объектные файлы и заменит старые обновленными версиями. Опция <b>c</b> заставляет создавать (от <b>c</b>reate) библиотеку, если ее нет, а опция <b>r</b> (от <b>r</b>eplace) заменяет старые объектные файлы новыми версиями.
+<p>Пока у нас есть лишь архивный файл <b>libfs.a</b>. Чтобы из него сделать полноценную библиотеку объектных файлов надо добавить к этому архиву индекс символов, т.е. список вложенных в библиотеку функций и переменных, чтобы линковка происходила быстрее. Далается это командой:
+<pre>
+ranlib lib<i>имя_библиотеки</i>.a
+</pre>
+<p>Программа <b>ranlib</b> добавит индекс к архиву и получится полноценная статическая библиотека объектных файлов. Стоит отметить, что на некоторых системах программа <b>ar</b> автоматически создает индекс, и использование <b>ranlib</b>  не имеет никакого эффекта. Но тут надо быть осторожным при атоматической компиляции библиотеки с помощью файлов <b>makefile</b>, если вы не будете использовать утилиту <b>ranlib</b>, то возможно на каких-то системах библиотеки будут создаваться не верно и потеряется независимость от платформы. Так что возьмем за правило тот факт, что утилиту <b>ranlib</b> надо запускать в любом случае, даже если он нее нет никакого эффекта.
+<p>Для компиляции нашего основного файла <b>main.c</b> надо сообщить компилятору, что надо использовать библиотеки. Чтобы компилятор знал где искать библиотеки ему надо сообщить каталог, в котором они содержатся и список этих билиотек. Каталог с библиотеками указывается ключом <b>-L</b>, в нашем случае библиотека находится в текущем каталоге, значит путь до нее будет в виде точки (<b>-L.</b>). Используемые библиотеки перечисляются через ключ <b>-l</b>, после которого указывается название библиотеки без префикса <b>lib</b> и окончания <b>.a</b>. В нашем случае этот ключ будет выглядеть, как <b>-lfs</b>. Теперь все одной командой:
+<pre>
+dron:~# gcc -c main.c
+dron:~# gcc main.o -L. -lfs -o rezult
+</pre>
+<p>Или можно чуть короче:
+<pre>
+dron:~# gcc main.c -L. -lfs -o rezult
+</pre>
+<p>Заметьте, что компилятору нужны библиотеки на этапе создания конечного файла, т.е. линковки. В первом случае процесс компиляции совершается первой командой, а сборка файла второй командой. Если же мы попытаемся подсунуть библиотеку на этапе компиляции, то получим вежливый ответ:
+<pre>
+dron:~# gcc -c main.c -L. -lfs
+gcc: -lfs: linker input file unused since linking not done
+</pre>
+<p>Что означает, что файлы библиотек не нужны, до процесса линковки. Данная команда создаст лишь файл <b>main.o</b>, который в итоге потом придется собирать отдельно.</div><center><hr><a href="r.php-4.htm" tppabs="http://www.firststeps.ru/linux/r.php?4">Предыдущий Шаг</a> | <a href="r.php-6.htm" tppabs="http://www.firststeps.ru/linux/r.php?6">Следующий Шаг</a> | <a href="general1.html" tppabs="http://www.firststeps.ru/linux/general1.html">Оглавление</a><br>Автор <a href="mailto:kuzinandrey@yandex.ru?SUBJECT=From_part_general#5'_on_[www.firststeps.ru]">Кузин Андрей</a>.<hr><iframe src="javascript:if(confirm('http://ad.adriver.ru/cgi-bin/erle.cgi?sid=9595&target=blank&bt=1&pz=0&rnd=733  \n\nThis file was not retrieved by Teleport Pro, because it did not meet the project\'s file type specifications.  \n\nDo you want to open it from the server?'))window.location='http://ad.adriver.ru/cgi-bin/erle.cgi?sid=9595&target=blank&bt=1&pz=0&rnd=733'" tppabs="http://ad.adriver.ru/cgi-bin/erle.cgi?sid=9595&target=blank&bt=1&pz=0&rnd=733" frameborder=0 vspace=0 hspace=0 width=468 height=60 marginwidth=0 marginheight=0 scrolling=no><a href="javascript:if(confirm('http://ad.adriver.ru/cgi-bin/click.cgi?sid=9595&bt=1&pz=0&rnd=733  \n\nThis file was not retrieved by Teleport Pro, because it is addressed on a domain or path outside the boundaries set for its Starting Address.  \n\nDo you want to open it from the server?'))window.location='http://ad.adriver.ru/cgi-bin/click.cgi?sid=9595&bt=1&pz=0&rnd=733'" tppabs="http://ad.adriver.ru/cgi-bin/click.cgi?sid=9595&bt=1&pz=0&rnd=733" target=_blank><img src="rle.cgi-sid=9595&bt=1&pz=0&rnd=733" tppabs="http://ad.adriver.ru/cgi-bin/rle.cgi?sid=9595&bt=1&pz=0&rnd=733" alt="-AdRiver-" border=0 width=468 height=60></a></iframe></center><br><br>

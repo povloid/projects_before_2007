@@ -1,0 +1,185 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1251"><title>www.ПЕРВЫЕ ШАГИ.ru :: Шаг 13 - Получение информации о пользователе</title></head><link rel=stylesheet type=text/css href="2.css" tppabs="http://www.firststeps.ru/2.css"><body text=black bgcolor=white link=blue vlink=blue alink=red><h2>Шаг 13 - Получение информации о пользователе</h2><div style="margin:10px;"><p>Практически любой программе нужно знать какую-то информацию о том, кто ее запускает. Например, если это обычный пользователь, то нужно хотя бы знать путь до его домашней директории. Если к примеру это пользователь <b>root</b>, то позволять что-то делать, если это обычный пользователь, то например выдавать сообщение об недостаточности привилегий. Ну, вобщем эти знания будут очень полезны любой программе.
+<p>Самые основные настройки для пользователя можно получить из переменных среды:
+<ul>
+<li><b>USER</b> - имя пользователя
+<li><b>HOME</b> - путь до пользовательской домашней директории
+<li><b>PATH</b> - пути для поиска запускаемых программ (разделены двоеточием)
+</ul>
+<p>Получить переменные среды можно с помощью функции <b>getenv()</b>:
+<pre>
+#include &lt;stdlib.h&gt;
+
+char *getenv(const char *name);
+</pre>
+<p>Данная функция ищет переменную среды с именем <b>name</b> и возвращает на нее указатель в случае удачи, иначе возвращает <b>NULL</b>.
+<pre>
+#include &lt;stdlib.h&gt;
+
+int main(){
+    printf("USER = \'%s\'\n",getenv("USER"));
+    printf("HOME = \'%s\'\n",getenv("HOME"));
+    printf("PATH = \'%s\'\n",getenv("PATH"));
+	return 0;
+};
+</pre>
+<p>Для примера результат работы данной программы:
+<pre>
+dron~# ./a.out
+USER = 'root'
+HOME = '/root'
+PATH = '/usr/local/sbin:/usr/sbin:/usr/bin'
+</pre>
+<p>Но почему нельзя полагаться на эти переменные ? Да потому, что их можно легко изменить одной командой (или вызовом фукнции в программе):
+<pre>
+dron~# export USER=""
+dron~# export HOME="/yoyoyoy"
+dron~# ./a.out
+USER = ''
+HOME = '/yoyoyoy'
+PATH = '/usr/local/sbin:/usr/sbin:/usr/bin'
+</pre>
+<p>Получается, что если другая программа установит другие переменные среды, то Вы больше никогда ничего реального не узнаете.
+<p>Но не все так плохо, просто надо пользоваться информацией "из первых рук". Для того, чтобы получить идентификатор пользователя, который запустил программу существует специальный набор функций:
+<pre>
+#include &lt;unistd.h&gt;
+#include &lt;sys/types.h&gt;
+
+uid_t getuid(void);
+uid_t geteuid(void);
+</pre>
+<p>Функция <b>getuid()</b> (get user id) возвращает реальный идентификатор пользователя для текущего процесса, который установлен в соответствие идентификатору вызывающего процесса.
+<p>Функция <b>geteuid()</b> (get effective user id) возвращает эффективный идентификатор пользователя, который устанавливается в соответствии с битом <b>set ID</b> на запускаемом файле.
+<p>Давайте посмотрим как работают эти функции, для этого напишем простую программку <b>test.c</b>:
+<pre>
+#include &lt;stdlib.h&gt;
+#include &lt;unistd.h&gt;
+#include &lt;sys/types.h&gt;
+
+int main(){
+
+    printf ("Real User ID = %d\n",getuid());
+    printf ("Effective User ID = %d\n\n",geteuid());
+
+    return 0;
+};
+</pre>
+<p>Теперь скомпилируем командой <b>gcc test.c -o test</b> и запустим. Я сейчас сижу под пользователем <b>root</b>. Посмотрим сначала что вышло в каталоге:
+<pre>
+dron~# ls -l
+total 20
+-rwxr-xr-x    1 root     root        13500 Dec 22 04:45 test
+-rw-r--r--    1 root     root          197 Dec 22 04:39 test.c
+</pre>
+<p>Как видите владелец обоих файлов является <b>root</b>. Теперь запускаем программу <b>test</b>:
+<pre>
+dron~# ./test
+Real User ID = 0
+Effective User ID = 0
+</pre>
+<p>Так как программа была запущена из под <b>root</b> идентификатор пользователя равен <b>0</b>. А как же насчет <b>geteuid()</b>, сейчас ее результат аналогичен работе <b>getuid()</b>. Давайте попробуем добиться того, чтобы этот идентификатор был другим. Как было написано выше эта функция возвращает идентификатор пользователя установленного на файле, да к томе же если на нем установлен бит <b>set ID</b>. Давайте сначала поменяем на файле пользователя и посмотрим, что выйдет из этого.
+<pre>
+dron~# chown dron:users test
+dron~# ls -l
+total 20
+-rwxr-xr-x    1 dron     users       13500 Dec 22 04:45 test
+-rw-r--r--    1 root     root          197 Dec 22 04:39 test.c
+dron~# ./test
+Real User ID = 0
+Effective User ID = 0
+</pre>
+<p>Интересно. Мы поменяли пользователя на <b>dron</b>, что вы можете увидеть из результата команды <b>ls</b>, однако как и следовало ожидать результат работы функции <b>geteuid()</b> остался таким же.
+<p>Теперь установим бит <b>set ID</b> на файл <b>test</b>:
+<pre>
+dron~# chmod +s test
+dron~# ls -l
+total 20
+-rwsr-sr-x    1 dron     users       13500 Dec 22 04:45 test
+-rw-r--r--    1 root     root          197 Dec 22 04:39 test.c
+</pre>
+<p>Теперь, если вы сравните старые биты привилегий <b>-rwxr-xr-x</b> с новыми <b>-rwsr-sr-x</b>, то увидите вместо <b>x</b> букву <b>s</b>, а это означает, что бит <b>set ID</b> установлен. Теперь если мы запустим программу снова, то увидим другой результат:
+<pre>
+dron~# ./test
+Real User ID = 0
+Effective User ID = 1000
+</pre>
+<p>Теперь мы поняли в чем смысл работы <b>geteuid()</b>, однако мне пока в голову не приходят мысли насчет ее полезности. Возможно так программа может отличать своего реального владельца от того, кто ее запускает. К примеру можно было бы в начале программы использовать следующий код:
+<pre>
+if (getuid()!=geteuid()){
+	printf("Вы не можете использовать чужую программу.\n");
+	exit();
+};
+</pre>
+<p>Тогда эту программу не сможет запустить никто кроме ее законного владельца. Незнаю насколько это "эффективно", может быть у Вас есть какие-то мысли по этому поводу. Я даже уверен, что Вы когда-нибудь ее примените в своей разработке :)
+<p>Ну, а теперь надо учиться что-то делать с этими идентификаторами. Наша начальная задача была получить настройки для пользователя, давайте этим и займемся. Откуда Вы можете достоверно получить информацию о пользователе ? Вы знаете ответ на этот вопрос ? Ну, конечно же из файла <b>/etc/passwd</b>.
+<p>Да да да, именно из этого файла, только не пугайтесь сразу того, что он текстовый и вам придется заниматься парсингом. Нет, не надо этим заниматься, все сделали до нас. Для этого существуют специальные функции:
+<pre>
+#include &lt;pwd.h&gt;
+#include &lt;sys/types.h&gt;
+
+struct passwd *getpwnam(const char * name);
+struct passwd *getpwuid(uid_t uid);
+</pre>
+<p>Первая функция <b>getpwnam()</b> возвращает информацию о пользователе по его имени <b>name</b>, вторая функция <b>getpwuid()</b> получает информацию о пользователе по идентификатору, который получать мы уже умеем :)
+<p>Обе данные функции возвращают информацию в виде заполненной структуры <b>struct passwd</b>:
+<pre>
+struct passwd {
+	char    *pw_name;       /* user name */
+	char    *pw_passwd;     /* user password */
+	uid_t   pw_uid;         /* user id */
+	gid_t   pw_gid;         /* group id */
+	char    *pw_gecos;      /* real name */
+	char    *pw_dir;        /* home directory */
+	char    *pw_shell;      /* shell program */
+};
+</pre>
+<p>Как видите тут можно получить даже больше данных, чем через переменные среды. А, что мы хотели получить ? Ну, давайте к примеру выведем домашний каталог и командный интерпретатор (ака <b>shell</b>).
+<pre>
+#include &lt;stdlib.h&gt;
+#include &lt;unistd.h&gt;
+#include &lt;sys/types.h&gt;
+#include &lt;pwd.h&gt;
+
+int main(){
+
+    struct passwd *userinfo;
+    uid_t userid;
+
+    printf ("Real User ID = %d\n",userid = getuid());
+
+    userinfo = getpwuid(userid);
+    if (userinfo!=NULL){
+        printf("user name = '%s'\n",userinfo->pw_name);
+        printf("user home dir = '%s'\n",userinfo->pw_dir);
+        printf("user shell = '%s'\n",userinfo->pw_shell);
+    };
+
+    return 0;
+};
+</pre>
+<p>Результат работы программы будет выглядеть так:
+<pre>
+dron~# ./a.out
+Real User ID = 0
+user name = 'root'
+user home dir = '/root'
+user shell = '/bin/bash'
+</pre>
+<p>У данной функции есть несомненный плюс - это, конечно же, способность возвратить самые точные системные настройки для требующегося пользователя. НО ! Посмотрите на возвращаемую структуру, вы видите что-нибудь интересное ? Ну, как же... Это поле <b>pw_passwd</b>, в котором содержится пароль пользователя, пусть и в зашифрованном виде. Получается, что любая программа запущенная под любым пользователем может получить пароль другого пользователя. В дальнейшем к примеру, этот пароль можно попробовать расшифровать и уже получить доступ под другим пользователем. А что может случиться, если этот атакуемый пользователь был <b>root</b> ?! Тогда возможна угроза полного взлома системы. Все разработчики системы <b>Linux</b> понимали это, и именно поэтому придумали технологию <b>shadow passwords</b>. В соответствии с данной технологией создается второй файл <b>/etc/shadow</b> с полной копией информации из <b>/etc/passwd</b>, а затем из файла <b>passwd</b> удаляются пароли(заменяются на символ <b>x</b>), а на <b>shadow</b> ставится доступ на чтение только пользователю <b>root</b>. Таким образом любая программа может получить всю информацию о пользователях, кроме их паролей. Сами же пароли может получить лишь программа запущенная в привилегированном режиме с администраторскими правами.
+<p>Вот такие вот пироги... :) В принципе это все, но только пришла мне тут кое-какая мысль. Что будет, если на <b>/etc/passwd</b> поставить доступ только пользователю <b>root</b>.
+<pre>
+dron~# chmod 600 /etc/passwd
+</pre>
+<p>Заходим под другим пользователем в систему и пробуем запустить нашу программ (не забудьте ее записать в домашний каталог этого пользователя):
+<pre>
+dron~$ ./a.out
+Real User ID = 1000
+</pre>
+<p>Как видите никакой информации получить мы не смогли. А если запускаем программу вывода переменных среды, то все окей:
+<pre>
+dron~# ./a1.out
+USER = 'dron'
+HOME = '/home/dron'
+PATH = '/usr/bin:/usr/local/bin'
+</pre>
+<p>Вот, что происходит. Если вдруг "неопытный" администратор системы отключит по соображениям "безопасности" доступ к файлу <b>/etc/passwd</b>, то многие программы недальновидных разработчиков могут просто перестать работать. Что нам остается ?! Ну, я думаю первым делом вы все вызовите команду <b>chmod 644 /etc/passwd</b>. А, во-вторых, перепишите код таким образом, чтобы если что-то не так с функцией <b>getpwuid</b>, то программа пользовалась переменными среды, как единственно доступной в данном случае информацией.
+<p>Собственно говоря, на этом все. Вы уже начинаете чувствовать, что не все просто в нашем мире <b>linux</b> ?</div><center><hr><a href="r.php-12.htm" tppabs="http://www.firststeps.ru/linux/r.php?12">Предыдущий Шаг</a> | <a href="r.php-14.htm" tppabs="http://www.firststeps.ru/linux/r.php?14">Следующий Шаг</a> | <a href="general1.html" tppabs="http://www.firststeps.ru/linux/general1.html">Оглавление</a><br>Автор <a href="mailto:kuzinandrey@yandex.ru?SUBJECT=From_part_general#13'_on_[www.firststeps.ru]">Кузин Андрей</a>.<hr><iframe src="javascript:if(confirm('http://ad.adriver.ru/cgi-bin/erle.cgi?sid=9595&target=blank&bt=1&pz=0&rnd=18479  \n\nThis file was not retrieved by Teleport Pro, because it did not meet the project\'s file type specifications.  \n\nDo you want to open it from the server?'))window.location='http://ad.adriver.ru/cgi-bin/erle.cgi?sid=9595&target=blank&bt=1&pz=0&rnd=18479'" tppabs="http://ad.adriver.ru/cgi-bin/erle.cgi?sid=9595&target=blank&bt=1&pz=0&rnd=18479" frameborder=0 vspace=0 hspace=0 width=468 height=60 marginwidth=0 marginheight=0 scrolling=no><a href="javascript:if(confirm('http://ad.adriver.ru/cgi-bin/click.cgi?sid=9595&bt=1&pz=0&rnd=18479  \n\nThis file was not retrieved by Teleport Pro, because it is addressed on a domain or path outside the boundaries set for its Starting Address.  \n\nDo you want to open it from the server?'))window.location='http://ad.adriver.ru/cgi-bin/click.cgi?sid=9595&bt=1&pz=0&rnd=18479'" tppabs="http://ad.adriver.ru/cgi-bin/click.cgi?sid=9595&bt=1&pz=0&rnd=18479" target=_blank><img src="rle.cgi-sid=9595&bt=1&pz=0&rnd=18479" tppabs="http://ad.adriver.ru/cgi-bin/rle.cgi?sid=9595&bt=1&pz=0&rnd=18479" alt="-AdRiver-" border=0 width=468 height=60></a></iframe></center><br><br>

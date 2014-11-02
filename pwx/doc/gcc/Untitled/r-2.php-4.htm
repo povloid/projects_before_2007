@@ -1,0 +1,80 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1251"><title>www.ПЕРВЫЕ ШАГИ.ru :: Шаг 4 - События X</title></head><link rel=stylesheet type=text/css href="2.css" tppabs="http://www.firststeps.ru/2.css"><body text=black bgcolor=white link=blue vlink=blue alink=red><h2>Шаг 4 - События X</h2><div style="margin:10px;"><p>Теперь по поводу событий среды <b>X</b>. Эти события относятся к управлению окнами и (в основном) к событиям мыши. Кроме того, некоторые встроенные виджеты <b>X</b> также управляются этими событиями. Например, простые кнопки... Правда на них посмотришь... Мда, некрасивые... Вообще сейчас мало где можно встроенные виджеты <b>X</b> увидеть, ну например запустите <b>xvidtune</b>. Эти события бывают следующих типов:
+<ul>
+<li>event
+<li>button_press_event
+<li>button_release_event
+<li>motion_notify_event
+<li>delete_event
+<li>destroy_event
+<li>expose_event
+<li>key_press_event
+<li>key_release_event
+<li>enter_notify_event
+<li>leave_notify_event
+<li>configure_event
+<li>focus_in_event
+<li>focus_out_event
+<li>map_event
+<li>unmap_event
+<li>property_notify_event
+<li>selection_clear_event
+<li>selection_request_event
+<li>selection_notify_event
+<li>proximity_in_event
+<li>proximity_out_event
+<li>drag_begin_event
+<li>drag_request_event
+<li>drag_end_event
+<li>drop_enter_event
+<li>drop_leave_event
+<li>drop_data_available_event
+<li>other_event
+</ul>
+<p>Для этих событий используется несколько иной синтаксис присоединения обработчика событий. Например, следующий вызов <b>gtk_signal_connect</b>:
+<pre>
+gtk_signal_connect(GTK_OBJECT(object) , "delete_event",
+	GTK_SIGNAL_FUNC (callback_func), NULL);
+</pre>
+<p>Применим к такому обработчику:
+<pre>
+void callback_func(
+	GtkWidget *widget,
+	GdkEvent *event,
+	gpointer callback_data );
+</pre>
+<p>Приведение типа можно даже не приводить при желании, и соответствующих настройках компилятора. Все же лучше стоит, а то даже в ординарной программе будут кучами сыпаться предупреждения компилятора. Здесь <b>event</b> - указатель на структуру-объединение <b>GDK</b>, содержащее данные этого события. Может быть одно из следующего:
+<ul> 
+<li>GDK_NOTHING
+<li>GDK_DELETE
+<li>GDK_DESTROY
+<li>GDK_EXPOSE
+<li>GDK_MOTION_NOTIFY
+<li>GDK_BUTTON_PRESS
+<li>GDK_2BUTTON_PRESS
+<li>GDK_3BUTTON_PRESS
+<li>GDK_BUTTON_RELEASE
+<li>GDK_KEY_PRESS
+<li>GDK_KEY_RELEASE
+<li>GDK_ENTER_NOTIFY
+<li>GDK_LEAVE_NOTIFY
+<li>GDK_FOCUS_CHANGE
+<li>GDK_CONFIGURE
+<li>GDK_MAP
+<li>GDK_UNMAP
+<li>GDK_PROPERTY_NOTIFY
+<li>GDK_SELECTION_CLEAR
+<li>GDK_SELECTION_REQUEST
+<li>GDK_SELECTION_NOTIFY
+<li>GDK_PROXIMITY_IN
+<li>GDK_PROXIMITY_OUT
+<li>GDK_DRAG_BEGIN
+<li>GDK_DRAG_REQUEST
+<li>GDK_DROP_ENTER
+<li>GDK_DROP_LEAVE
+<li>GDK_DROP_DATA_AVAIL
+<li>GDK_CLIENT_EVENT
+<li>GDK_VISIBILITY_NOTIFY
+<li>GDK_NO_EXPOSE
+<li>GDK_OTHER_EVENT
+</ul>
+<p>Я думаю. некоторое соответствие названиям событий <b>X</b> все же проглядывается :)</div><center><hr><a href="r-2.php-3.htm" tppabs="http://www.firststeps.ru/linux/gtk/r.php?3">Предыдущий Шаг</a> | <a href="r-1.php-5.htm" tppabs="http://www.firststeps.ru/linux/gtk/r.php?5">Следующий Шаг</a> | <a href="gtk1.html" tppabs="http://www.firststeps.ru/linux/gtk/gtk1.html">Оглавление</a><br>Автор <a href="mailto:seavan@yandex.ru?SUBJECT=From_part_gtk#4'_on_[www.firststeps.ru]">Аванесов Самвел</a>.<hr><iframe src="javascript:if(confirm('http://ad.adriver.ru/cgi-bin/erle.cgi?sid=9595&target=blank&bt=1&pz=0&rnd=18488  \n\nThis file was not retrieved by Teleport Pro, because it did not meet the project\'s file type specifications.  \n\nDo you want to open it from the server?'))window.location='http://ad.adriver.ru/cgi-bin/erle.cgi?sid=9595&target=blank&bt=1&pz=0&rnd=18488'" tppabs="http://ad.adriver.ru/cgi-bin/erle.cgi?sid=9595&target=blank&bt=1&pz=0&rnd=18488" frameborder=0 vspace=0 hspace=0 width=468 height=60 marginwidth=0 marginheight=0 scrolling=no><a href="javascript:if(confirm('http://ad.adriver.ru/cgi-bin/click.cgi?sid=9595&bt=1&pz=0&rnd=18488  \n\nThis file was not retrieved by Teleport Pro, because it is addressed on a domain or path outside the boundaries set for its Starting Address.  \n\nDo you want to open it from the server?'))window.location='http://ad.adriver.ru/cgi-bin/click.cgi?sid=9595&bt=1&pz=0&rnd=18488'" tppabs="http://ad.adriver.ru/cgi-bin/click.cgi?sid=9595&bt=1&pz=0&rnd=18488" target=_blank><img src="rle.cgi-sid=9595&bt=1&pz=0&rnd=18488" tppabs="http://ad.adriver.ru/cgi-bin/rle.cgi?sid=9595&bt=1&pz=0&rnd=18488" alt="-AdRiver-" border=0 width=468 height=60></a></iframe></center><br><br>

@@ -1,0 +1,51 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1251"><title>www.ПЕРВЫЕ ШАГИ.ru :: Шаг 2 - Установка Linux</title></head><link rel=stylesheet type=text/css href="2.css" tppabs="http://www.firststeps.ru/2.css"><body text=black bgcolor=white link=blue vlink=blue alink=red><h2>Шаг 2 - Установка Linux</h2><div style="margin:10px;"><p>Для установки надо подготовить две дискеты установочные дискеты. Однако они Вам не потребуются, если Ваш компьютер позволяет осуществлять загрузку с CD. Предположим, что у меня такой возможности нет и пойдем более сложным путем :) Надо же все уметь...
+<p>Я нашел в ящике две запылившиеся дискеты на 1.44 Мб. Вот их то я и буду использовать. Две дискеты нужны для того, чтобы записать на них <b>boot</b> диск и <b>root</b> диск.
+<p>Первый диск должен содержать ядро системы <b>Linux</b>. Изначально ядер несколько, в зависимости от того, какое железо содержится в вашем компьютере. Посмотреть их Вы можете в каталоге <b>bootdsks.144</b>
+<pre>
+LILO 21.7-5
+
+Welcome to the Slackware Linux (v. 8.0.0) bare.i bootdisk !
+
+If you need to pass extra parameters to the kernel, enter them at the prompt
+below after one of the valid configuration names:  ramdisk (to load a rootdisk
+into memory and boot it), and mount (to boot an existing Linux partition).
+NOTE:  Most hardware is auto-detected without parameters.  So, before assuming
+       your system requires parameters, try a few different bootdisks. :^)
+
+Here are some examples (and more can ba found in the BOOTING file):
+   ramdisk hdx=cylc,heads,sects,wpcom,irq  (needed only if probing fails)
+   ramdisk hdx=cdrom (force detection of an IDE/ATAPI CD-ROM drive)
+   where hdx can be any of hda through hdh. Examples: hdc=1050,32,64  hdd=cdrom
+
+If you would rather load the root/install disk from your second floppy drive:
+   ramdisk root=/dev/fd1
+
+In a pinch, you can boot your Linux system a command like:
+   mount root=/dev/hda1
+
+DON'T SWITCH ANY DISKS YET! This prompt is just for entering extra parameters.
+If you don't need  to enter any parameters, hit ENTER to continue.
+
+boot: _
+</pre>
+<p>При появлении этого пригласительного экрана Вы можете просто нажать <b>Enter</b> и загрузка продолжится. После того как загрузится основное ядро, Вам будет пердложено вставить второй диск с файловой системой <b>root</b>:
+<pre>
+VFS: Inset root floppy disk to be loaded into RAM disk and press ENTER
+</pre>
+<p>Меняем диски и нажимаем <b>Enter</b>. При загрузке нас спросят хотим ли мы использовать другую раскладку клавиатуры:
+<pre>
+&lt;OPTION TO LOAD SUPPORT FOR NON-US KEYBOARD&gt;
+
+If you are not using a US keyboard, you may now load a different
+keyboard map.  To select a different keyboard map, please enter 1
+now.  To continue using the US map, just hit enter.
+
+Enter 1 to select a keyboard map: _
+</pre>
+<p>Нам сейчас другая раскладка совсем ни к чему, потому что при установке не надо будет вводить русских букв, поэтому смело жмем <b>Enter</b>. После этого появится приглащение для входа в систему:
+<pre>
+You may now login as 'root'.
+
+slackware login: _
+</pre>
+<p>Введем логин <b>root</b> и нажмем <b>Enter</b>. Теперь мы в системе и можем продолжить установку.</div><center><hr><a href="r-1.php-1.htm" tppabs="http://www.firststeps.ru/linux/admin/r.php?1">Предыдущий Шаг</a> | <a href="r-1.php-3.htm" tppabs="http://www.firststeps.ru/linux/admin/r.php?3">Следующий Шаг</a> | <a href="admin1.html" tppabs="http://www.firststeps.ru/linux/admin/admin1.html">Оглавление</a><br>Автор <a href="mailto:kuzinandrey@yandex.ru?SUBJECT=From_part_admin#2'_on_[www.firststeps.ru]">Кузин Андрей</a>.<hr><iframe src="javascript:if(confirm('http://ad.adriver.ru/cgi-bin/erle.cgi?sid=9595&target=blank&bt=1&pz=0&rnd=22263  \n\nThis file was not retrieved by Teleport Pro, because it did not meet the project\'s file type specifications.  \n\nDo you want to open it from the server?'))window.location='http://ad.adriver.ru/cgi-bin/erle.cgi?sid=9595&target=blank&bt=1&pz=0&rnd=22263'" tppabs="http://ad.adriver.ru/cgi-bin/erle.cgi?sid=9595&target=blank&bt=1&pz=0&rnd=22263" frameborder=0 vspace=0 hspace=0 width=468 height=60 marginwidth=0 marginheight=0 scrolling=no><a href="javascript:if(confirm('http://ad.adriver.ru/cgi-bin/click.cgi?sid=9595&bt=1&pz=0&rnd=22263  \n\nThis file was not retrieved by Teleport Pro, because it is addressed on a domain or path outside the boundaries set for its Starting Address.  \n\nDo you want to open it from the server?'))window.location='http://ad.adriver.ru/cgi-bin/click.cgi?sid=9595&bt=1&pz=0&rnd=22263'" tppabs="http://ad.adriver.ru/cgi-bin/click.cgi?sid=9595&bt=1&pz=0&rnd=22263" target=_blank><img src="rle.cgi-sid=9595&bt=1&pz=0&rnd=22263" tppabs="http://ad.adriver.ru/cgi-bin/rle.cgi?sid=9595&bt=1&pz=0&rnd=22263" alt="-AdRiver-" border=0 width=468 height=60></a></iframe></center><br><br>

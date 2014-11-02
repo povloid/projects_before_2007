@@ -1,0 +1,57 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1251"><title>www.ПЕРВЫЕ ШАГИ.ru :: Шаг 4 - Начало установки</title></head><link rel=stylesheet type=text/css href="2.css" tppabs="http://www.firststeps.ru/2.css"><body text=black bgcolor=white link=blue vlink=blue alink=red><h2>Шаг 4 - Начало установки</h2><div style="margin:10px;"><p>Чтобы начать установку нам надо вызвать программу <b>setup</b>:
+<pre>
+# setup
+</pre>
+<p>После этого запустится меню установочной программы.
+<pre>
+HELP       Read the Slackware Setup HELP file
+KEYMAP     Remap your keyboard if you're not using a US one
+ADDSWAP    Set up your swap partition(s)
+TARGET     Set up your target partitions
+SOURCE     Select source media
+INSTALL    Install selected software
+CONFIGURE  Reconfigure your Linux system
+EXIT       Exit Slackware Linux Setup
+</pre>
+<p>Думаю тут все ясно. Установку надо начинать с второй позиции <b>KEYMAP</b>, но мы ее пропустим, потому что потом сможем поменять все внутри системы. И вообще на этапе установки проще делать меньше всего настроек, все равно потом все лучше менять самому.
+<p>Перейдем к разделу добавления своп-раздела, в меню <b>ADDSWAP</b> и нажмем <b>Enter</b>. Появится окно я перечислением разеделов диска типа <b>Linux swap</b>:
+<pre>
+Slackware Setup has detected a swap partition:
+
+   Device Boot    Start       End    Blocks   Id  System
+/dev/hda1             1         9     72261   82  Linux swap
+
+
+Do you wish to install this as your swap partition?
+</pre>
+<p>Конечно хотим, выбираем кнопку <b>&lt; Yes &gt;</b>. После этого раздел быстро отформатируется и подключится. Он также добавится в файл <b>/etc/fstab</b>:
+<pre>
+Your swapspace has been configured. This information will
+be added to your /etc/fstab:
+
+/dev/hda1       swap      swap     defaults   0   0
+</pre>
+<p>Нажимаем кнопку <b>&lt; EXIT &gt;</b> и попадаем в следующий раздел главного меню - выбор диска для установки:
+<pre>
+Now that you've set up your swap space, you may continue
+on with the installation. Otherwise, you'll be returned
+to the main menu. Would you like to continue the 
+installation and set up your TARGET drive(s)?
+         &lt; Yes &gt;       &lt; No &gt;
+</pre>
+<p>Мы продолжаем не выходя в главное меню, поэтому выбираем кнопку <b>&lt; Yes &gt;</b>. После этого программа установки выведет все найденные ею разделы пригодные для установки.
+<pre>
+Please select a partition from the following list to use for your
+root (/) Linux partition.
+
+/dev/hda2  Linux native 4120627K
+</pre>
+<p>Выбираем этот самый <b>/dev/hda2</b> и нажимаем <b>&lt; OK &gt;</b>. После этого выведется окно с предложением отформатировать данный раздел.
+<pre>
+Format  Quick format with no bad block checking
+Check   Slow format that checks for bad blocks
+No      No, do not format this partition
+         &lt; OK &gt;       &lt; Cancel &gt;
+</pre>
+<p>У нас раздел новый и не отформатированный, поэтому его надо обязательно отформатировать. Чтобы сэкономить время можно выбрать <b>Format</b>, а если Вы хотите еще проверить диск на сбойные блоки, то выбирайте <b>Check</b>. Если Вы ставите систему на готовый заполненный чем-то раздел (например переустанавливаете), то лучше Вам его не трогать, и выбрать <b>No</b>. Я не буду терять время и выберу простое форматирование <b>Format</b>.
+<p>После того, как пройдет процесс форматирования можно будет приступать к следующей стадии установки.</div><center><hr><a href="r-1.php-3.htm" tppabs="http://www.firststeps.ru/linux/admin/r.php?3">Предыдущий Шаг</a> | <a href="admin1.html" tppabs="http://www.firststeps.ru/linux/admin/admin1.html">Оглавление</a><br>Автор <a href="mailto:kuzinandrey@yandex.ru?SUBJECT=From_part_admin#4'_on_[www.firststeps.ru]">Кузин Андрей</a>.<hr><iframe src="javascript:if(confirm('http://ad.adriver.ru/cgi-bin/erle.cgi?sid=9595&target=blank&bt=1&pz=0&rnd=14268  \n\nThis file was not retrieved by Teleport Pro, because it did not meet the project\'s file type specifications.  \n\nDo you want to open it from the server?'))window.location='http://ad.adriver.ru/cgi-bin/erle.cgi?sid=9595&target=blank&bt=1&pz=0&rnd=14268'" tppabs="http://ad.adriver.ru/cgi-bin/erle.cgi?sid=9595&target=blank&bt=1&pz=0&rnd=14268" frameborder=0 vspace=0 hspace=0 width=468 height=60 marginwidth=0 marginheight=0 scrolling=no><a href="javascript:if(confirm('http://ad.adriver.ru/cgi-bin/click.cgi?sid=9595&bt=1&pz=0&rnd=14268  \n\nThis file was not retrieved by Teleport Pro, because it is addressed on a domain or path outside the boundaries set for its Starting Address.  \n\nDo you want to open it from the server?'))window.location='http://ad.adriver.ru/cgi-bin/click.cgi?sid=9595&bt=1&pz=0&rnd=14268'" tppabs="http://ad.adriver.ru/cgi-bin/click.cgi?sid=9595&bt=1&pz=0&rnd=14268" target=_blank><img src="rle.cgi-sid=9595&bt=1&pz=0&rnd=14268" tppabs="http://ad.adriver.ru/cgi-bin/rle.cgi?sid=9595&bt=1&pz=0&rnd=14268" alt="-AdRiver-" border=0 width=468 height=60></a></iframe></center><br><br>

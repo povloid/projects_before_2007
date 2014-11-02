@@ -1,0 +1,118 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1251"><title>www.ПЕРВЫЕ ШАГИ.ru :: Шаг 12 - Вывод сообщений об ошибках программы</title></head><link rel=stylesheet type=text/css href="2.css" tppabs="http://www.firststeps.ru/2.css"><body text=black bgcolor=white link=blue vlink=blue alink=red><h2>Шаг 12 - Вывод сообщений об ошибках программы</h2><div style="margin:10px;"><p>Сообщения об ошибках один из методов анализа правильности работы программы. Причем это не только сообщения для пользователя, но и сообщения об ошибках на этапе отладки приложения при разработке.
+<p>Вывод сообщений обычно делается через стандартный поток <b>stderr</b>, который перенаправляет все данные на консоль. Можно делать это и через <b>stdout</b>, но он может быть перенаправлен в файл или куда-либо еще, к тому же он обладает буфером, который ему не позволяет выводить данные моментально и если программа резко "обрушится", то Вы можете не увидеть нужных сообщений вообще. В потоке <b>stderr</b> буфер отключен, поэтому вызов функции <b>fflush(stderr)</b> не обязателен.
+<p>Все это конечно хорошо, если Вы разрабытаваете пользовательское консольное приложение, но как быть, если Ваша программа является сетевым приложением, например <b>POP3</b> или каким-нибудь другим сервером. В этом случае работа с <b>stderr</b> не возможна, и отладка мягко выражаясь может сильно усложниться. Но не все так печально. Для этих случаев существует демон сообщений <b>syslogd</b>, который все сообщения от ядра и программ записывает в файлы хранящиеся в папке <b>/var/log</b>.
+<p>Для того, чтобы начать работу с этим демоном надо подключить файл <b>syslog.h</b> и вам станут доступными три процедуры:
+<pre>
+#include &lt;syslog.h&gt;
+
+void openlog( char *ident, int option, int  facility)
+
+void syslog( int priority, char *format, ...)
+
+void closelog( void )
+</pre>
+<p>Предназначение функции <b>closelog()</b> думаю ясно, она закрывает дескриптор, который использовался для передачи сообщений в <b>system logger</b>. Ее использование опционально и, если вы забудете ее вызвать, то ничего катастрофичного не произойдет.
+<p>Для начала вывода сообщений Вам придется передать в функцию <b>openlog()</b> несколько необходимых параметров:
+<ul>
+<li><b>ident</b> - текстовый идентификатор программы, обычно ее название. Он добавляется к началу каждого сообщения для того, чтобы было видно от какой программы поступают сообщения.
+<li><b>option</b> - установки открываемого соединения, которые посредством операции <b>OR</b> могут складываться из следующих:
+<ul>
+<li><b>LOG_CONS</b> - вывод напрямую в системную консоль, если вдруг происходит ошибка во время отправления сообщения
+<li><b>LOG_NDELAY</b> - открывать соединение сразу, обычно соединение открывается после появления первого сообщения
+<li><b>LOG_PERROR</b> - выводить сообщения в <b>stderr</b>
+<li><b>LOG_PID</b> - добавлять <b>PID</b> программы в каждое сообщение. Полезно когда может работать одновременно несколько одинаковых программ, в этом случае их можно различить по идентификатору процесса.
+</ul>
+<li><b>facility</b> - позволяет задать тип программы, которая выводит сообщение. Это полезно для того, чтобы разделять сообщения от различных программ и записывать их в разные файлы. Все это настраивается для <b>syslogd</b> файлом конфигурации <b>/etc/syslog.conf</b>. А значения этого параметра могут быть следующими:
+<ul>
+<li><b>LOG_AUTH</b> - сообщения безопасности/авторизации (рекомендуется использовать <b>LOG_AUTHPRIV</b>)
+<li><b>LOG_AUTHPRIV</b> - приватные сообщения безопасности/авторизации
+<li><b>LOG_CRON</b> - сообщения от демонов времени (например, <b>cron</b> или <b>at</b>)
+<li><b>LOG_DAEMON</b> - сообщения от других демонов системы
+<li><b>LOG_KERN</b> - сообщения ядра системы
+<li><b>LOG_LOCAL0...LOG_LOCAL7</b> - зарезервированы для локального использования
+<li><b>LOG_LPR</b> - подсистема принтера
+<li><b>LOG_MAIL</b> - почтовая подсистема
+<li><b>LOG_NEWS</b> - подсистема новостей <b>USENET</b>
+<li><b>LOG_SYSLOG</b> - внутренние сообщения сгенерированные <b>syslogd</b>
+<li><b>LOG_USER</b> (по умолчанию) - сообщения пользовательского уровня
+<li><b>LOG_UUCP</b> - сообщения системы <b>UUCP</b>
+</ul>
+</ul>
+<p>Вызов функции <b>openlog()</b> также не обязателен, она будет автоматически вызвана при необходимости во время использования <b>syslog()</b>, но идентификатор программы будет установлен в <b>NULL</b>, что я думаю не будет считаться хорошим тоном.
+<p>Ну, и чтобы выводить сами сообщения надо использовать функцию <b>syslog()</b>, работа с которой похожа на работу с функцией <b>printf</b>, за исключением того, что сообщению можно задать приоритет(или тип), т.е. его важность. Задается приоритет параметром <b>priority</b>, который может иметь следующие значения:
+<ul>
+<li><b>LOG_EMERG</b> - система не работает, грубо говоря в обмороке и требует госпитализации :)
+<li><b>LOG_ALERT</b> - необходимо немедленно принять меры
+<li><b>LOG_CRIT</b> - критическое состояние
+<li><b>LOG_ERR</b> - ошибочное состояние
+<li><b>LOG_WARNING</b> - состояние предупреждения
+<li><b>LOG_NOTICE</b> - нормальное, но значимое, состояние
+<li><b>LOG_INFO</b> - информационное сообщение
+<li><b>LOG_DEBUG</b> - сообщение отладки, то что как раз нужно при разработке
+</ul>
+<p>А теперь попробуем написать программу <b>test.c</b>, использующую <b>syslog</b>:
+<pre>
+#include &lt;stdlib.h&gt;
+#include &lt;stdio.h&gt;
+#include &lt;syslog.h&gt;
+
+#define DEBUG
+
+int main(){
+
+    int i=0;
+    openlog("test",LOG_PID,LOG_USER);
+
+#ifdef DEBUG
+    syslog(LOG_DEBUG,"try to sending 10 messages");
+#endif
+
+    for (i=0;i&lt;10;i++){
+        syslog(LOG_INFO,"info message [i = %d] ",i);
+    };
+
+#ifdef DEBUG
+    syslog(LOG_DEBUG,"try log to stderr");
+#endif
+    closelog();
+
+    openlog("test_stderr",LOG_PERROR | LOG_PID,LOG_USER);
+    syslog(LOG_INFO,"this is attempt to use stderr for syslog");
+    closelog();
+
+    return 0;
+};
+</pre>
+<p>Компилируем программу и попробуем запустить:
+<pre>
+dron~# ./test
+test_stderr[6222]: this is attempt to use stderr for syslog
+</pre>
+<p>Теперь можем зайти в файл <b>/var/log/messages</b> и посмотреть, что там получилось. А получилось вот что:
+<pre>
+Dec 20 11:25:04 dron-linux test[6222]: info message [i = 0]
+Dec 20 11:25:04 dron-linux test[6222]: info message [i = 1]
+Dec 20 11:25:04 dron-linux test[6222]: info message [i = 2]
+Dec 20 11:25:04 dron-linux test[6222]: info message [i = 3]
+Dec 20 11:25:04 dron-linux test[6222]: info message [i = 4]
+Dec 20 11:25:04 dron-linux test[6222]: info message [i = 5]
+Dec 20 11:25:04 dron-linux test[6222]: info message [i = 6]
+Dec 20 11:25:04 dron-linux test[6222]: info message [i = 7]
+Dec 20 11:25:04 dron-linux test[6222]: info message [i = 8]
+Dec 20 11:25:04 dron-linux test[6222]: info message [i = 9]
+Dec 20 11:25:04 dron-linux test_stderr[6222]: this is attempt to use stderr for syslog
+</pre>
+<p>Помоему классно, но почему-то не хватает некоторых сообщений. Посмотрим <b>/var/log/debug</b> и увидим, что все на месте :)
+<pre>
+Dec 20 11:25:04 dron-linux test[6222]: try to sending 10 messages
+Dec 20 11:25:04 dron-linux test[6222]: try log to stderr
+</pre>
+<p>То есть тут мы можем увидеть, что сообщения разных типов выводятся в разные файлы. Настроить это можно с помощью файла <b>/etc/syslog.conf</b>. К примеру в данном случае он выглядит вот так:
+<pre>
+# /etc/syslog.conf
+# For info about the format of this file, see "man syslog.conf"
+*.=info;*.=notice	/var/log/messages
+*.=debug		/var/log/debug
+*.err			/var/log/syslog
+</pre>
+<p>Обратите также внимание, что сообщения, которые должны были выводиться в <b>stderr</b> дублируются в файл. Т.е. по большому счету, даже если поток <b>stderr</b> будет не доступен, то сообщения программы все равно дойдут до вас и это очень хорошо.</div><center><hr><a href="r.php-11.htm" tppabs="http://www.firststeps.ru/linux/r.php?11">Предыдущий Шаг</a> | <a href="r.php-13.htm" tppabs="http://www.firststeps.ru/linux/r.php?13">Следующий Шаг</a> | <a href="general1.html" tppabs="http://www.firststeps.ru/linux/general1.html">Оглавление</a><br>Автор <a href="mailto:kuzinandrey@yandex.ru?SUBJECT=From_part_general#12'_on_[www.firststeps.ru]">Кузин Андрей</a>.<hr><iframe src="javascript:if(confirm('http://ad.adriver.ru/cgi-bin/erle.cgi?sid=9595&target=blank&bt=1&pz=0&rnd=10513  \n\nThis file was not retrieved by Teleport Pro, because it did not meet the project\'s file type specifications.  \n\nDo you want to open it from the server?'))window.location='http://ad.adriver.ru/cgi-bin/erle.cgi?sid=9595&target=blank&bt=1&pz=0&rnd=10513'" tppabs="http://ad.adriver.ru/cgi-bin/erle.cgi?sid=9595&target=blank&bt=1&pz=0&rnd=10513" frameborder=0 vspace=0 hspace=0 width=468 height=60 marginwidth=0 marginheight=0 scrolling=no><a href="javascript:if(confirm('http://ad.adriver.ru/cgi-bin/click.cgi?sid=9595&bt=1&pz=0&rnd=10513  \n\nThis file was not retrieved by Teleport Pro, because it is addressed on a domain or path outside the boundaries set for its Starting Address.  \n\nDo you want to open it from the server?'))window.location='http://ad.adriver.ru/cgi-bin/click.cgi?sid=9595&bt=1&pz=0&rnd=10513'" tppabs="http://ad.adriver.ru/cgi-bin/click.cgi?sid=9595&bt=1&pz=0&rnd=10513" target=_blank><img src="rle.cgi-sid=9595&bt=1&pz=0&rnd=10513" tppabs="http://ad.adriver.ru/cgi-bin/rle.cgi?sid=9595&bt=1&pz=0&rnd=10513" alt="-AdRiver-" border=0 width=468 height=60></a></iframe></center><br><br>

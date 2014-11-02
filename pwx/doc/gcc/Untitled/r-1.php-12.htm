@@ -1,0 +1,100 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1251"><title>www.ПЕРВЫЕ ШАГИ.ru :: Шаг 12 - Переключатели и радиокнопки</title></head><link rel=stylesheet type=text/css href="2.css" tppabs="http://www.firststeps.ru/2.css"><body text=black bgcolor=white link=blue vlink=blue alink=red><h2>Шаг 12 - Переключатели и радиокнопки</h2><div style="margin:10px;"><p>Тоже относятся к категории <b>gtk_*_button</b>. Для создания двухпозиционных переключателей (галочек:)) используются следующие функции:
+<pre>
+GtkWidget *gtk_check_button_new( void );
+GtkWidget *gtk_check_button_new_with_label ( gchar *label );
+</pre>
+<p>Элементарно, правда... Немного сложнее обстоит дело с радиокнопками, ведь их еще группировать надо. Для работы с этими кнопками используются следующие функции:
+<pre>
+GtkWidget *gtk_radio_button_new( GSList *group );
+GtkWidget *gtk_radio_button_new_with_label( GSList *group, gchar *label );
+GSList *gtk_radio_button_group( GtkRadioButton *radio_button );
+void gtk_toggle_button_set_active( GtkToggleButton *toggle_button, gint state );
+</pre>
+<p>Они означают именно то, что написано... Порядок такой:
+<ol>
+<li>Создается кнопка функцией <b>button1 = gtk_radio_button_new*(NULL,...);</b>
+<li>Создается группа <b>group1 = gtk_radio_button_group(button1);</b>
+<li>Добавляются другие кнопки <b>buttonx = gtk_radio_button_new*(group1,...);</b>
+<li>Устанавливается отмеченная по умолчанию кнопка <b>gtk_toggle_button_set_active(buttonx,TRUE)</b>
+</ol>
+<p>Вот пример программы, работающей с радиокнопками:
+<pre>
+#include &lt;gtk/gtk.h&gt;
+#include &lt;glib.h&gt;
+
+gint close_application( GtkWidget *widget, GdkEvent *event, gpointer data )
+{
+	gtk_main_quit();
+	return(FALSE);
+}
+
+int main( int argc, char *argv[] )
+{
+	GtkWidget *window = NULL;
+	GtkWidget *box1;
+	GtkWidget *box2;
+	GtkWidget *button;
+	GtkWidget *separator;
+	GSList *group;
+
+	gtk_init(&argc,&argv);    
+
+	window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
+
+	gtk_signal_connect (GTK_OBJECT (window), "delete_event",
+		GTK_SIGNAL_FUNC(close_application), NULL);
+
+	gtk_window_set_title (GTK_WINDOW (window), "radio buttons");
+	gtk_container_set_border_width (GTK_CONTAINER (window), 0);
+
+	box1 = gtk_vbox_new (FALSE, 0);
+	gtk_container_add (GTK_CONTAINER (window), box1);
+	gtk_widget_show (box1);
+
+	box2 = gtk_vbox_new (FALSE, 10);
+	gtk_container_set_border_width (GTK_CONTAINER (box2), 10);
+	gtk_box_pack_start (GTK_BOX (box1), box2, TRUE, TRUE, 0);
+	gtk_widget_show (box2);
+
+	button = gtk_radio_button_new_with_label (NULL, "button1");
+	gtk_box_pack_start (GTK_BOX (box2), button, TRUE, TRUE, 0);
+	gtk_widget_show (button);
+
+	group = gtk_radio_button_group (GTK_RADIO_BUTTON (button));
+	button = gtk_radio_button_new_with_label(group, "button2");
+	gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (button), TRUE);
+	gtk_box_pack_start (GTK_BOX (box2), button, TRUE, TRUE, 0);
+	gtk_widget_show (button);
+
+	button = gtk_radio_button_new_with_label(
+		gtk_radio_button_group (GTK_RADIO_BUTTON (button)),
+		"button3");
+	gtk_box_pack_start (GTK_BOX (box2), button, TRUE, TRUE, 0);
+	gtk_widget_show (button);
+
+	separator = gtk_hseparator_new ();
+	gtk_box_pack_start (GTK_BOX (box1), separator, FALSE, TRUE, 0);
+	gtk_widget_show (separator);
+
+	box2 = gtk_vbox_new (FALSE, 10);
+	gtk_container_set_border_width (GTK_CONTAINER (box2), 10);
+	gtk_box_pack_start (GTK_BOX (box1), box2, FALSE, TRUE, 0);
+	gtk_widget_show (box2);
+
+	button = gtk_button_new_with_label ("close");
+	gtk_signal_connect_object (GTK_OBJECT (button), "clicked",
+		GTK_SIGNAL_FUNC(close_application),
+		GTK_OBJECT (window));
+	gtk_box_pack_start (GTK_BOX (box2), button, TRUE, TRUE, 0);
+	GTK_WIDGET_SET_FLAGS (button, GTK_CAN_DEFAULT);
+	gtk_widget_grab_default (button);
+	gtk_widget_show (button);
+	gtk_widget_show (window);
+
+	gtk_main();
+
+	return(0);
+}
+</pre>
+<p>У меня все это выглядело так:
+<p><img src="12_1.gif" tppabs="http://www.firststeps.ru/linux/gtk/gif/12_1.gif" alt="gif/12_1.gif (8772 b)" border=2></p></div><center><hr><a href="r-1.php-11.htm" tppabs="http://www.firststeps.ru/linux/gtk/r.php?11">Предыдущий Шаг</a> | <a href="r-1.php-13.htm" tppabs="http://www.firststeps.ru/linux/gtk/r.php?13">Следующий Шаг</a> | <a href="gtk1.html" tppabs="http://www.firststeps.ru/linux/gtk/gtk1.html">Оглавление</a><br>Автор <a href="mailto:seavan@yandex.ru?SUBJECT=From_part_gtk#12'_on_[www.firststeps.ru]">Аванесов Самвел</a>.<hr><iframe src="javascript:if(confirm('http://ad.adriver.ru/cgi-bin/erle.cgi?sid=9595&target=blank&bt=1&pz=0&rnd=27914  \n\nThis file was not retrieved by Teleport Pro, because it did not meet the project\'s file type specifications.  \n\nDo you want to open it from the server?'))window.location='http://ad.adriver.ru/cgi-bin/erle.cgi?sid=9595&target=blank&bt=1&pz=0&rnd=27914'" tppabs="http://ad.adriver.ru/cgi-bin/erle.cgi?sid=9595&target=blank&bt=1&pz=0&rnd=27914" frameborder=0 vspace=0 hspace=0 width=468 height=60 marginwidth=0 marginheight=0 scrolling=no><a href="javascript:if(confirm('http://ad.adriver.ru/cgi-bin/click.cgi?sid=9595&bt=1&pz=0&rnd=27914  \n\nThis file was not retrieved by Teleport Pro, because it is addressed on a domain or path outside the boundaries set for its Starting Address.  \n\nDo you want to open it from the server?'))window.location='http://ad.adriver.ru/cgi-bin/click.cgi?sid=9595&bt=1&pz=0&rnd=27914'" tppabs="http://ad.adriver.ru/cgi-bin/click.cgi?sid=9595&bt=1&pz=0&rnd=27914" target=_blank><img src="rle.cgi-sid=9595&bt=1&pz=0&rnd=27914" tppabs="http://ad.adriver.ru/cgi-bin/rle.cgi?sid=9595&bt=1&pz=0&rnd=27914" alt="-AdRiver-" border=0 width=468 height=60></a></iframe></center><br><br>

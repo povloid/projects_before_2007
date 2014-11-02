@@ -1,0 +1,188 @@
+;; Scroll Bar gets dragged by mouse butn 1
+(global-set-key [vertical-scroll-bar down-mouse-1] 'scroll-bar-drag)
+;; Paste at point NOT at cursor
+(setq mouse-yank-at-point 't)
+;;колесо мышки
+(mouse-wheel-mode 1)
+
+(setq scroll-margin 3)
+;;
+;;Настройка внешнего вида редактора
+;; Тема
+(require 'color-theme)                                                                           
+(color-theme-jsc-light2)
+;;установка размеров экрана
+(set-frame-height (selected-frame) 32)
+(set-frame-width (selected-frame) 97)
+;;установка левого верхнего угла фрейма 
+(set-frame-position (selected-frame) 0 0)
+;;
+;; настройка клавиатуры как в Windows
+;;Delete (and its variants) delete forward instead of backward.
+;;C-Backspace kills backward a word (as C-Delete normally would).
+;;M-Backspace does undo.
+;;Home and End move to beginning and end of line
+;;C-Home and C-End move to beginning and end of buffer.
+;;C-Escape does list-buffers." 
+(pc-bindings-mode)
+
+;; Выделение парных скобок
+(show-paren-mode 1)
+
+;;Настройка выделения "как в Windows"
+(pc-selection-mode)
+(delete-selection-mode nil)
+
+;;Настройки проверка правописания Ispell
+;;
+;(setq ispell-dictionary "russianw"); default dictionary
+(setq ispell-local-dictionary "russian"); default dictionary
+(add-hook 'text-mode-hook 'flyspell-mode)
+(setq flyspell-default-dictionary "russian")
+(setq flyspell-delay '1)
+
+;; show column & line numbers in status bar
+(setq column-number-mode t)
+(setq line-number-mode t)
+
+;; setting some f[1-12] keys
+(global-set-key [f1]    'help)
+(global-set-key [f2]    'save-buffer)
+
+(global-set-key [M-f3]    'flyspell-mode)
+(global-set-key [f3]    'ispell-buffer)
+
+
+(global-set-key [f6]    'buffer-menu)
+
+(global-set-key [f9]    'compile)
+(global-set-key [f10]    'save-buffers-kill-emacs)
+(global-set-key [M-f7]    'isearch-forward)
+
+(global-set-key [f8]    'ecb-activate)
+(global-set-key [M-f11]    'ecb-goto-window-methods)
+(global-set-key [f11]    'ecb-goto-window-history)
+(global-set-key [f12] 'ecb-goto-window-edit1)
+
+;;***********************************************************
+;;
+;;Установка кодировки текста
+;;
+;;Создание кодировки cp1251
+(put-charset-property 'cyrillic-iso8859-5 'preferred-coding-system 'koi8-r)
+(codepage-setup 1251)
+(define-coding-system-alias 'windows-1251 'cp1251)
+;;(set-input-mode nil nil 'We-will-use-eighth-bit-of-input-byte)
+;;(setq-default coding-system-for-read 'cp1251)
+;;(set-selection-coding-system 'cp1251)
+;;
+;;создать в меню Set Language Environment пункт Cyrillic-CP1251
+(set-language-info-alist
+ "Cyrillic-CP1251" `((charset cyrillic-iso8859-5)
+		   (coding-system cp1251)
+		   (coding-priority cp1251)
+		   (input-method . "cyrillic-jcuken")
+		   (features cyril-util)
+		   (unibyte-display . cp1251)
+		   (sample-text . "Russian (Русский)    Здравствуйте!")
+		   (documentation . "Support for Cyrillic CP1251."))
+'("Cyrillic"))
+;;
+
+
+;;(set-language-environment "Russian")
+;;(codepage-setup 437) ;; ascii
+;;(codepage-setup 866) ;; Russian DOS
+;;(codepage-setup 1251)
+;;(set-terminal-coding-system 'cp1251-dos)
+;;(set-keyboard-coding-system 'cp1251-dos)
+;;(set-selection-coding-system 'cp1251-dos)
+;;(set-w32-system-coding-system 'cp1251)
+;;(set-file-name-coding-system 'cp1251)
+;;(setq default-buffer-file-coding-system 'cp1251-dos)
+;;(prefer-coding-system 'cp1251)
+(define-coding-system-alias 'windows-1251 'cp1251)
+(define-coding-system-alias 'koi8-u 'cyrillic-koi8)
+(define-coding-system-alias 'KOI8-R 'cyrillic-koi8)
+;;(modify-coding-system-alist 'file "\.*" 'cp1251)
+;;(modify-coding-system-alist 'file "\.utf8?$" 'utf-8)
+;;(modify-coding-system-alist 'file "\\.el$" 'iso-2022-7bit)
+;;(modify-coding-system-alist 'process ".*" 'cp1251-dos)
+;;(modify-coding-system-alist 'process "cvs" 'cp1251-dos)
+;;(prefer-coding-system 'cp1251)
+
+
+
+(setq evm-coding-systems-list (make-ring 10))
+(ring-insert evm-coding-systems-list 'koi8-r)
+(ring-insert evm-coding-systems-list 'alternativnyj)
+(ring-insert evm-coding-systems-list 'iso-8859-5)
+(ring-insert evm-coding-systems-list 'windows-1251)
+
+(global-set-key [f5]
+  (lambda ()
+    (interactive)
+    (let* ((keys (recent-keys))
+           (len (length keys))
+           (key1 (if (> len 0) (elt keys (- len 1)) nil))
+           (key2 (if (> len 1) (elt keys (- len 2)) nil))
+           cs)
+      (if (eq key1 key2)
+          (setcar evm-coding-systems-list
+                  (ring-plus1 (car evm-coding-systems-list)
+                              (ring-length evm-coding-systems-list)))
+        (setcar evm-coding-systems-list 0))
+      (set-buffer-multibyte t)
+      (set-buffer-file-coding-system (aref (cddr evm-coding-systems-list)
+                                           (car evm-coding-systems-list)))
+      (revert-buffer nil t))))
+
+
+
+;;(setq c-tab-always-indent nil)
+(custom-set-variables
+  ;; custom-set-variables was added by Custom -- don't edit or cut/paste it!
+  ;; Your init file should contain only one such instance.
+ '(auto-fill-inhibit-regexp "on")
+ '(case-fold-search t)
+ '(current-language-environment "Cyrillic-KOI8")
+ '(default-input-method "cyrillic-jcuken")
+ '(ecb-compile-window-height nil)
+ '(ecb-compile-window-width (quote edit-window))
+ '(ecb-create-layout-frame-height 100)
+ '(ecb-create-layout-frame-width 100)
+ '(ecb-layout-name "left11")
+ '(ecb-options-version "2.27")
+ '(ecb-tip-of-the-day nil)
+ '(ecb-windows-height 0.33)
+ '(ecb-windows-width 0.22)
+ '(global-font-lock-mode t nil (font-lock))
+ '(ispell-local-dictionary "russian")
+ '(scroll-conservatively 1)
+ '(tool-bar-mode nil nil (tool-bar))
+ '(transient-mark-mode "on")
+ '(truncate-lines "no")
+ '(view-scroll-auto-exit nil))
+ '(font-lock-comment-face  "MistyRose1")
+(custom-set-faces
+  ;; custom-set-faces was added by Custom -- don't edit or cut/paste it!
+  ;; Your init file should contain only one such instance.
+ '(default ((t (:stipple nil :background "gray75" :foreground "black" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight bold :height 179 :width normal :family "xos4-terminus"))))
+ '(cursor ((t (:background "black"))))
+ '(ecb-default-general-face ((((class color) (background light)) (:height 0.7))))
+ '(font-lock-builtin-face ((t (:foreground "dark red"))))
+ '(font-lock-comment-face ((t (:foreground "OrangeRed3" :slant italic :weight bold))))
+ '(font-lock-keyword-face ((t (:foreground "cyan4" :weight bold)))))
+ ;;'(ecb-default-general-face ((((class color) (background dark)) (:weight normal :height 0.7))))
+ ;;'(ecb-default-highlight-face ((((class color) (background dark)) (:background "grey40" :weight bold))))
+ ;;'(ecb-tag-header-face ((((class color) (background dark)) (:background "SeaGreen4"))))
+ ;;'(font-lock-doc-face ((t (:inherit font-lock-string-face :foreground "blue1"))))
+ ;;'(font-lock-string-face ((((class color) (background dark)) (:foreground "yellow2"))))
+ ;;'(font-lock-type-face ((((class color) (background dark)) (:foreground "green2" :weight bold :family unspecified))))
+ ;;'(font-lock-variable-name-face ((((class color) (background dark)) (:foreground "White"))))
+ ;;'(show-paren-match-face ((((class color)) (:background "blue")))))
+
+(put 'upcase-region 'disabled nil)
+
+
+

@@ -1,0 +1,69 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1251"><title>www.ПЕРВЫЕ ШАГИ.ru :: Шаг 7 - Использование динамических библиотек</title></head><link rel=stylesheet type=text/css href="2.css" tppabs="http://www.firststeps.ru/2.css"><body text=black bgcolor=white link=blue vlink=blue alink=red><h2>Шаг 7 - Использование динамических библиотек</h2><div style="margin:10px;"><p>В <a href="r.php-6.htm" tppabs="http://www.firststeps.ru/linux/r.php?6">прошлый раз</a> мы с Вами обнаружили, что запуск программ, скомпилированных вместе с динамическими библиотеками, вызывает ошибку:
+<pre>
+dron:~# ./rezultdyn
+./rezultdyn: error in loading shared libraries: libfsdyn.so: cannot open 
+shared object file: No such file or directorydron:/#
+</pre>
+<p>Это сообщение выдает загрузчик динамических библиотек(динамический линковщик - <b>dynamic linker</b>), который в нашем случае не может обнаружить библиотеку <b>libfsdyn.so</b>. Для настройки динамического линковщика существует ряд программ.
+<p>Первая программа называется <b>ldd</b>. Она выдает на экран список динамических библиотек используемых в программе и их местоположение. В качестве параметра ей сообщается название обследуемой программы. Давайте попробуем использовать ее для нашей программы <b>rezultdyn</b>:
+<pre>
+dron:~# ldd rezultdyn
+        libfsdyn.so => not found
+        libc.so.6 => /lib/libc.so.6 (0x40016000)
+        /lib/ld-linux.so.2 => /lib/ld-linux.so.2 (0x40000000)
+dron:~#
+</pre>
+<p>Как видите все правильно. Программа использует три библиотеки:
+<ul>
+<li><b>libc.so.6</b> - стандартную библиотеку функций языка <b>C++</b>.
+<li><b>ld-linux.so.2</b> - библиотеку динамической линковки программ <b>ELF</b> формата.
+<li><b>libfsdyn.so</b> - нашу динамическую библиотеку функций.
+</ul>
+<p>Нашу библиотеку она найти не может. И правильно! Динамический линковщик ищет библиотеки только в известных ему каталогах, а каталог нашей программы ему явно не известен.
+<p>Для того, чтобы добавить нашу директорию с библиотекой в список известных директорий надо подредактировать файл <b>/etc/ld.so.conf</b>. Например, у меня этот файл состоит из таких строк:
+<pre>
+dron:~# cat /etc/ld.so.conf
+/usr/X11R6/lib
+/usr/i386-slackware-linux/lib
+/usr/i386-slackware-linux-gnulibc1/lib
+/usr/i386-slackware-linux-gnuaout/lib
+dron:~#
+</pre>
+<p>Во всех этих директории хранятся всеми используемые библиотеки. В этом списке нет лишь одной директории - <b>/lib</b>, которая сама по себе не нуждается в описании, так как она является главной. Получается, что наша библиотека станет "заметной", если поместить ее в один их этих каталогов, либо отдельно описать в отдельном каталоге. Давайте для теста опишем, добавим строку в конец файла <b>ld.so.conf</b>:
+<pre>
+/root
+</pre>
+<p>У меня этот файл валяется в домашнем каталога пользователя <b>root</b>, у Вас он может быть в другом месте. Теперь после этого динамический линковщик будет знать где можно найти наш файл, но после изменения конфигурационного файла <b>ld.so.conf</b> необходимо, чтобы система перечитала настройки заново. Это делает программа <b>ldconfig</b>. Пробуем запустить нашу программу:
+<pre>
+dron:~# ldconfig
+dron:~# ./rezultdyn
+f1() = 25
+f2() = 10
+dron:~#
+</pre>
+<p>Как видите все заработало :) Если теперь Вы удалите добавленную нами строку и снова запустите <b>ldconfig</b>, то данные о расположении нашей библиотеки исчезнут и будет появляться таже самая ошибка.
+<p>Но описанный метод влияет на всю систему в целом и требует доступа администратора системы, т.е. <b>root</b>. А если Вы простой пользователь без сверх возможностей ?!
+<p>Для такого случая есть другое безболезненное решение. Это использование специальной переменной среды <b>LD_LIBRARY_PATH</b>, в которой перечисляются все каталоги содержащие пользовательские динамические библиотеки. Для того, чтобы установить эту переменную в командной среде <b>bash</b> надо набрать всего несколько команд. Для начала посмотрим есть ли у нас такая переменная среды:
+<pre>
+dron:~# echo $LD_LIBRARY_PATH
+</pre>
+<p>У меня в ответ выводится пустая строка, означающая, что такой переменной среды нет. Устанавливается она следующим образом:
+<pre>
+dron:~# LD_LIBRARY_PATH=/root
+dron:~# export LD_LIBRARY_PATH
+</pre>
+<p>После этого программа <b>rezultdyn</b> будет прекрасно работать. В случае, если у Вас в системе эта переменная среды уже уставновлена, то, чтобы не испортить ее значение, надо новый каталог прибавить к старому значению. Делается это другой командой:
+<pre>
+dron:~# LD_LIBRARY_PATH=/root:${LD_LIBRARY_PATH}
+dron:~# export LD_LIBRARY_PATH
+</pre>
+<p>Если Вы обнулите эту переменную, то снова библиотека перестанет работать:
+<pre>
+dron:~# LD_LIBRARY_PATH=""
+dron:~# export LD_LIBRARY_PATH
+dron:~# ./rezultdyn
+./rezultdyn: error in loading shared libraries: libfsdyn.so: cannot open 
+shared object file: No such file or directory
+dron:~#
+</pre>
+<p>Вы также параллельно можете зайти в систему под другим пользователем или даже тем же самым, но если Вы захотите просмотреть значение <b>LD_LIBRARY_PATH</b>, то увидите ее прежнее значение. Это означает, что два разных пользователя <b>Linux</b> не могут влиять на работу друг друга, а это и есть самое главное хорошее отличие систем <b>Unix</b> от большинства других систем.</div><center><hr><a href="r.php-6.htm" tppabs="http://www.firststeps.ru/linux/r.php?6">Предыдущий Шаг</a> | <a href="r.php-8.htm" tppabs="http://www.firststeps.ru/linux/r.php?8">Следующий Шаг</a> | <a href="general1.html" tppabs="http://www.firststeps.ru/linux/general1.html">Оглавление</a><br>Автор <a href="mailto:kuzinandrey@yandex.ru?SUBJECT=From_part_general#7'_on_[www.firststeps.ru]">Кузин Андрей</a>.<hr><iframe src="javascript:if(confirm('http://ad.adriver.ru/cgi-bin/erle.cgi?sid=9595&target=blank&bt=1&pz=0&rnd=16954  \n\nThis file was not retrieved by Teleport Pro, because it did not meet the project\'s file type specifications.  \n\nDo you want to open it from the server?'))window.location='http://ad.adriver.ru/cgi-bin/erle.cgi?sid=9595&target=blank&bt=1&pz=0&rnd=16954'" tppabs="http://ad.adriver.ru/cgi-bin/erle.cgi?sid=9595&target=blank&bt=1&pz=0&rnd=16954" frameborder=0 vspace=0 hspace=0 width=468 height=60 marginwidth=0 marginheight=0 scrolling=no><a href="javascript:if(confirm('http://ad.adriver.ru/cgi-bin/click.cgi?sid=9595&bt=1&pz=0&rnd=16954  \n\nThis file was not retrieved by Teleport Pro, because it is addressed on a domain or path outside the boundaries set for its Starting Address.  \n\nDo you want to open it from the server?'))window.location='http://ad.adriver.ru/cgi-bin/click.cgi?sid=9595&bt=1&pz=0&rnd=16954'" tppabs="http://ad.adriver.ru/cgi-bin/click.cgi?sid=9595&bt=1&pz=0&rnd=16954" target=_blank><img src="rle.cgi-sid=9595&bt=1&pz=0&rnd=16954" tppabs="http://ad.adriver.ru/cgi-bin/rle.cgi?sid=9595&bt=1&pz=0&rnd=16954" alt="-AdRiver-" border=0 width=468 height=60></a></iframe></center><br><br>

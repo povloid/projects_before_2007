@@ -1,0 +1,765 @@
+<HTML><HEAD><META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=koi8-r"><TITLE>
+OpenNET: статья - Многопотоковое программирование под Linux (threads linux gcc)
+</TITLE>
+<meta name="KeyWords" content="threads, linux, gcc">
+</HEAD><BODY BGCOLOR="#DDE1C2" TEXT="#002040">
+<!--htdig_noindex-->
+<LINK REL="stylesheet" href="/opennet.css" type="text/css">
+<FORM method="get" action="http://www.opennet.ru/search.shtml">
+<TABLE BORDER=0 CELLSPACING=0 CELLPADDING=0 WIDTH="100%">
+<TR>
+<TD VALIGN="BOTTOM" BGCOLOR="#E9EAD6" style="background: #E9EAD6 url('/back.gif') repeat-x bottom left">
+<A HREF="http://www.opennet.ru"><IMG SRC="/opennet2.gif" HEIGHT=60 WIDTH=249 ALT="The OpenNET Project" BORDER="0"></A><br>
+</TD>
+
+<TD BGCOLOR="#B0B190" WIDTH="1"><IMG SRC="/p.gif" HEIGHT=1 WIDTH=1 ALT=""></TD>
+
+<TD VALIGN=TOP ALIGN=RIGHT WIDTH="470" BGCOLOR="#D9DAC6">
+<TABLE BORDER=0 CELLPADDING=1 WIDTH="470">
+<TR>
+<TD HEIGHT=60 BGCOLOR="#D9DAC6">
+
+<b>Хинт:</b> Желающие увидеть внутреннюю статистику сайта, информацию о БД и текущие задачи и планы проекта могут обратиться к разделу <a href="/cup.shtml">ЦУП</a>.
+
+
+</TD>
+</TR>
+</TABLE>
+</TD>
+
+<TD BGCOLOR="#B0B190" WIDTH="1"><IMG SRC="/p.gif" HEIGHT=1 WIDTH=1 ALT=""></TD>
+<TD WIDTH="40" BGCOLOR="#E9EAD6" style="background: #E9EAD6 url('/back.gif') repeat-x bottom left">&nbsp;</TD>
+<TD BGCOLOR="#B0B190" WIDTH="1"><IMG SRC="/p.gif" HEIGHT=1 WIDTH=1 ALT=""></TD>
+
+<TD VALIGN=TOP ALIGN=RIGHT WIDTH="130" BGCOLOR="#E9EAD6" ROWSPAN=3>
+<script type="text/javascript"><!--
+google_ad_client = "pub-2075278885744463";
+google_ad_width = 125;
+google_ad_height = 125;
+google_ad_format = "125x125_as";
+google_ad_channel ="";
+google_color_border = "E9EAD6";
+google_color_bg = "E9EAD6";
+google_color_link = "0000FF";
+google_color_url = "008000";
+google_color_text = "000000";
+google_language = 'ru';
+google_alternate_color = "E9EAD6";
+//--></script>
+<script type="text/javascript"
+  src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+</script>
+</TD>
+
+</TR>
+
+<TR BGCOLOR="#B0B190"><TD COLSPAN=6><IMG SRC="/p.gif" HEIGHT=1 WIDTH=1 ALT=""></TD></TR>
+
+
+<TR BGCOLOR="#E9EAD6">
+<TD ALIGN=CENTER COLSPAN=5>
+<table width="100%">
+<tr>
+<td rowspan=2 width=300 nowrap class="h">
+<INPUT type=hidden name=exclude value="index|/man.shtml"><A HREF="../../search.shtml" class="h"><u>Поиск</u></A>&nbsp;(<A HREF="../../keywords/" class="h">ключи</A>):&nbsp;<INPUT type="text" size="20" name="words" value="">
+</td><td width="25%">
+   <A HREF="../../prog/sml/" class="h"><b><u>ПРОГРАММЫ</u></b></A>
+</td><td width="25%">
+   <A HREF="../../filebase.shtml" class="h"><b><u>СТАТЬИ</u></b></A>
+</td><td width="25%">
+   <A HREF="../../tips/sml/" class="h"><b><u>СОВЕТЫ</u></b></A>
+</td><td width="25%">
+   <A HREF="http://forum.opennet.ru" class="h"><b><u>ФОРУМ</u></b></A>
+</td></tr>
+<tr><td>
+   <A HREF="../../links/sml/" class="h"><b><u>ССЫЛКИ</u></b></A>
+</td><td class="h">
+   <A HREF="../../opennews/" class="h"><b><u>НОВОСТИ</u></b></A> (<a href="../../news/grab.shtml" class="h">+</a>)
+</td><td>
+   <A HREF="../../man.shtml" class="h"><b><u>MAN'ы</u></b></A>
+</td><td>
+   <A HREF="../../docs/" class="h"><b><u>ДОКУМЕНТАЦИЯ</u></b></A>
+</td></tr>
+</table>
+</TD>
+<TD BGCOLOR="#B0B190" WIDTH="1"><IMG SRC="/p.gif" HEIGHT=1 WIDTH=1 ALT=""></TD>
+</TR>
+<TR BGCOLOR="#B0B190"><TD COLSPAN=7><IMG SRC="/p.gif" HEIGHT=2 WIDTH=1 ALT=""></TD></TR>
+</TABLE>
+<script language="JavaScript"><!--
+d=document;a='';r=escape(d.referrer);a+=';r='+r;
+js=10; d.write('<img src="http://top.list.ru/counter'+
+'?id=77689;js='+js+a+';rand='+Math.random()+
+'" alt="" height=1 width=1>');
+if(js>11)d.write('<'+'!-- ')//--></script><noscript><img
+src="http://top.list.ru/counter?js=na;id=77689"
+height=1 width=1 alt="">
+</noscript>
+</FORM>
+<!--/htdig_noindex-->
+
+<!--htdig_noindex-->
+
+<style>
+table.opensource {
+font: 12px Arial, Helvetica;
+border: 1px solid black;
+background: #dfc;
+}
+table.opensource td {
+font: bold 12px Arial, Helvetica;
+text-align:center;
+}
+table.opensource td.osc {
+border-right:1px solid silver;
+}
+table.opensource li{
+margin-left: 2px;
+}
+table.opensource a, table.opensource a:visited{
+text-decoration:none;
+color: blue;
+}
+table.opensource a:hover{
+text-decoration:underline;
+}
+</style>
+<table width='760' height='60' class='opensource' cellpadding='1' cellspacing='0' align='center' bgcolor='#FFF'>
+<tr>
+<td colspan='4' align='center' style='border-bottom: 1px solid silver'>
+<A href='http://opensource.com.ua/?rID=1816'>OpenSource.com.ua &ndash; <font color='red'>Диски с Linux, FreeBSD, OpenOffice, Книги</font>. CD - 5 грн, DVD - 14.95 грн!</A>
+</td>
+</tr>
+<tr>
+<td nowrap='yes' class='osc'>
+    <a href='http://opensource.com.ua/index.php?rID=1816&cPath=34'>
+<font color='red'>ASPLinux 10 DVD - 14.95 грн.</font>
+</a>
+    <br>
+<a href='http://opensource.com.ua/index.php?rID=1816&cPath=37'>SUSE 9.3 DVD - 14.95 грн.</a>
+</td>
+<td nowrap='yes' class='osc'>
+    <a href='http://opensource.com.ua/index.php?rID=1816&cPath=36'>Debian Sarge 3.1r0a 2 DVD - 29,90 грн.</a>
+    <br>
+<a href='http://opensource.com.ua/index.php?rID=1816&cPath=44'>
+<font color='red'>Fedora Core 4 DVD - 14,95 грн.</font>
+</a>
+</td>
+<td nowrap='yes' class='osc'>
+    <a href='http://opensource.com.ua/index.php?rID=1816&cPath=120'>
+<font color='red'>Ultimate Boot CD - 5 грн.</font>
+</a>
+    <br>
+<a href='http://opensource.com.ua/index.php?rID=1816&cPath=32'>Mandriva 2005 LE DVD - 14,95 грн.</a>
+</td>
+<td nowrap='yes'>
+    <a href='http://opensource.com.ua/index.php?rID=1816&cPath=38'>FreeBSD 5.4 2CD - 10 грн.</a>
+    <br>
+<a href='http://opensource.com.ua/index.php?rID=1816&cPath=70'>
+<font color='red'>Кружка "Linux" белая - 19.95 грн.</font>
+</a>
+</td>
+</tr>
+</table>
+
+
+<!--/htdig_noindex-->
+
+
+<CENTER><H3><FONT COLOR="#000090">
+Многопотоковое программирование под Linux (threads linux gcc)
+</FONT></H3></CENTER>
+<BR>
+<TABLE BORDER=0 CELLSPACING=0 CELLPADDING=1 BGCOLOR="#B0B190" WIDTH="100%">
+<TR><TD>
+<TABLE BORDER=0 CELLSPACING=0 CELLPADDING=0 BGCOLOR="#E9EAD6" ALIGN=CENTER WIDTH="100%">
+<TR BGCOLOR="#000000"><TD COLSPAN=7><IMG SRC="/p.gif" HEIGHT=1 WIDTH=1 ALT=""></TD></TR>
+<TR ALIGN=CENTER>
+<TD><small><A HREF="/cgi-bin/opennet/jump.cgi?name=linux_threads.txt&ref=prev">&lt;&lt; Предыдущая</A></TD>
+<TD><small><A HREF="/cgi-bin/opennet/jump.cgi?name=linux_threads.txt&ref=index">ИНДЕКС</A></TD>
+<TD><small><A HREF="/search.shtml">Поиск в статьях</A></TD>
+<TD><small><A HREF="/cgi-bin/opennet/jump.cgi?name=linux_threads.txt&ref=raw">src</A></TD>
+<TD><small><A HREF="/cgi-bin/opennet/jump.cgi?name=linux_threads.txt&ref=setbookmark">Установить закладку</A></TD>
+<TD><small><A HREF="/cgi-bin/opennet/jump.cgi?name=linux_threads.txt&ref=getbookmark">Перейти на закладку</A></TD>
+<TD><small><A HREF="/cgi-bin/opennet/jump.cgi?name=linux_threads.txt&ref=next">Следующая &gt;&gt;</A></TD>
+</TR><TR BGCOLOR="#000000"><TD COLSPAN=7><IMG SRC="/p.gif" HEIGHT=1 WIDTH=1 ALT=""></TD></TR>
+</TR></TABLE></TD></TR></TABLE>
+<PRE>
+<b>Ключевые слова:</b> <A href="/cgi-bin/opennet/ks.cgi?mask=threads">threads</a>, <A href="/cgi-bin/opennet/ks.cgi?mask=linux">linux</a>, <A href="/cgi-bin/opennet/ks.cgi?mask=gcc">gcc</a>,  (<a href="/cgi-bin/opennet/ks.cgi?mask=threads%20linux%20gcc">найти похожие документы</a>)<br>
+<FONT COLOR="#0000C0">From: Владимир Калюжный, Владимир Тарасенко</FONT>
+<FONT COLOR="#0000C0">Newsgroups: Издательский дом "КОМИЗДАТ" htpp://www.comizdat.com/</FONT>
+<FONT COLOR="#0000C0">Date: Mon, 20 Sep 2004 18:21:07 +0000 (UTC)</FONT>
+<FONT COLOR="#0000C0"><B>Subject: Многопотоковое программирование под Linux</B></FONT>
+
+Оригинал: <a href="http://www.cpp.com.ua/?in=kpp_show_article&kpp_art_ID=15">http://www.cpp.com.ua/?in=kpp_show_article&kpp_art_ID=15</a>
+
+   Многопотоковые вычисления в системе Linux
+
+   Последнее время все компьютерные издания так или иначе уделяют
+   внимание Linux, свободно распространяемой операционной системе. Многие
+   ведущие производители ПО объявляют о переносе своих продуктов на эту
+   систему. В интернете постоянно появляются новые сайты посвященные этой
+   системе. Налицо бум вокруг Linux, который не только не умолкает а
+   становится все сильнее и мощнее.
+
+
+<b style="color: #990000">Linux и потоки.
+</b>
+   Linux, как клон Unix, на данный момент поддерживает многозадачность и
+   многопотоковость, т.е. в системе одновременно может работать несколько
+   задач (процессов), и каждая из задач может выполнятся в несколько
+   потоков. Для начала рассмотрим, что такое поток: поток выполнения -
+   это элемент кода программы, выполняемый последовательно. Большинство
+   приложений - однопотоковые программы. Многопотоковая программа в один
+   момент времени может выполняться в нескольких отдельных потоках. В
+   случае, если задача выполняется на многопроцессорной машине, то все ее
+   потоки могут выполняться одновременно, повышая таким образом
+   производительность выполнения задачи. Производительность
+   многопотокового приложения можно улучшить даже на однопроцессорной
+   системе. Например, если один из потоков приложения блокируется
+   каким-то системным вызовом или ожидает поступления данных, в это время
+   выполняется другой поток.
+
+   Между процессами и потоками существуют различия. Под процессами
+   понимается программа находящаяся в стадии выполнения. Скажем, shell в
+   UNIX - это процесс который создается при входе пользователя в систему.
+   Каждая команда создает новый процесс. Согласно терминологии UNIX - это
+   порожденный процесс, который выполняет команду от лица пользователя.
+   Потоки - это часть процесса, и они используют сегменты данных и кода
+   совместно.
+
+   Для многопотокового программирования существует два основных
+   стандарта: многопотоковые API Solaris (Sun Microsystems) и API
+   POSIX.1c
+
+   В Linux используется API POSIX.1c. Но если быть абсолютно точным, то в
+   Linux присутствует системный вызов clone(), на основе которого и
+   построено API для работы с потоками, соответствующие стандарту
+   POSIX.1c с незначительными исключениями.
+
+
+<b style="color: #990000">Постановка задачи
+</b>
+   Довольно часто в инженерных рассчетах необходимо произвети вычисления
+   матрицы, элементами которой являются функции, а вернее значение
+   функции с определенными параметрами.
+
+   Рассмотрим следующую матрицу A размерностью 4x4:
+<font color="#461b7e">
+           f(X11) f(X12) f(X13) f(X14)
+           f(X21) f(X22) f(X23) f(X24)
+           f(X31) f(X32) f(X33) f(X34)
+           f(X41) f(X42) f(X43) f(X44)
+
+</font>
+   где
+
+   f(x) - вычисляемая функция
+   Xij - аргумент
+
+   Стандартный подход к вычислениям: достоинства и недостатки
+
+   Для вычисления элементов данной матрицы, обычно используют следующий
+   фрагмент кода:
+
+   Приняв, что выходные данные (Xij) хранятся в массиве X, а исходные в
+   S:
+
+<font color="#461b7e">
+           int SIZE_I = 4;
+           int SIZE_J = 4;
+           double X&#091;SIZE_I&#093;&#091;SIZE_J&#093;;
+           double S&#091;SIZE_I&#093;&#091;SIZE_J&#093;;
+           .....
+           double f(double x)
+           &#123;
+                ..... //какие-то вычисления
+           &#125;
+           main_evalution()
+           &#123;
+                for (int i=0;i&lt;SIZE_I; ++i)
+                &#123;
+                    for (int z=0; z&lt;SIZE_J; P ++z)
+                    &#123;
+                       //вычисляем елемент матрицы
+                       X&#091;i&#093;&#091;z&#093; = f(S&#091;i&#093;&#091;z&#093;);
+                    &#125;
+                &#125;
+           &#125;
+
+</font>
+   После выполнения этого кода, матрица X будет заполнена вычисленными
+   данными. Достоинство данного подхода - простота реализации. Недостаток
+   - при работе на мощной машине (особенно с несколькими процессорами)
+   неполное использование вычислительных ресурсов.
+
+
+<b style="color: #990000">Многопотоковые вычисления: достоинства и недостатки
+</b>
+   Для преобразования предыдущего примера в многопотоковую задачу,
+   необходимо произвести маленькие изменения - функция, вычисляющая
+   значение, должна работать отдельным потоком.
+
+<font color="#461b7e">
+           int SIZE_I = 4;
+           int SIZE_J = 4;
+           double X&#091;SIZE_I&#093;&#091;SIZE_J&#093;;
+           double S&#091;SIZE_I&#093;&#091;SIZE_J&#093;;
+           struct DATA_
+           &#123;
+               double x;
+               int i;
+               int z;
+           &#125;
+           typedef struct DATA_ DATA;
+           double f(double x)
+           &#123;
+               //какие-то вычисления
+           &#125;
+           void *thread_f(void *arg) //функция для вычисления элемента матрицы
+           &#123;
+               DATA* a = (DATA*)arg; //преобразуем данные
+               X&#091;a-&gt;i&#093;&#091;a-&gt;z&#093; = f(&#091;a-&gt;x&#093;); //вычисляем
+           &#125;
+           main_evalution()
+           &#123;
+               pthread_t thread; //идентификатор потока
+               DATA *arg; //данные для передачи в поток
+               for (int i=0;i&lt;SIZE_I; ++i)
+               &#123;
+                   for (int z=0; z&lt;SIZE_J; P ++z)
+                   &#123;
+                       // создаем
+                       arg = new DATA;
+                       //инициализируем данные
+                       arg-&gt;i = i; arg-&gt;z = z; arg-&gt;x = S&#091;i&#093;&#091;z&#093;;
+                       //создаем поток
+                       pthread_create(&amp;thread, NULL, thread_f, (void *)arg);
+                       //переводим в отсоединенное состояние
+                       pthread_detach(thread);
+                   &#125;
+               &#125;
+           &#125;
+
+</font>
+   В результате сделанных изменений, вычисление каждого элемента будет
+   происходить в отдельном потоке. Недостатком такого метода является
+   сложность - необходимо всегда учитывать то, что две нити могут
+   обратиться к одним и тем же даным - одна для чтения, другая для
+   записи, и в таком случае нельзя гарантировать достоверность данных.
+   Т.е. необходимо устанавливать/проверять блокировки, обеспечивать
+   синхронизацию выполнения и т.п. Достоинство - повышение
+   производительности. Так в нашем примере, процесс не ждет выполнения
+   всех нитей, т.е. он не ждет когда все елементы матрицы заполняться, а
+   продолжает свою работу. В случае когда дальнейшая работа программы
+   зависит от полученных вычислений, можно приостановить основной процесс
+   до завершения всех нитей.
+
+
+<b style="color: #990000">Функции для работы с потоками
+</b>
+   Для работы с потоками существуют следующие основные функции:
+     * pthread_create(pthread_t *tid, const pthread_attr_t *attr,
+       void*(*function)(void*), void* arg) - создает поток для выполнения
+       функции function. В качестве параметра для потоковой функции
+       передается указатель arg. Индентификатор нового потока
+       возвращается через tid. Поток создается с параметрами attr.
+     * pthread_mutex_init(pthread_mutex_t* lock, pthread_mutexattr_t
+       *attr) - инициализирует взаимоисключающую блокировку. attr -
+       содержит аттрибуты для взаимоисключающей блокировки. В случае,
+       если attr == NULL, используются установки по умолчаниию.
+     * pthread_mutex_destroy(pthread_mutex_t* lock) - удаляет
+       взаимоисключающую блокировку.
+     * pthread_mutex_lock(pthread_mutex_t* lock) - устанавливает
+       блокировку. В случае, если блокировка была установлена другим
+       процессом, текущий процесс останавливается до снятия блокировки
+       другим процессом.
+     * pthread_mutex_unlock(pthread_mutex_t* lock) - снимает блокировку.
+     * pthread_join(pthread_t tid, void **statusp) - ожидает завершение
+       неотсоединенного процесса, результат возвращаемый функцией
+       сохраняется в statusp.
+     * pthread_detach(pthread_t tid) - отсоединяет процесс. Это же можно
+       задать при создании процесса, установив аттрибут detachstate
+       вызовом pthread_attr_setdetachstate.
+     * pthread_exit(void *status) - завершает процесс, статус передается
+       вызову pthread_join, подобен exit(). Но вызов exit() в процессе
+       приведет к завершению всей программы.
+
+   Процесс завершается двумя путями - вызовом pthread_exit() или
+   завершением потоковой функции. В случае, если процесс неотсоединен, то
+   при его завершении ресурсы, выделенные процессу, не освобождаются до
+   вызова pthread_join(). Если процесс отсоединенный - ресурсы
+   освобождаются по ее завершению.
+
+
+<b style="color: #990000">Пример программы
+</b>
+   Данная программа запрашивает у пользователя параметры матрицы
+   аргументов, и используя потоки, заполняет матрицу результатами
+   вычислений.
+
+   Данную программу необходимо компилировать с библиотекой pthread
+   (именно в ней находятся все функции для работы с потоками) и задав
+   _REENTRANT:
+<font color="#461b7e">
+       g++ -D_REENTRANT -o threads threads.c -lpthread
+
+</font>
+   Данный код проверялся на RedHat Linux 6.0
+<font color="#461b7e">
+           /* threads.c
+           * simple pthread API demo
+           * autor: Tarasenko Volodymyr
+           * e-mail: &#091;18&#093;trsnk@mail.ru
+           * Компилировать:
+           * g++ -D_REENTRANT -o threads threads.c -lpthread
+           */
+
+           #include &lt;PTHREAD.H&gt;
+           #include &lt;STDIO.H&gt;
+           #include &lt;UNISTD.H&gt;
+           #include &lt;MATH.H&gt;
+           #define SIZE_I 2
+           #define SIZE_J 2
+           float X&#091;SIZE_I&#093;&#091;SIZE_J&#093;;
+           float S&#091;SIZE_I&#093;&#091;SIZE_J&#093;;
+           int all = 0;
+           struct DATA_
+           &#123;
+               double x;
+               int i;
+               int z;
+           &#125;;
+           typedef struct DATA_ DATA;
+
+           pthread_mutex_t lock; //Исключающая блокировка
+
+           // Функция для вычислений
+           double f(float x)
+           &#123;
+               if (x&gt;0) return log(x);
+               else return x;
+           &#125;
+           // Потоковая функция для вычислений
+           void *thread_f(void *arg)
+           &#123;
+               DATA* a = (DATA*) arg;
+               X&#091;a-&gt;i&#093;&#091;a-&gt;z&#093; = f(a-&gt;x);
+               // устанавливаем блокировку
+               pthread_mutex_lock(&amp;lock);
+               // изменяем глобальную переменную
+               ++all;
+               // снимаем блокировку
+               pthread_mutex_unlock(&amp;lock);
+               delete a; // удаляем свои данные
+               return NULL;
+           &#125;
+           // Потоковая функция для ввода
+           void *input_thr(void *arg)
+           &#123;
+               DATA* a = (DATA*) arg;
+               //pthread_mutex_lock(&amp;lock);
+               printf("S&#091;%d&#093;&#091;%d&#093;:", a-&gt;i, a-&gt;z);
+               scanf("%f", &amp;S&#091;a-&gt;i&#093;&#091;a-&gt;z&#093;);
+               //pthread_mutex_unlock(&amp;lock);
+               delete a;
+               return NULL;
+           &#125;
+           int main()
+           &#123;
+               //массив идентификаторов потоков
+               pthread_t thr&#091; SIZE_I + SIZE_J &#093;;
+               //инициализация исключающей блокировки
+               pthread_mutex_init(&amp;lock, NULL);
+               DATA *arg;
+               // Ввод
+               for (int i=0;i&lt;SIZE_I; ++i)
+               &#123;
+                   for (int z=0; z&lt;SIZE_J; P ++z)
+                   &#123;
+                       arg = new DATA;
+                       arg-&gt;i = i; arg-&gt;z = z;
+                       //создаем поток для ввода
+                       pthread_create(&amp;thr&#091;i+z&#093;, NULL, input_thr, (void *)arg);
+                   &#125;
+               &#125;
+               //Ожидаем завершения всех потоков
+               //идентификаторы потоков хранятся в массиве
+               for(int i = 0; i&lt;SIZE_I; ++i)&#123;
+               &#123;
+                   pthread_join(thr&#091;i&#093;, NULL);
+               &#125;
+               //Вычисления
+               printf("Start calculation\n");
+               for (int i=0;i&lt;SIZE_I; ++i)
+               &#123;
+                   for (int z=0; z&lt;SIZE_J; P ++z)
+                   &#123;
+                       arg = new DATA;
+                       arg-&gt;i = i; arg-&gt;z = z; arg-&gt;x = S&#091;i&#093;&#091;z&#093;;
+                       pthread_t thread;
+                       //создаем поток для вычислений
+                       pthread_create(&amp;thread, NULL, thread_f, (void *)arg);
+                       // переводим в отсоединенный режим
+                       pthread_detach(thread);
+                   &#125;
+               &#125;
+               do
+               &#123;
+                   // Основной процесс "засыпает" на 1с
+                   sleep(1);
+                   // Все-ли завершились?
+                   printf("finished %d threads.\n", all);
+               &#125;while(all &lt; SIZE_I+SIZE_J);
+               //Печать результатов
+               for (int i=0;i&lt;SIZE_I; ++i)
+               &#123;
+                   for (int z=0; z&lt;SIZE_J; P ++z)
+                   &#123;
+                       printf("X&#091;%d&#093;&#091;%d&#093; = %f\t", i, z, X&#091;i&#093;&#091;z&#093;);
+                   &#125;
+                   printf("\n");
+               &#125;
+               //Удаляем исключающую блокировку
+               pthread_mutex_destroy(&amp;lock);
+               return 0;
+           &#125;
+
+</font>
+   После запуска программа инициализирует исключающую блокировку и
+   начинает ввод данных. В данном случае, в качестве примера ввод сделан
+   из потоков, без всяких блокировок ввода/вывода, чтобы показать, что
+   потоки работают одновременно и когда один останавливается, остальные
+   продолжают работать.
+
+   Основной процесс ожидает завершения всех потоков вызовом
+   pthread_join().
+
+   Только после завершения всех потоков происходит переход ко второй
+   части программы - вычислениям.
+
+   Для вычислений используются отсоединенные потоки, отсоединение
+   происходит вызовом pthread_detach().
+
+   После завершения вычислений в потоке, происходит увеличение переменной
+   all на единицу, и поток завершает работу. Для гарантирования
+   правильности изменений применяется исключающая блокировка.
+
+   После задержки основного процесса на 1 сек., проверяем количество
+   завершенных потоков, и если все потоки завершили вычисления, выводим
+   результат работы.
+
+   Показанный пример будет полезен при решении многих задач. Особенно при
+   расчетах в области обработки металлов давлением, при решении которых,
+   часто используются методы конечных элементов или методы граничных
+   элементов. Эти методы характеризируются большими вычислениями,
+   связанными с матрицами и их заполнением. В большинстве случаев
+   элементом матрицы является результат сложных вычислений, таких как
+   решение интегральных уравнений. Применение многопотокового подхода
+   позволит увеличить скорость и производительность вычислений. Но, как
+   показано, это приводит к усложнению реализации вычислений.
+
+
+<b style="color: #990000">Литература и ссылки
+</b>
+   Литература:
+   1. Теренс Чан "Системное программирование на С++ для Unix"
+   2. Андрей Робачевский "Операционная система UNIX"
+
+   Ссылки:
+   1. <a href="http://www.linux.org.ru">http://www.linux.org.ru</a>
+   2. <a href="http://www.byte.com">http://www.byte.com</a>
+   3. <a href="http://www.linux.org">http://www.linux.org</a>
+
+</PRE><BR>
+<TABLE BORDER=0 CELLSPACING=0 CELLPADDING=1 BGCOLOR="#B0B190" WIDTH="100%">
+<TR><TD>
+<TABLE BORDER=0 CELLSPACING=0 CELLPADDING=0 BGCOLOR="#E9EAD6" ALIGN=CENTER WIDTH="100%">
+<TR BGCOLOR="#000000"><TD COLSPAN=7><IMG SRC="/p.gif" HEIGHT=1 WIDTH=1 ALT=""></TD></TR>
+<TR ALIGN=CENTER>
+<TD><small><A HREF="/cgi-bin/opennet/jump.cgi?name=linux_threads.txt&ref=prev">&lt;&lt; Предыдущая</A></TD>
+<TD><small><A HREF="/cgi-bin/opennet/jump.cgi?name=linux_threads.txt&ref=index">ИНДЕКС</A></TD>
+<TD><small><A HREF="/search.shtml">Поиск в статьях</A></TD>
+<TD><small><A HREF="/cgi-bin/opennet/jump.cgi?name=linux_threads.txt&ref=raw">src</A></TD>
+<TD><small><A HREF="/cgi-bin/opennet/jump.cgi?name=linux_threads.txt&ref=setbookmark">Установить закладку</A></TD>
+<TD><small><A HREF="/cgi-bin/opennet/jump.cgi?name=linux_threads.txt&ref=getbookmark">Перейти на закладку</A></TD>
+<TD><small><A HREF="/cgi-bin/opennet/jump.cgi?name=linux_threads.txt&ref=next">Следующая &gt;&gt;</A></TD>
+</TR><TR BGCOLOR="#000000"><TD COLSPAN=7><IMG SRC="/p.gif" HEIGHT=1 WIDTH=1 ALT=""></TD></TR>
+</TR></TABLE></TD></TR></TABLE>
+<br><TABLE BORDER=0 CELLSPACING=0 CELLPADDING=1 BGCOLOR="#B0B190" WIDTH="100%">
+<TR><TD>
+<TABLE  BORDER=0 CELLSPACING=0 CELLPADDING=5 BGCOLOR="#E9EAD6" WIDTH="100%">
+<tr BGCOLOR="#C7CBB1"><td><font color="#000090"><b>Обсуждение</b></font></td></tr>
+<tr bgcolor="E9EAD6"><td>
+
+
+<table width="100%" BORDER=0 CELLSPACING=0 CELLPADDING=0><tr><td width="3%">&nbsp;</td><td width="97%">
+
+<table bgcolor="#D9DAC6" width="100%" BORDER=0 CELLSPACING=2 CELLPADDING=2><tr><td><li><b><a href="/openforum/vsluhforumID3/5405.html#1">Многопотоковое программирование под Linux (threads linu</b></a>, <small><a href="mailto:script@REMOVE-THIS-FAKE.bel.ru">script</a></small><font color="#707070">, <font size="-2">12:19:26, 04/07/2005</font></font> [<a href="/cgi-bin/openforum/vsluhboard.cgi?az=post&om=5405&forum=vsluhforumID3&omm=1">ответить</a>] (1)
+<br><small>sleep использовать не всегда хорошо. Есть более оптимальные решения. Например просыпаться в этом месте по сигналу. </small></td></tr></table><br>
+
+</td></tr></table>
+
+
+
+<BR></td></tr>
+<tr BGCOLOR="#C7CBB1"><td><font color="#000090"><b>Ваш комментарий</b></font></td></tr>
+<tr BGCOLOR="#DDE1C2"><td>
+<form method="post" action="http://www.opennet.ru/cgi-bin/openforum/vsluhboard.cgi">
+<input type=hidden name="om"  value="5405">
+<input type=hidden name="key_section" value="topic">
+<input type=hidden name="key_sub" value="dev">
+<input type=hidden name="key_item" value="linux_threads">
+<input type=hidden name="forum" value="vsluhforumID3">
+<input type=hidden name="omm" value="">
+<input type="hidden" name="az" value="a_mesg">
+
+Имя:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <input type=text name="name" value="" size=30><br>
+E-Mail:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <input type=text name="email" value="" size=30><br>
+Заголовок: <input type=text name="subject" value="Многопотоковое программирование под Linux (threads linux gcc)" size=30><br>
+Текст:<br>
+<textarea name="body" COLS=50 ROWS=8 WRAP="virtual">
+</textarea><br>
+<INPUT TYPE="submit" NAME="post" VALUE="Отправить">
+</form>
+</td></tr>
+</table>
+</td></tr>
+</table>
+<br>
+<!--htdig_noindex--><br>
+
+<table CELLSPACING=0 CELLPADDING=0 BORDER=1 BGCOLOR="#441144" WIDTH=100% ALIGN=center>
+<tr>
+<td ALIGN="center" VALIGN="center">
+<table align="center" width=100% border=1 cellspacing=0 cellpadding=2 bordercolor=#F8BB0B bordercolordark=#F8BB0B bordercolorlight=#FFFFFF>
+<tr>
+<td bgcolor=#FFF8E8 align=center colspan=2>
+<a href=http://www.linuxcenter.ru/?sid=nP5OTFA1>
+<font size=4 face="sans-serif" color=#5B1900>
+<b>Закажи себе дистрибутив! Linux и BSD почтой от ЛинуксЦентра:</b>
+</font>
+</td>
+</tr>
+<tr>
+<td bgcolor=#FFF8E8 align=left>
+<font size=2 face="sans-serif" color=#5B1900 width=50%>&nbsp;1. <a href="http://www.linuxcenter.ru/index.phtml?good=1229&sid=nP5OTFA1">
+<font size=3 face="sans-serif" color=#5B1900>Подписка на журнал "Linux Format" 4 номера (сентябрь, октябрь, ноябрь и декабрь 2005) - 600 руб.</font>
+</a>
+<br>&nbsp;2. <a href="http://www.linuxcenter.ru/index.phtml?good=1212&sid=nP5OTFA1">
+<font size=3 face="sans-serif" color=#5B1900>Fedora Core 4, i386 binaries (1DVD) - наследник RedHat Linux - 250 руб.</font>
+</a>
+<br>&nbsp;3. <a href="http://www.linuxcenter.ru/index.phtml?good=1142&sid=nP5OTFA1">
+<font size=3 face="sans-serif" color=#5B1900>Mandriva Linux Limited Edition 2005 (1DVD) - 250 руб.</font>
+</a>
+<br>&nbsp;4. <a href="http://www.linuxcenter.ru/index.phtml?good=1054&sid=nP5OTFA1">
+<font size=3 face="sans-serif" color=#5B1900>Mandrakelinux 10.1 Official Discovery (3CD) - 545 руб.</font>
+</a>
+<br>&nbsp;5. <a href="http://www.linuxcenter.ru/index.phtml?good=1232&sid=nP5OTFA1">
+<font size=3 face="sans-serif" color=#5B1900>Gentoo Linux 2005.0 Linuxсenter Edition (1DVD) - 250 руб.</font>
+</a>
+<br>
+</font>
+</td>
+<td bgcolor=#FFF8E8 align=left>
+<font size=2 face="sans-serif" color=#5B1900 width=50%>&nbsp;6. <a href="http://www.linuxcenter.ru/index.phtml?good=1158&sid=nP5OTFA1">
+<font size=3 face="sans-serif" color=#5B1900>FreeBSD 5.4 i386 Linuxcenter Edition (2 DVD) - 500 руб.</font>
+</a>
+<br>&nbsp;7. <a href="http://www.linuxcenter.ru/index.phtml?good=1071&sid=nP5OTFA1">
+<font size=3 face="sans-serif" color=#5B1900>Knoppix 3.7 Russian Edition (1CD) - 90 руб.</font>
+</a>
+<br>&nbsp;8. <a href="http://www.linuxcenter.ru/index.phtml?good=1240&sid=nP5OTFA1">
+<font size=3 face="sans-serif" color=#5B1900>Журнал "Системный администратор", 2005 год, июль. - 145 руб.</font>
+</a>
+<br>&nbsp;9. <a href="http://www.linuxcenter.ru/index.phtml?good=1213&sid=nP5OTFA1">
+<font size=3 face="sans-serif" color=#5B1900>Fedora Core 4, 64bit binaries (1DVD) - наследник RedHat Linux - 250 руб.</font>
+</a>
+<br>&nbsp;10. <a href="http://www.linuxcenter.ru/index.phtml?good=1234&sid=nP5OTFA1">
+<font size=3 face="sans-serif" color=#5B1900>Кружка TUX! - 185 руб.</font>
+</a>
+<br>
+</font>
+</td>
+</tr>
+</table>
+</td>
+</tr>
+</table>
+<!--/htdig_noindex-->
+
+
+<!-- footer -->
+<!--htdig_noindex-->
+<br>
+<form method="get" action="http://www.opennet.ru/cgi-bin/opennet/jump.cgi">
+<TABLE BORDER=0 CELLSPACING=0 CELLPADDING=1 WIDTH="100%" BGCOLOR="#B0B190">
+<TR><TD>
+<TABLE BORDER=0 CELLSPACING=0 CELLPADDING=0 WIDTH="100%" VALIGN="MIDDLE">
+<TR ALIGN=CENTER><TD WIDTH="27%" BGCOLOR="#E9EAD6"><FONT SIZE="-1">
+    <select name="to" onChange="submit()">
+	<option value="/index.shtml" selected>Быстрая навигация по сайту</option>
+	<option value="/prog/sml">__________________ КАТАЛОГИ:</option>
+<option value="/prog/sml/">Каталог программного обеспечения</option>
+<option value="/links/sml/">Каталог ссылок на unix ресурсы</option>
+<option value="/filebase.shtml">Каталог тематических статей</option>
+<option value="/docs/">Архив документации</option>
+<option value="/tips/sml/">Советы, заметки</option>
+<option value="/man.shtml">MAN - Системные руководства</option>
+	<option value="/opennews/">__________________ НОВОСТИ:</option>
+<option value="/opennews/">Новости OpenNews</option>
+<option value="/lastsoft/">LastSoft - Свежий софт</option>
+<option value="/news/freshmeat.shtml">Обзоры ПО с freshmeat</option>
+<option value="/security/">Проблемы безопасности</option>
+<option value="/news/grab.shtml">Новости с других сайтов</option>
+	<option value="/cgi-bin/openforum/vsluhboard.cgi">__________________ ОБЩЕНИЕ:</option>
+<option value="/cgi-bin/openforum/vsluhboard.cgi">Форум/Конферения</option>
+	<option value="/index.shtml">_______________ МИНИ-ПОРТАЛЫ:</option>
+<option value="/cisco.shtml">CISCO.opennet.ru</option>
+<option value="/bsd.shtml">BSD.opennet.ru</option>
+<option value="/linux.shtml">LINUX.opennet.ru</option>
+<option value="/solaris.shtml">SOLARIS.opennet.ru</option>
+<option value="/web.shtml">WEB.opennet.ru - web-технологии</option>
+<option value="/security/">SECURITY.opennet.ru</option>
+<option value="/palm.shtml">PALM.opennet.ru - карманные ПК</option>
+	<option value="/index.shtml">__________________ НАВИГАЦИЯ:</option>
+<option value="/keywords/">Навигация по ключевым словам</option>
+<option value="/search.shtml">Системы ПОИСКА</option>
+	<option value="/index.shtml">__________________ РАЗНОЕ:</option>
+<option value="/cup.shtml">ЦУП - Центр Управления Проектом</option>
+<option value="/announce_prog.shtml">Добавление в каталоги</option>
+	</select>
+</FONT>
+</TD>
+<TD WIDTH="8%" BGCOLOR="#E9EAD6">
+<FONT SIZE="-1">
+<A HREF="/cgi-bin/opennet/bookmark.cgi">Закладки&nbsp;на&nbsp;сайте</A><BR>
+<A HREF="/cgi-bin/opennet/bookmark.cgi?submit=add" target="blank_">Проследить&nbsp;за&nbsp;страницей</A>
+</FONT>
+</TD>
+<TD WIDTH="65%" ALIGN=RIGHT BGCOLOR="#E9EAD6">
+<FONT SIZE="-1">Created&nbsp;1996-2005&nbsp;by&nbsp;<B><A HREF="mailto:mc@tyumen.ru">Maxim&nbsp;Chirkov</A></B></FONT>&nbsp;&nbsp;<BR>
+<FONT SIZE="-1"><A HREF="http://www.opennet.ru/guestbook.shtml">Добавить</A>,&nbsp;<A HREF="http://www.opennet.ru/reklama.shtml">Реклама</A>,&nbsp;<A HREF="http://www.opennet.ru/banners2.shtml">Вебмастеру</A>,&nbsp;<A HREF="../../cup.shtml">ЦУП</A>,&nbsp;<A HREF="../../guide.shtml">ГИД</A></FONT>&nbsp;&nbsp;
+</TD>
+</TR>
+</TABLE>
+</TD></TR>
+</TABLE>
+
+
+<div align=right><table><tr><td>
+<a target=_blank href="http://www.runnet.ru"><img src="/img/runnet.gif" border=0 height=31 width=88 alt="RUNNet"></a>
+<a target=_blank href="http://top.list.ru/jump?from=77689"><img src="http://top.list.ru/counter?id=77689;t=75;l=1" border=0 height=31 width=38 alt="TopList"></a>
+<a target=_blank href="http://counter.rambler.ru/top100/"><img src="http://counter.rambler.ru/top100.cnt?10566" width=1 height=1 border=0><img src="/banner.gif" width=88 height=31 border=0></a>
+<script language="JavaScript"><!--
+d=document;r=escape(d.referrer);h=""+Math.random()+"&s=105359&im=16&r="+r;
+d.write(' <a href="http://u367.96.spylog.com/cnt?f=3&p=1" target=_blank><img src="http://u367.96.spylog.com/cnt?p=1&r='+r+'" border=0 alt=SpyLog height=31 width=88></a>');
+//--></script>
+</td></tr></table>
+</div>
+</form>
+<!--/htdig_noindex-->
+<!-- end of footer -->
+
+
+
+</BODY></HTML>

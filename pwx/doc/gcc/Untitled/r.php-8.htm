@@ -1,0 +1,103 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1251"><title>www.ПЕРВЫЕ ШАГИ.ru :: Шаг 8 - Функции работы с динамическими библиотеками</title></head><link rel=stylesheet type=text/css href="2.css" tppabs="http://www.firststeps.ru/2.css"><body text=black bgcolor=white link=blue vlink=blue alink=red><h2>Шаг 8 - Функции работы с динамическими библиотеками</h2><div style="margin:10px;"><p>Если Вы подумали, что фокусы с динамическими библиотеками кончились, то Вы очень сильно ошиблись. До того были цветочки, а ягодки будут сейчас :)
+<p>Оказывается, что использовать динамические библиотеки можно не только в начале загрузки, но и в процессе самой работы программы. Программа сама может вызывать любые функции из библиотеки, когда ей захочется. Для этого всего-лишь надо использовать библиотеку <b>dl</b>, которая позволяет линковать библиотеки "на лету". Она управляет загрузкой динамических библиотек, вызовом функций из них и выгрузкой после конца работы.
+<p>Для использования функций программной работы с динамическими библиотеками необходимо подключить заголовочный файл:
+<pre>
+#include &lt;dlfcn.h&gt;
+</pre>
+<p>Чтобы вызывать какие-то функции из динамической библиотеки сначала надо открыть эту библиотеку (можно сказать "загрузить"). Открывается она функцией:
+<pre>
+void *dlopen (const char *filename, int flag);
+</pre>
+<p>Параметр <b>filename</b> содержит путь до требуемой библиотеки, а параметр <b>flag</b> задает некоторые специфические флаги для работы. Функция возвращает указатель на загруженную библиотеку. В случае любой ошибки возвращается указатель <b>NULL</b>. В таком случае тест ошибки понятный человеку можно получить с помощью функции <b>dlerror()</b>. Пока мы не будем задумываться над этим, и я приведу стандартный код для открытия библиотеки:
+<pre>
+void *library_handler;
+
+<i>//......</i>
+
+<i>//загрузка библиотеки</i>
+
+library_handler = dlopen("/path/to/the/library.so",RTLD_LAZY);
+if (!library_handler){
+	<i>//если ошибка, то вывести ее на экран</i>
+	fprintf(stderr,"dlopen() error: %s\n", dlerror());
+	exit(1); <i>// в случае ошибки можно, например, закончить работу программы</i>
+};
+</pre>
+<p>После этого можно работать с библиотекой. А работа эта заключается в получении адреса требуемой функции из библиотеки. Получить адрес функции или переменной можно по ее имени с помощью функции:
+<pre>
+void *dlsym(void *handle, char *symbol);
+</pre>
+<p>Для этой функции требуется адрес загруженной библиотеки <b>handle</b>, полученный при открытии функцией <b>dlopen()</b>. Требуемая функция или переменная задается своим именем в переменной <b>symbol</b>.
+<p>Закрывается библиотека функцией:
+<pre>
+dlclose(void *handle);
+</pre>
+<p>При закрытии библиотеки динамический линковщик проверяет счетчик количества открытий библиотеки, и если она была открыта несколькими программами одновременно, то она не выгружается до тех пор, пока все программы не закроют эту библиотеку.
+<p>Для примера создадим программу, которая в качестве параметра получает название функции, которую она будет использовать в работе. Например, это будут математические функции возведения в степень. Создадим сначала динамическую библиотеку. Пишем ее код:
+<pre>
+double power2(double x){
+	return x*x;
+};
+
+double power3(double x){
+	return x*x*x;
+};
+
+double power4(double x){
+	return power2(x)*power2(x);
+};
+
+<i>//......</i>
+</pre>
+<p>Сохраняем его в файл <b>lib.c</b> и создаем динамическую библиотеку <b>libpowers.so</b> следующими командами:
+<pre>
+dron:~# gcc -fPIC -c lib.c
+dron:~# gcc -shared lib.o -o libpowers.so
+</pre>
+<p>Теперь создаем основную программу в файле <b>main.c</b>:
+<pre>
+#include &lt;stdio.h&gt;
+
+<i>/* заголовочный файл для работы с динамическими библиотеками */</i>
+#include &lt;dlfcn.h&gt;
+
+int main(int argc, char* argv[]){
+
+	void *ext_library;	<i>// хандлер внешней библиотеки</i>
+	double value=0;		<i>// значение для теста</i>
+	double (*powerfunc)(double x);	<i>// переменная для хранения адреса функции</i>
+
+	<i>//загрузка библиотеки</i>
+	ext_library = dlopen("/root/libpowers.so",RTLD_LAZY);
+	if (!ext_library){
+		<i>//если ошибка, то вывести ее на экран</i>
+		fprintf(stderr,"dlopen() error: %s\n", dlerror());
+		return 1;
+	};
+
+	<i>//загружаем из библиотеки требуемую процедуру</i>
+	powerfunc = dlsym(ext_library, argv[1]);	
+	value=3.0;
+
+	<i>//выводим результат работы процедуры</i>
+	printf("%s(%f) = %f\n",argv[1],value,(*powerfunc)(value));
+
+	<i>//закрываем библиотеку</i>
+	dlclose(ext_library);
+};
+</pre>
+<p>Код главной программы готов. Требуется его откомпилировать с использованием библиотеки <b>dl</b>:
+<pre>
+dron:~# gcc main.c -o main -ldl
+</pre>
+<p>Получим программный файл <b>main</b>, который можно тестировать. Наша программа должна возводить значение <b>3.0</b> в требуемую нами степень, которая задается названием функции. Давайте попробуем:
+<pre>
+dron:~# ./main power2
+power2(3.000000) = 9.000000
+dron:~# ./main power3
+power3(3.000000) = 27.000000
+dron:~# ./main power4
+power4(3.000000) = 81.000000
+dron:~#
+</pre>
+<p>Ну, как ?! Круто !!! Мы используем какие-то функции, зная лишь их название. Представьте открывающиеся возможности для программ, на основе этого метода можно создавать плагины для программ, модернизировать какие-то части, добавлять новые возможности и многое другое.</div><center><hr><a href="javascript:if(confirm('http://www.firststeps.ru/linux/prog/8.zip  \n\nThis file was not retrieved by Teleport Pro, because it did not meet the project\'s file type specifications.  \n\nDo you want to open it from the server?'))window.location='http://www.firststeps.ru/linux/prog/8.zip'" tppabs="http://www.firststeps.ru/linux/prog/8.zip">Загрузить проект</a> | <a href="r.php-7.htm" tppabs="http://www.firststeps.ru/linux/r.php?7">Предыдущий Шаг</a> | <a href="r.php-9.htm" tppabs="http://www.firststeps.ru/linux/r.php?9">Следующий Шаг</a> | <a href="general1.html" tppabs="http://www.firststeps.ru/linux/general1.html">Оглавление</a><br>Автор <a href="mailto:kuzinandrey@yandex.ru?SUBJECT=From_part_general#8'_on_[www.firststeps.ru]">Кузин Андрей</a>.<hr><iframe src="javascript:if(confirm('http://ad.adriver.ru/cgi-bin/erle.cgi?sid=9595&target=blank&bt=1&pz=0&rnd=8644  \n\nThis file was not retrieved by Teleport Pro, because it did not meet the project\'s file type specifications.  \n\nDo you want to open it from the server?'))window.location='http://ad.adriver.ru/cgi-bin/erle.cgi?sid=9595&target=blank&bt=1&pz=0&rnd=8644'" tppabs="http://ad.adriver.ru/cgi-bin/erle.cgi?sid=9595&target=blank&bt=1&pz=0&rnd=8644" frameborder=0 vspace=0 hspace=0 width=468 height=60 marginwidth=0 marginheight=0 scrolling=no><a href="javascript:if(confirm('http://ad.adriver.ru/cgi-bin/click.cgi?sid=9595&bt=1&pz=0&rnd=8644  \n\nThis file was not retrieved by Teleport Pro, because it is addressed on a domain or path outside the boundaries set for its Starting Address.  \n\nDo you want to open it from the server?'))window.location='http://ad.adriver.ru/cgi-bin/click.cgi?sid=9595&bt=1&pz=0&rnd=8644'" tppabs="http://ad.adriver.ru/cgi-bin/click.cgi?sid=9595&bt=1&pz=0&rnd=8644" target=_blank><img src="rle.cgi-sid=9595&bt=1&pz=0&rnd=8644" tppabs="http://ad.adriver.ru/cgi-bin/rle.cgi?sid=9595&bt=1&pz=0&rnd=8644" alt="-AdRiver-" border=0 width=468 height=60></a></iframe></center><br><br>

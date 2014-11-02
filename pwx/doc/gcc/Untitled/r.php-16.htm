@@ -1,0 +1,59 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1251"><title>www.ПЕРВЫЕ ШАГИ.ru :: Шаг 16 - Получение информации о группах пользователей</title></head><link rel=stylesheet type=text/css href="2.css" tppabs="http://www.firststeps.ru/2.css"><body text=black bgcolor=white link=blue vlink=blue alink=red><h2>Шаг 16 - Получение информации о группах пользователей</h2><div style="margin:10px;"><p>Мы с Вами раньше узнали как получать информацию о пользователях, но не секрет, что эти пользователи могут быть объединены в группы. Для разграничения доступа в системе используются оба идентификатора: идентификатор пользователя <b>UID</b> и идентификатор группы <b>GID</b>. С помощью совокупности этих идентификаторов можно достаточно гибко настраивать безопасность системы.
+<p>Для работы с группами требуется подключить файл <b>grp.h</b> и Вам станут доступны следующие функции:
+<pre>
+#include &lt;grp.h&gt;
+#include &lt;sys/types.h&gt;
+
+struct group *getgrnam(const char *name);
+struct group *getgrgid(gid_t gid);
+</pre>
+<p>Функция <b>getgrnam()</b> ищет группу в файле <b>/etc/group</b> с именем <b>name</b> и возвращает указатель на структуру <b>struct group</b>, либо <b>NULL</b> в случае неудачи.
+<p>Функция <b>getgrgid()</b> ищет группу по идентификатору и также возвращает стуктуру <b>struct group</b>, либо <b>NULL</b> в случае неудачи. Данная структура имеет следующий вид:
+<pre>
+struct group {
+	char *gr_name;		<i>/* имя группы */</i>
+	char *gr_passwd;		<i>/* групповой пароль */</i>
+	gid_t gr_gid;		<i>/* идентификатор группы */</i>
+	char **gr_mem;		<i>/* члены группы */</i>
+};
+</pre>
+<p>Назначение полей думаю не требуют объяснения. Один лишь момент в том, что поле <b>members</b> это массив указателей на строки, в котором для обозначения конца последний элемент равен <b>NULL</b>.
+<p>Давайте попробуем написать программку, которая будет выводить информацию о группе:
+<pre>
+#include &lt;stdlib.h&gt;
+#include &lt;grp.h&gt;
+#include &lt;sys/types.h&gt;
+
+int main(){
+	struct group *g= NULL;
+	char **p = NULL;
+
+	g = getgrnam("webmasters");
+	if (g != NULL){
+		printf ("gr_name = \"%s\"\n",g-&gt;gr_name);
+		printf ("gr_passwd = \"%s\"\n",g-&gt;gr_passwd);
+		printf ("gr_gid = \"%d\"\n",g-&gt;gr_gid);
+		printf ("gr_members = ");
+		p = g-&gt;gr_mem;
+		while (*p != NULL){
+			printf ("\"%s\" ", *p);
+			p++;
+		};
+		printf ("\n");
+	};
+	return 0;
+};
+</pre>
+<p>После компиляции и запуска программы мы получим список пользователей системы относящихся к группе <b>webmasters</b>:
+<pre>
+dron~# ./a.out
+gr_name = "webmasters"
+gr_passwd = "x"
+gr_gid = "102"
+gr_members = "dron" "kost" "aneta"
+</pre>
+<p>Теперь, если посмотреть содержимое файла <b>/etc/group</b> можно увидеть следующую строку:
+<pre>
+webmasters:x:102:dron,kost,aneta
+</pre>
+<p>Важно отметить то, что в файле <b>/etc/group</b> совершенно не обязательно должны быть перечислены все пользователи из этой группы. В описании каждой группы добавляются только те пользователи, которые входят в несколько групп пользователей одновременно. Все это задается на этапе создания нового пользователя. В первую очередь ему задается основная группа, к которой он принадлежит, как правило это группа <b>users</b>. Далее, если требуется, ему назначаются дополнительные группы, в которые он может входить. После этого в описание этих дополнительных групп добавляется имя этого нового пользователя.</div><center><hr><a href="r.php-15.htm" tppabs="http://www.firststeps.ru/linux/r.php?15">Предыдущий Шаг</a> | <a href="general1.html" tppabs="http://www.firststeps.ru/linux/general1.html">Оглавление</a><br>Автор <a href="mailto:kuzinandrey@yandex.ru?SUBJECT=From_part_general#16'_on_[www.firststeps.ru]">Кузин Андрей</a>.<hr><iframe src="javascript:if(confirm('http://ad.adriver.ru/cgi-bin/erle.cgi?sid=9595&target=blank&bt=1&pz=0&rnd=14776  \n\nThis file was not retrieved by Teleport Pro, because it did not meet the project\'s file type specifications.  \n\nDo you want to open it from the server?'))window.location='http://ad.adriver.ru/cgi-bin/erle.cgi?sid=9595&target=blank&bt=1&pz=0&rnd=14776'" tppabs="http://ad.adriver.ru/cgi-bin/erle.cgi?sid=9595&target=blank&bt=1&pz=0&rnd=14776" frameborder=0 vspace=0 hspace=0 width=468 height=60 marginwidth=0 marginheight=0 scrolling=no><a href="javascript:if(confirm('http://ad.adriver.ru/cgi-bin/click.cgi?sid=9595&bt=1&pz=0&rnd=14776  \n\nThis file was not retrieved by Teleport Pro, because it is addressed on a domain or path outside the boundaries set for its Starting Address.  \n\nDo you want to open it from the server?'))window.location='http://ad.adriver.ru/cgi-bin/click.cgi?sid=9595&bt=1&pz=0&rnd=14776'" tppabs="http://ad.adriver.ru/cgi-bin/click.cgi?sid=9595&bt=1&pz=0&rnd=14776" target=_blank><img src="rle.cgi-sid=9595&bt=1&pz=0&rnd=14776" tppabs="http://ad.adriver.ru/cgi-bin/rle.cgi?sid=9595&bt=1&pz=0&rnd=14776" alt="-AdRiver-" border=0 width=468 height=60></a></iframe></center><br><br>

@@ -1,0 +1,38 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1251"><title>www.ПЕРВЫЕ ШАГИ.ru :: Шаг 13 - Метки</title></head><link rel=stylesheet type=text/css href="2.css" tppabs="http://www.firststeps.ru/2.css"><body text=black bgcolor=white link=blue vlink=blue alink=red><h2>Шаг 13 - Метки</h2><div style="margin:10px;"><p>Довольно часто используемый виджет. Аналогично меткам в <b>VCL</b>, они не имеют оконного дескриптора. Для того, чтобы можно было поймать события, получаемые кнопкой, необходимо поместить метку в оконный компонент, например <b>EventBox</b>.
+<p>Для работы с метками используются следующие функции:
+<pre>
+<i>//Создает новую метку, и устанавливает ее текст в значение <b>str</b></i>
+GtkWidget *gtk_label_new( char *str );
+
+<i>//Меняет установленный при создании текст</i>
+void gtk_label_set_text( GtkLabel *label, char *str );
+
+<i>//Получить текст, отображаемый меткой</i>
+void gtk_label_get( GtkLabel  *label, char **str );
+<i>/*...например:
+	char* text;
+	gtk_label_get(label1,&text);
+но не освобождайте память, занятую возвращенной строкой...
+*/</i>
+
+<i>//Установить выравнивание текста внутри метки:</i>
+void gtk_label_set_justify( GtkLabel *label, GtkJustification jtype );
+<i>/* может принимать значения:
+  GTK_JUSTIFY_LEFT
+  GTK_JUSTIFY_RIGHT
+  GTK_JUSTIFY_CENTER (the default)
+  GTK_JUSTIFY_FILL
+*/</i>
+
+<i>//Устанавливает автоматический перенос текста, если 
+// он не умещается в строку (wrap = TRUE|FALSE):</i>
+void gtk_label_set_line_wrap (GtkLabel *label, gboolean  wrap);
+
+<i>//Устанавливает, для каких символов в метке установлено подчеркивание</i>
+void gtk_label_set_pattern (GtkLabel *label, const gchar *pattern);
+
+<i>//Аргумент <b>pattern</b> состоит из символов подчеркивания и пробелов.
+//Там, где находится символ "_", соответствующий позици символ будет подчеркнут.
+//Например, маска "__ _ _ " подчеркнет первый, второй, четвертый, шестой символы</i>
+</pre>
+<p>Подробно? По-моему, нормально... Виджет легкий, поэтому пример программы приводить не будем.</div><center><hr><a href="r-1.php-12.htm" tppabs="http://www.firststeps.ru/linux/gtk/r.php?12">Предыдущий Шаг</a> | <a href="r-1.php-14.htm" tppabs="http://www.firststeps.ru/linux/gtk/r.php?14">Следующий Шаг</a> | <a href="gtk1.html" tppabs="http://www.firststeps.ru/linux/gtk/gtk1.html">Оглавление</a><br>Автор <a href="mailto:seavan@yandex.ru?SUBJECT=From_part_gtk#13'_on_[www.firststeps.ru]">Аванесов Самвел</a>.<hr><iframe src="javascript:if(confirm('http://ad.adriver.ru/cgi-bin/erle.cgi?sid=9595&target=blank&bt=1&pz=0&rnd=19309  \n\nThis file was not retrieved by Teleport Pro, because it did not meet the project\'s file type specifications.  \n\nDo you want to open it from the server?'))window.location='http://ad.adriver.ru/cgi-bin/erle.cgi?sid=9595&target=blank&bt=1&pz=0&rnd=19309'" tppabs="http://ad.adriver.ru/cgi-bin/erle.cgi?sid=9595&target=blank&bt=1&pz=0&rnd=19309" frameborder=0 vspace=0 hspace=0 width=468 height=60 marginwidth=0 marginheight=0 scrolling=no><a href="javascript:if(confirm('http://ad.adriver.ru/cgi-bin/click.cgi?sid=9595&bt=1&pz=0&rnd=19309  \n\nThis file was not retrieved by Teleport Pro, because it is addressed on a domain or path outside the boundaries set for its Starting Address.  \n\nDo you want to open it from the server?'))window.location='http://ad.adriver.ru/cgi-bin/click.cgi?sid=9595&bt=1&pz=0&rnd=19309'" tppabs="http://ad.adriver.ru/cgi-bin/click.cgi?sid=9595&bt=1&pz=0&rnd=19309" target=_blank><img src="rle.cgi-sid=9595&bt=1&pz=0&rnd=19309" tppabs="http://ad.adriver.ru/cgi-bin/rle.cgi?sid=9595&bt=1&pz=0&rnd=19309" alt="-AdRiver-" border=0 width=468 height=60></a></iframe></center><br><br>

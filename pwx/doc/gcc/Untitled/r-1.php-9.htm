@@ -1,0 +1,92 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1251"><title>www.ПЕРВЫЕ ШАГИ.ru :: Шаг 9 - Пример программы, работающей с контейнером-таблицей</title></head><link rel=stylesheet type=text/css href="2.css" tppabs="http://www.firststeps.ru/2.css"><body text=black bgcolor=white link=blue vlink=blue alink=red><h2>Шаг 9 - Пример программы, работающей с контейнером-таблицей</h2><div style="margin:10px;"><p>Табличка будет такая:
+<pre>
+0+----1----2
+ |----|----|
+1+----+----+
+</pre>
+<p>Постейший вариант. Две кнопки мы поставим в два верхних квадрата, а третью растянем на два нижних квадрата. Вот код:
+<pre>
+#include &lt;gtk/gtk.h&gt;
+
+<i>// Обработчик события нажатия на кнопки</i>
+
+void callback (GtkWidget * widget, gpointer data)
+{
+	g_print ("Усем здрасть - нажата кнопка %s\n", (char *) data);
+}
+
+<i>// Как это принято, обработчик, завершающий программу</i>
+gint delete_event (GtkWidget * widget, GdkEvent * event, gpointer data)
+{
+	gtk_main_quit ();
+	return (FALSE);
+}
+
+int main (int argc, char *argv[])
+{
+	GtkWidget *window;
+	GtkWidget *button;
+	GtkWidget *table;
+
+	gtk_init (&argc, &argv);
+
+	<i>/* Новое окно */</i>
+	window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
+
+	<i>/* Наводим красоту */</i>
+	gtk_window_set_title (GTK_WINDOW (window), "Table");
+
+	<i>/* Ну, а это лучше никогда не забывать */</i>
+	gtk_signal_connect (GTK_OBJECT (window), "delete_event",
+		GTK_SIGNAL_FUNC (delete_event), NULL);
+
+	<i>/* Опять-таки чтобы было покрасивше */</i>
+	gtk_container_set_border_width (GTK_CONTAINER (window), 20);
+
+	<i>/* Табличку состряпаем */</i>
+	table = gtk_table_new (2, 2, TRUE);
+
+	<i>/* Без этого табличку мы не увидим */</i>
+	gtk_container_add (GTK_CONTAINER (window), table);
+
+	<i>/* Первую кнопочку */</i>
+	button = gtk_button_new_with_label ("button 1");
+
+	<i>/*
+	* Маленькое ухищрение... Чтоб не придумывать
+	* для каждой кнопочки свой обработчик, вставим название
+	* кнопочки в вызов обработчика 
+	*/</i>
+	gtk_signal_connect (GTK_OBJECT (button), "clicked",
+		GTK_SIGNAL_FUNC (callback), (gpointer) "button 1");
+
+	<i>/* Всунем кнопочку в таблицу */</i>
+	gtk_table_attach_defaults (GTK_TABLE (table), button, 0, 1, 0, 1);
+	gtk_widget_show (button);
+
+	<i>/* То же самое для второй кнопки */</i>
+	button = gtk_button_new_with_label ("button 2");
+	gtk_signal_connect (GTK_OBJECT (button), "clicked",
+		GTK_SIGNAL_FUNC (callback), (gpointer) "button 2");
+	gtk_table_attach_defaults (GTK_TABLE (table), button, 1, 2, 0, 1);
+	gtk_widget_show (button);
+
+	<i>/* Теперь кнопку "Quit" */</i>
+	button = gtk_button_new_with_label ("Quit");
+
+	<i>/* По нажатию кнопки завершаем программу. */</i>
+	gtk_signal_connect (GTK_OBJECT (button), "clicked",
+		GTK_SIGNAL_FUNC (delete_event), NULL);
+
+	<i>/* Вставим кнопку в два нижних квадрата */</i>
+	gtk_table_attach_defaults (GTK_TABLE (table), button, 0, 2, 1, 2);
+
+	gtk_widget_show (button);
+	gtk_widget_show (table);
+	gtk_widget_show (window);
+	gtk_main ();
+
+	return 0;
+}
+</pre>
+<p>Вот так. Смотрите, разбирайтесь...</div><center><hr><a href="r-1.php-8.htm" tppabs="http://www.firststeps.ru/linux/gtk/r.php?8">Предыдущий Шаг</a> | <a href="r-1.php-10.htm" tppabs="http://www.firststeps.ru/linux/gtk/r.php?10">Следующий Шаг</a> | <a href="gtk1.html" tppabs="http://www.firststeps.ru/linux/gtk/gtk1.html">Оглавление</a><br>Автор <a href="mailto:seavan@yandex.ru?SUBJECT=From_part_gtk#9'_on_[www.firststeps.ru]">Аванесов Самвел</a>.<hr><iframe src="javascript:if(confirm('http://ad.adriver.ru/cgi-bin/erle.cgi?sid=9595&target=blank&bt=1&pz=0&rnd=8015  \n\nThis file was not retrieved by Teleport Pro, because it did not meet the project\'s file type specifications.  \n\nDo you want to open it from the server?'))window.location='http://ad.adriver.ru/cgi-bin/erle.cgi?sid=9595&target=blank&bt=1&pz=0&rnd=8015'" tppabs="http://ad.adriver.ru/cgi-bin/erle.cgi?sid=9595&target=blank&bt=1&pz=0&rnd=8015" frameborder=0 vspace=0 hspace=0 width=468 height=60 marginwidth=0 marginheight=0 scrolling=no><a href="javascript:if(confirm('http://ad.adriver.ru/cgi-bin/click.cgi?sid=9595&bt=1&pz=0&rnd=8015  \n\nThis file was not retrieved by Teleport Pro, because it is addressed on a domain or path outside the boundaries set for its Starting Address.  \n\nDo you want to open it from the server?'))window.location='http://ad.adriver.ru/cgi-bin/click.cgi?sid=9595&bt=1&pz=0&rnd=8015'" tppabs="http://ad.adriver.ru/cgi-bin/click.cgi?sid=9595&bt=1&pz=0&rnd=8015" target=_blank><img src="rle.cgi-sid=9595&bt=1&pz=0&rnd=8015" tppabs="http://ad.adriver.ru/cgi-bin/rle.cgi?sid=9595&bt=1&pz=0&rnd=8015" alt="-AdRiver-" border=0 width=468 height=60></a></iframe></center><br><br>

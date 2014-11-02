@@ -1,0 +1,65 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1251"><title>www.ПЕРВЫЕ ШАГИ.ru :: Шаг 6 - Контейнеры</title></head><link rel=stylesheet type=text/css href="2.css" tppabs="http://www.firststeps.ru/2.css"><body text=black bgcolor=white link=blue vlink=blue alink=red><h2>Шаг 6 - Контейнеры</h2><div style="margin:10px;"><p>Чаще всего, когда создается диалоговое окно, предполагается, что в нем будет находится более одного виджета. При программировании в <b>WinAPI</b> координаты этих виджетов задаются вручную. То есть напрямую координатами - габариты и координаты левой верхней точки объекта. Так как у пользователей может быть разное разрешение, то возникает неприятный эффект несоответстия позиций сгруппированных виджетов. Соответственно, если пользователь хочет изменить размеры диалогового окна, то последствия вообще не поддаются описанию. Ну, против этого естественно есть средства - подгонять координаты под разные разрешения и фиксирование размеров окна.
+<p>Ужас. Так чем же отличается <b>GTK</b> в этом плане от Виндов? Своеобразная теория контейнеров предполагает создание сетки, относительно которой будут выравниваться виджеты. Сетка распределяется относительно размеров окна. То есть, можно просто сказать - сетка 4 на 8, тогда размер каждой ячейки будет [ширина окна]/4 x [высота окна]/8. При изменении размеров автоматически будут перемещаться и виджеты. Впрочем, это зависит от соответствующих аргументов функций. А, еще они невидимы, что тоже не так уж плохо...
+<p>Такие виджеты, называемые также контейнерами или "упаковывающими виджетами" (<b>packing widgets</b>), бывают трех видов - вертикальные колонны, горизонтальные ряды и таблицы. Строго говоря, основная разница между ними в способе выравнивания и распределения упаковываемых виджетов.
+<p>Для начала приведу очень простой пример распределения полей ввода и меток. Надо сказать, что мне немного надоело писать все на простом <b>C</b>. Поэтому следующий файл будет написан на <b>C++</b>. Сохранить его надо будет как <b>.cpp</b>, <b>.C</b>, или <b>.cc</b>. Как угодно... Команда компиляции таже самая - <b>gcc -Wall `gtk-config --libs --cflags` [имя файла] -o [имя исполнимого файла]</b>.
+<pre>
+#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;gtk/gtk.h&gt;
+
+
+void delete_event (GtkObject * object)
+{
+	gtk_main_quit ();
+};
+
+int main (int argc, char *argv[])
+{
+	GtkWidget *window;
+	GtkWidget *edit[5];
+	GtkWidget *label[5];
+	GtkWidget *vbox;
+
+	char str[] = "Edit x";
+	gtk_init (&argc, &argv);
+
+	vbox = gtk_vbox_new (0, 0);
+
+	window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
+
+	<i>//Никогда не забывайте устанвливать этот обработчик</i>
+	gtk_signal_connect_object (GTK_OBJECT (window), "delete_event",
+		GTK_SIGNAL_FUNC (delete_event), NULL);
+
+	<i>//Вы же не хотите, чтобы элементы прилипали к краям?</i>
+	gtk_container_set_border_width (GTK_CONTAINER (window), 10);
+
+	<i>//Создаем и упаковываем по пять меток и пять полей ввода...</i>
+	for (int i = 0; i &lt; 5; i++)
+	{
+		edit[i] = gtk_entry_new ();
+		sprintf (str, "Edit %d", i);
+		label[i] = gtk_label_new (str);
+
+		<i>//Загоняем сначала метку, а затем и поле ввода в контейнер</i>
+		gtk_box_pack_start (GTK_BOX (vbox), label[i], TRUE, 0, 5);
+		gtk_box_pack_start (GTK_BOX (vbox), edit[i], TRUE, 0, 5);
+		gtk_widget_show (edit[i]);
+		gtk_widget_show (label[i]);
+	};
+
+	<i>//Чтобы добавить контейнер в окно...</i>
+	gtk_container_add (GTK_CONTAINER (window), vbox);
+
+	gtk_widget_show (window);
+	gtk_widget_show (GTK_WIDGET (vbox));
+
+	gtk_window_set_title (GTK_WINDOW (window), "Step 6");
+
+	gtk_main ();
+	return 0;
+};
+</pre>
+<p>У меня все это отобразилось так:
+<p><img src="6_1.gif" tppabs="http://www.firststeps.ru/linux/gtk/gif/6_1.gif" alt="gif/6_1.gif (8777 b)" border=2></p>
+<p>Обратили внимание, как лекго все это расположилось на равном расстоянии! Впрочем, это расположение можно контролировать. Для этого есть много параметров, я бы даже сказал, слишком много. Подробно мы эти функции рассмотрим в следующем шаге.</div><center><hr><a href="javascript:if(confirm('http://www.firststeps.ru/linux/gtk/prog/6.zip  \n\nThis file was not retrieved by Teleport Pro, because it did not meet the project\'s file type specifications.  \n\nDo you want to open it from the server?'))window.location='http://www.firststeps.ru/linux/gtk/prog/6.zip'" tppabs="http://www.firststeps.ru/linux/gtk/prog/6.zip">Загрузить проект</a> | <a href="r-1.php-5.htm" tppabs="http://www.firststeps.ru/linux/gtk/r.php?5">Предыдущий Шаг</a> | <a href="r-1.php-7.htm" tppabs="http://www.firststeps.ru/linux/gtk/r.php?7">Следующий Шаг</a> | <a href="gtk1.html" tppabs="http://www.firststeps.ru/linux/gtk/gtk1.html">Оглавление</a><br>Автор <a href="mailto:seavan@yandex.ru?SUBJECT=From_part_gtk#6'_on_[www.firststeps.ru]">Аванесов Самвел</a>.<hr><iframe src="javascript:if(confirm('http://ad.adriver.ru/cgi-bin/erle.cgi?sid=9595&target=blank&bt=1&pz=0&rnd=21023  \n\nThis file was not retrieved by Teleport Pro, because it did not meet the project\'s file type specifications.  \n\nDo you want to open it from the server?'))window.location='http://ad.adriver.ru/cgi-bin/erle.cgi?sid=9595&target=blank&bt=1&pz=0&rnd=21023'" tppabs="http://ad.adriver.ru/cgi-bin/erle.cgi?sid=9595&target=blank&bt=1&pz=0&rnd=21023" frameborder=0 vspace=0 hspace=0 width=468 height=60 marginwidth=0 marginheight=0 scrolling=no><a href="javascript:if(confirm('http://ad.adriver.ru/cgi-bin/click.cgi?sid=9595&bt=1&pz=0&rnd=21023  \n\nThis file was not retrieved by Teleport Pro, because it is addressed on a domain or path outside the boundaries set for its Starting Address.  \n\nDo you want to open it from the server?'))window.location='http://ad.adriver.ru/cgi-bin/click.cgi?sid=9595&bt=1&pz=0&rnd=21023'" tppabs="http://ad.adriver.ru/cgi-bin/click.cgi?sid=9595&bt=1&pz=0&rnd=21023" target=_blank><img src="rle.cgi-sid=9595&bt=1&pz=0&rnd=21023" tppabs="http://ad.adriver.ru/cgi-bin/rle.cgi?sid=9595&bt=1&pz=0&rnd=21023" alt="-AdRiver-" border=0 width=468 height=60></a></iframe></center><br><br>

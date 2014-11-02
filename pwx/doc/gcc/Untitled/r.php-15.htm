@@ -1,0 +1,190 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1251"><title>www.ПЕРВЫЕ ШАГИ.ru :: Шаг 15 - Работа с паролями системы с помощью функции crypt()</title></head><link rel=stylesheet type=text/css href="2.css" tppabs="http://www.firststeps.ru/2.css"><body text=black bgcolor=white link=blue vlink=blue alink=red><h2>Шаг 15 - Работа с паролями системы с помощью функции crypt()</h2><div style="margin:10px;"><p>Уже многие из Вас задали себе закономерный вопрос "как же работать с паролями", т.е. как получить тот хеш, о котором шла речь раньше. Давайте раберемся с этим.
+<p>За генерацию паролей отвечает функция <b>crypt()</b>. Подключить ее к программе можно так:
+<pre>
+#define _XOPEN_SOURCE
+#include &lt;unistd.h&gt;
+
+char *crypt(const char *key, const char *salt);
+</pre>
+<p>Вместо заголовочного файла <b>unistd.h</b> для подключения функций шифрования можно использовать другой файл - <b>crypt.h</b>. В принципе без разницы, они оба имеют одинаковые определения функции <b>crypt()</b>.
+<p>Для работы функции требуется два параметра:
+<ul>
+<li><b>key</b> - это секретный пароль пользователя, который требуется зашифровать
+<li><b>salt</b> - это так называемый "открытый ключ", или же в понятиях алгоритмов шифрования инициализационные данные. Данный параметр должен состоять из символов <b>a-zA-Z0-9./</b>, т.е. из любых латинских букв, цифр или некоторых символов.
+</ul>
+<p>Если же с паролем все ясно, то <b>salt</b> может заставить задуматься. Давайте посмотрим на что влияет этот параметр. Напишем тестовую программку <b>crypt.c</b>:
+<pre>
+#include &lt;stdlib.h&gt;
+#include &lt;crypt.h&gt;
+
+int main(){
+    printf("crypt(\"password\",\"ab\") = \"%s\"\n",crypt("password","ab"));
+    printf("crypt(\"password\",\"ab12\") = \"%s\"\n",crypt("password","ab12"));
+    printf("crypt(\"password\",\"ac\") = \"%s\"\n",crypt("password","ac"));
+    printf("crypt(\"password\",\"ac123\") = \"%s\"\n",crypt("password","ac123"));
+    printf("crypt(\"password\",\"1a\") = \"%s\"\n",crypt("password","1a"));
+    printf("crypt(\"password\",\"1a.\") = \"%s\"\n",crypt("password","1a."));
+    return 0;
+};
+</pre>
+<p>Данная программа пытается выработать хеш с разным сальтом для пароля <b>"password"</b>. Компилируем программу:
+<pre>
+dron~# gcc crypt.c -o crypt
+/tmp/ccBXde1R.o: In function `main':
+/tmp/ccBXde1R.o(.text+0x17): undefined reference to `crypt'
+/tmp/ccBXde1R.o(.text+0x3f): undefined reference to `crypt'
+/tmp/ccBXde1R.o(.text+0x67): undefined reference to `crypt'
+/tmp/ccBXde1R.o(.text+0x8f): undefined reference to `crypt'
+/tmp/ccBXde1R.o(.text+0xb7): undefined reference to `crypt'
+/tmp/ccBXde1R.o(.text+0xdf): more undefined references to `crypt' follow
+collect2: ld returned 1 exit status
+</pre>
+<p>Не так быстро. Просто так откомпилировать программу нельзя, надо обязательно подключить библиотеку <b>libcrypt.a</b>, делается это такой командой:
+<pre>
+dron~# gcc crypt.c -o crypt -lcrypt
+dron~# ./crypt
+crypt("password","ab") = "abJnggxhB/yWI"
+crypt("password","ab12") = "abJnggxhB/yWI"
+crypt("password","ac") = "acBxUIBkuWIZE"
+crypt("password","ac123") = "acBxUIBkuWIZE"
+crypt("password","1a") = "1abtv8E0hkEd6"
+crypt("password","1a.") = "1abtv8E0hkEd6"
+</pre>
+<p>Посмотрите на результат работы функции. Хоть я и задавал разные <b>salt</b> некоторые хеши получились совершенно одинаковыми. Из этого можно сделать вывод и том, что в нем играют роль только первые два символа. Значения этих символов используются для шифрования пароля алгоритмом <b>DES</b>. Заметьте также, что <b>salt</b> входит в хеш как его начальная часть. И это правильно, ведь если его удалить, то неизвестно, что надо использовать для проверки достоверности пароля. На самом деле, как мы узнаем дальше, это сделано специально для того, чтобы можно было без особых мучений с паролем из <b>/etc/shadow</b> сразу же отправлять его в функцию <b>crypt()</b>.
+<p>Хорошо. Нам теперь, думаю, стало понятно как работает алгоритм <b>DES</b>, а как же <b>MD5</b> ? Ведь, как я уже говорил, пароли сегодня чаще всего хранятся в виде <b>MD5</b>. Хороший вопрос. Ответ на него я искал некоторое время. Исходя из того, что совершенно точно функция <b>crypt()</b> должна работать с <b>MD5</b> я начал рыскать в исходнике <b>gnu-pop3d</b>, который совсем недавно чуть ли не переписал заново :) Пролистав все и не обнаружив ни <b>#define</b> ни хитрых <b>#include</b> я попробовал залезть в файл библиотеки <b>/usr/lib/libcrypt.a</b>. Получить список функций из нее можно командой <b>nm</b>:
+<pre>
+dron~# nm /usr/lib/libcrypt.a
+
+crypt-entry.o:
+0000000000000117 t Letext
+0000000000000000 T __crypt_r
+                 U __md5_crypt
+                 U __md5_crypt_r
+                 U _ufc_dofinalperm_r
+                 U _ufc_doit_r
+                 U _ufc_foobar
+                 U _ufc_mk_keytab_r
+                 U _ufc_output_conversion_r
+                 U _ufc_setup_salt_r
+00000000000000d0 T crypt
+0000000000000000 W crypt_r
+00000000000000d0 W fcrypt
+0000000000000000 r md5_salt_prefix
+                 U strncmp
+                 U strncpy
+
+md5-crypt.o:
+000000000000070a t Letext
+                 U __assert_fail
+                 U __errno_location
+0000000000000690 T __md5_crypt
+0000000000000000 T __md5_crypt_r
+                 U __md5_finish_ctx
+                 U __md5_init_ctx
+...............
+</pre>
+<p>Посмотрите, список функций очень большой, поэтому не привожу весь, но видно определенно, что <b>libcrypt.a</b> содержит функции для работы с <b>MD5</b>. Но тогда как ?! Ведь нет никаких параметров дополнительных. А все оказалось куда проще %) Посмотрите на листинг, видите имя <b>md5_salt_prefix</b>. Не правда ли очень говорящее название ?! А теперь посмотрите типичный пароль закодированный с помощью <b>MD5</b>:
+<pre>
+$1$/DrNy/Cv$ZBydbOBsEvdI5u5sib2X/0
+$1$02p9xyDo$gnkh4vts/rArhJselceTV1
+</pre>
+<p>Не видите ничего странного ?! Правильно, у них структура отличается от паролей на <b>DES</b> и выглядит следующим образом:
+<pre>
+$1$..salt..$.........hash.........
+</pre>
+<p>Именно по этой структуре функция <b>crypt()</b> определяет каким методом ей шифровать пароль. Не поленимся однако и посмотрим исходники <b>crypt()</b> в библиотеке <b>libc</b>. Вот к примеру строки из файла <b>crypt-entry.c</b>:
+<pre>
+<i>/* Define our magic string to mark salt for MD5 encryption
+replacement.  This is meant to be the same as for other MD5 based
+encryption implementations.  */</i>
+
+static const char md5_salt_prefix[] = "$1$";
+
+.......
+  
+<i>/* Try to find out whether we have to use MD5 encryption replacement.*/</i>
+if (strncmp (md5_salt_prefix, salt, sizeof (md5_salt_prefix) - 1) == 0)
+	return __md5_crypt_r (key, salt, (char *) data, sizeof (struct crypt_data));
+</pre>
+<p>Помоему классно :) Именно "магическая строчка" <b>$1$</b> и является тем методом переключения между различными алгоритмами. Тут еще интересен вопрос о том, какой длины должен быть этот <b>salt</b>, изучая исходниках дальше Вы сможете найти в файле <b>md5-crypt.c</b> строчки:
+<pre>
+<i>/* Find beginning of salt string.  The prefix should normally always
+be present.  Just in case it is not.  */</i>
+if (strncmp (md5_salt_prefix, salt, sizeof (md5_salt_prefix) - 1) == 0)
+<i>	/* Skip salt prefix.  */</i>
+	salt += sizeof (md5_salt_prefix) - 1;
+
+salt_len = MIN (strcspn (salt, "$"), 8);
+key_len = strlen (key);
+</pre>
+<p>Тут не вооруженным глазом видно, что после <b>$1$</b> ищется второй символ <b>$</b> и берется длина строки ограниченная этими признаками. Далее выбирается минимум между длиной строки и 8, т.е. получается что <b>salt</b> в алгоритме <b>MD5</b> может быть любой длины не больше 8-ми. Это и требовалось доказать, теперь давайте попробуем :)
+<pre>
+#include &lt;stdlib.h&gt;
+#include &lt;crypt.h&gt;
+
+int main(){
+    printf("crypt(\"12345678\",\"$1$abasdlkasl123$\") = \"%s\"\n",
+    	crypt("password","$1$abasdlkasl123$"));
+    printf("crypt(\"12345678\",\"$1$dfg$\") = \"%s\"\n",
+    	crypt("password","$1$dfg$"));
+    return 0;
+};
+</pre>
+<p>Снова компилируем, и не забываем про библиотеку <b>crypt</b>:
+<pre>
+dron~#  gcc crypt1.c -o crypt1 -lcrypt
+dron~# ./crypt1
+crypt("12345678","$1$abasdlkasl123$") = "$1$abasdlka$z9aVWR2l14E3WngLCABSt1"
+crypt("12345678","$1$dfg$") = "$1$dfg$fF0Vo9cC5CyBY827ltEdn0"
+</pre>
+<p>Все получилось :) А Вы как думали ?! И обратите внимание на то, что длинный <b>salt</b> в первом случае обрезался до 8-ми символов. Кстати, помоему длина 8 символов куда лучше, чем два. Это еще раз говорит о том, что метод <b>MD5</b> лучше <b>DES</b>. И раз вообще заговорили про размер, то сравните длину получающихся хешей от работы этих алгоритмов.
+<p>Теперь, собственно говоря, сам процесс проверки пароля. Как Вы уже наверно поняли он сводится к простому сравнению, смотрим код:
+<pre>
+#include &lt;stdlib.h&gt;
+#include &lt;unistd.h&gt;
+#include &lt;sys/types.h&gt;
+#include &lt;pwd.h&gt;
+#include &lt;shadow.h&gt;
+
+int main(int argc,int *argv){
+	struct passwd *userinfo;
+	struct spwd *passw;
+	uid_t userid;
+
+	if (argc&lt;2) {
+		printf("Try to use: %s uin password\n",argv[0]);
+		return 1;
+	};
+
+	userid = (uid_t)atoi(argv[1]);
+	userinfo = getpwuid(userid);
+
+	if (userinfo != NULL){
+		passw = getspnam(userinfo->pw_name);
+		if (passw != NULL){
+			printf("Try to test password for \"%s\": ",userinfo->pw_name);
+			if (strcmp(passw->sp_pwdp,crypt(argv[2],passw->sp_pwdp))==0)
+				printf ("Ok...\n");
+			else
+				printf ("Failed...\n");
+		} else
+			printf("Can't find password for user with UIN = %s\n",argv[1]);
+	} else
+		printf("Can't find user with UIN = %s\n",argv[1]);
+
+	return 0;
+};
+</pre>
+<p>Теперь компилируем и запускаем:
+<pre>
+dron~# ./testpasswd
+Try to use: ./testpasswd uin password
+
+dron~# ./testpasswd 1000 12345678
+Try to test password for "dron": Ok...
+
+dron~# ./testpasswd 1000 1234
+Try to test password for "dron": Failed...
+</pre>
+<p>Помоему мы научились проверять правильность паролей для пользователей :) Только не забывайте про то, что пароли из <b>/etc/shadow</b> доступны только из под <b>root</b>, но об этом мы не однократно говорили раньше.
+<p>И еще я все время пытаюсь Вам привить то, что исходники не только для того, чтобы их компилировать. Они нужны для того, чтобы изучать программирование и мы будем продолжать их просматривать :) Мало ли может глюки найдем %)</div><center><hr><a href="r.php-14.htm" tppabs="http://www.firststeps.ru/linux/r.php?14">Предыдущий Шаг</a> | <a href="r.php-16.htm" tppabs="http://www.firststeps.ru/linux/r.php?16">Следующий Шаг</a> | <a href="general1.html" tppabs="http://www.firststeps.ru/linux/general1.html">Оглавление</a><br>Автор <a href="mailto:kuzinandrey@yandex.ru?SUBJECT=From_part_general#15'_on_[www.firststeps.ru]">Кузин Андрей</a>.<hr><iframe src="javascript:if(confirm('http://ad.adriver.ru/cgi-bin/erle.cgi?sid=9595&target=blank&bt=1&pz=0&rnd=18841  \n\nThis file was not retrieved by Teleport Pro, because it did not meet the project\'s file type specifications.  \n\nDo you want to open it from the server?'))window.location='http://ad.adriver.ru/cgi-bin/erle.cgi?sid=9595&target=blank&bt=1&pz=0&rnd=18841'" tppabs="http://ad.adriver.ru/cgi-bin/erle.cgi?sid=9595&target=blank&bt=1&pz=0&rnd=18841" frameborder=0 vspace=0 hspace=0 width=468 height=60 marginwidth=0 marginheight=0 scrolling=no><a href="javascript:if(confirm('http://ad.adriver.ru/cgi-bin/click.cgi?sid=9595&bt=1&pz=0&rnd=18841  \n\nThis file was not retrieved by Teleport Pro, because it is addressed on a domain or path outside the boundaries set for its Starting Address.  \n\nDo you want to open it from the server?'))window.location='http://ad.adriver.ru/cgi-bin/click.cgi?sid=9595&bt=1&pz=0&rnd=18841'" tppabs="http://ad.adriver.ru/cgi-bin/click.cgi?sid=9595&bt=1&pz=0&rnd=18841" target=_blank><img src="rle.cgi-sid=9595&bt=1&pz=0&rnd=18841" tppabs="http://ad.adriver.ru/cgi-bin/rle.cgi?sid=9595&bt=1&pz=0&rnd=18841" alt="-AdRiver-" border=0 width=468 height=60></a></iframe></center><br><br>

@@ -1,0 +1,8 @@
+until false
+    do
+    smbmount //server/base mnt/ -o ro,username=pasha,password=paradox
+    cat mnt/POWER.TXT
+    echo " "
+    smbumount mnt/
+    sleep 10	
+    done

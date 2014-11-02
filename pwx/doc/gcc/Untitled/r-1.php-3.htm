@@ -1,0 +1,104 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1251"><title>www.ПЕРВЫЕ ШАГИ.ru :: Шаг 3 - Разбиение жесткого диска</title></head><link rel=stylesheet type=text/css href="2.css" tppabs="http://www.firststeps.ru/2.css"><body text=black bgcolor=white link=blue vlink=blue alink=red><h2>Шаг 3 - Разбиение жесткого диска</h2><div style="margin:10px;"><p>Для того, чтобы продолжить установку нам надо иметь разделы под <b>Linux</b>. Для разбиения диска можно запустить программы <b>fdisk</b> или <b>cfdisk</b>. Программа <b>cfdisk</b> с более дружелюбным пользовательским интерфейсом, поэтому при желании можете запустить ее. Я же запущу <b>fdisk</b>:
+<pre>
+# fdisk
+</pre>
+<p>Для того, чтобы вызвать помощь нужно набрать букву <b>m</b> и нажать <b>Enter</b>:
+<pre>
+Command (m for help): m
+Command action
+    a  toggle a bootable flag
+    d  edit bsd disklabel
+    c  toggle the dos compatibility flag
+    d  delete a partition
+    l  list known partition types
+    m  print this menu
+    n  add a new partition
+    o  create a new empty DOS partition
+    p  printf the partition table
+    q  quit without saving changes
+    s  create a new empty Sun disklabel
+    t  change a partition's system id
+    u  change display/entry units
+    v  vetify the partition table
+    w  write table to disk and exit
+    x  extra functionality (experts only)
+</pre>
+<p>Нам надо создать как минимум два новых раздела на диске. Первый раздел типа <b>swap</b>, который является неким подобием памяти на диске. Этот раздел используется системой, когда не хватает основной памяти. Давайте его создадим, нажмем "<b>n</b>" - создать новый раздел. Программа предложит выбрать тип раздела:
+<pre>
+Command action
+   e   extended
+   p   primary partition (1-4)
+</pre>
+<p>Для своп-раздела лучше выбрать тип <b>primary</b>. Нажимаем <b>p</b>. Далее вводим номер раздела, у нас он самый первый, поэтому:
+<pre>
+Partition number (1-4): 1
+</pre>
+<p>Далее требуется ввести начальный цилиндр для этого раздела, не будем особо демать над этим, у нас это самый первый раздел значит введем 1 или просто нажмем <b>Enter</b>.
+<pre>
+First cylinder (1-522, default 1): 1
+</pre>
+<p>Теперь требуется ввести размер раздела. Про размер своп-раздела можно говорить долго. Если у Вас памяти много, то размер этого раздела может быть не большим, но с другой стороны <b>Linux</b> это не <b>Windows</b>, он не может динамически менять размер "файла подкачки", поэтому если ему не будет хватать основной памяти, то лучше сделать этот раздел побольше. В конце концов лучше посмотреть на размер жесткого диска, и если он больше нескольких гигабайт, то зачем экономить на мегабайтах ? Лучше сделать этот раздел больше 64 Мб, например, 256 или 300. Сейчас я устанавливаю систему на небольшой винчестер, поэтому место на нем лучше чуток экономить, поэтому сделаю раздел в 64 Мб.
+<pre>
+Last cylinder or +size or +sizeM or +sizeK (1-522, default 522): +64M
+</pre>
+<p>Теперь если вывести список разделов командой <b>p</b>, то получим следующую картинку:
+<pre>
+Command (m for help): p
+
+Disk /dev/hda: 255 heads, 63 sectors, 522 cylinders
+Units = cylinders of 16065 * 512 bytes
+
+   Device Boot    Start       End    Blocks   Id  System
+/dev/hda1             1         9     72261   83  Linux native
+
+</pre>
+<p>Видим что появился раздел, но не чуть не того типа. Тип <b>Linux native</b> будет нужен для других разделов, а для своп-раздела надо поменять <b>Id</b>. Выбираем команду смены типа <b>t</b>:
+<pre>
+Command (m for help): t
+Partition number (1-4): 1
+Hex code (type L to list codes):
+</pre>
+<p>Чтобы узнать нужный нам код <b>ID</b> введем <b>L</b> для просмотра листинга. Приводить весь листинг из более чем 40 кодов не буду, посмотрите сами, а я Вам просто скажу, что нужен тип <b>82 - Linux swap</b>.
+<pre>
+Hex code (type L to list codes): 82
+Changed system type of partition 1 to 82 (Linux swap)
+</pre>
+<p>Теперь создадим второй раздел, для корневого каталога. В данный раздел будет производиться установка нашей системы.
+<pre>
+Command (m for help): n
+Command action
+   e   extended
+   p   primary partition (1-4)
+p
+Partition number (1-4): 2
+First cylinder (10-522, default 10):
+Using default value 10
+Last cylinder of +size of +sizeM or +sizeK (10-522, default 522): 522
+</pre>
+<p>Теперь количество разделов увеличилось:
+<pre>
+Command (m for help): p
+
+Disk /dev/hda: 255 heads, 63 sectors, 522 cylinders
+Units = cylinders of 16065 * 512 bytes
+
+   Device Boot    Start       End    Blocks   Id  System
+/dev/hda1             1         9     72261   82  Linux swap
+/dev/hda2            10       522   4120672+  83  Linux native
+</pre>
+<p>По идее можно было бы создать еще несколько разделов, для разных нужд, но для обучения хватит и этих. Однако помните что если вы потеряете по какой-то причине один раздел, то возможно другие останутся целыми. Поэтому я не рекомендую создавать разделы по 20 Гб. У меня уже было два раза, когда такие разделы "залечивались" какими-нибудь <b>Norton DiskDoctor</b>, поверьте ощущения от потери 20 Гб информации рамые мерзопакостные. А еще лучше, если у Вас будет несколько отдельных винчестеров %)
+<p>Думаю остался один штрих, но незнаю нужен ли он. По идее бы надо установить признак <b>Boot</b> на раздел <b>/dev/hda2</b>, но возможно и не обязательно. Ладно, не буду ставить, а там посмотрим :)
+<p>Для выхода нам надо записать таблицу разбиения на диск командой <b>w</b>.
+<pre>
+Command (m for help): w
+The partition table has been altered!
+
+Calling ioctl() to re-read partition table.
+Syncing disks.
+
+WARNING: If you have created of modified any DOS 6.x
+partitions, please see the fdisk manual page for additional
+information.
+# _
+</pre>
+<p>Все, теперь можно продолжать установку.</div><center><hr><a href="r-1.php-2.htm" tppabs="http://www.firststeps.ru/linux/admin/r.php?2">Предыдущий Шаг</a> | <a href="r-1.php-4.htm" tppabs="http://www.firststeps.ru/linux/admin/r.php?4">Следующий Шаг</a> | <a href="admin1.html" tppabs="http://www.firststeps.ru/linux/admin/admin1.html">Оглавление</a><br>Автор <a href="mailto:kuzinandrey@yandex.ru?SUBJECT=From_part_admin#3'_on_[www.firststeps.ru]">Кузин Андрей</a>.<hr><iframe src="javascript:if(confirm('http://ad.adriver.ru/cgi-bin/erle.cgi?sid=9595&target=blank&bt=1&pz=0&rnd=17373  \n\nThis file was not retrieved by Teleport Pro, because it did not meet the project\'s file type specifications.  \n\nDo you want to open it from the server?'))window.location='http://ad.adriver.ru/cgi-bin/erle.cgi?sid=9595&target=blank&bt=1&pz=0&rnd=17373'" tppabs="http://ad.adriver.ru/cgi-bin/erle.cgi?sid=9595&target=blank&bt=1&pz=0&rnd=17373" frameborder=0 vspace=0 hspace=0 width=468 height=60 marginwidth=0 marginheight=0 scrolling=no><a href="javascript:if(confirm('http://ad.adriver.ru/cgi-bin/click.cgi?sid=9595&bt=1&pz=0&rnd=17373  \n\nThis file was not retrieved by Teleport Pro, because it is addressed on a domain or path outside the boundaries set for its Starting Address.  \n\nDo you want to open it from the server?'))window.location='http://ad.adriver.ru/cgi-bin/click.cgi?sid=9595&bt=1&pz=0&rnd=17373'" tppabs="http://ad.adriver.ru/cgi-bin/click.cgi?sid=9595&bt=1&pz=0&rnd=17373" target=_blank><img src="rle.cgi-sid=9595&bt=1&pz=0&rnd=17373" tppabs="http://ad.adriver.ru/cgi-bin/rle.cgi?sid=9595&bt=1&pz=0&rnd=17373" alt="-AdRiver-" border=0 width=468 height=60></a></iframe></center><br><br>

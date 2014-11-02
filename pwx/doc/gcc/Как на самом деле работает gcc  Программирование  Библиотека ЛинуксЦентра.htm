@@ -1,0 +1,375 @@
+<html><head><title>Как на самом деле работает gcc || Программирование || Библиотека ЛинуксЦентра</title>
+<meta name="keywords" content="LinuxCenter, Unix, Linux, RedHat, Mandrake,  SlackWare, Debian, SuSE, Corel, FreeBSD, StarOffice, Caldera, software, линукс, юникс, операционная система, русский, книги, литература, программа, продажа, магазин, купить">
+<meta name="description" content="ЛинуксЦентр - это портал, посвященный ОС Linux и другим Unix-системам: новостная лента, Виртуальная Энциклопедия Linux, подборка статей, а также он-лайн магазин, где можно купить CD-ROM с дистрибутивами RedHat, Mandrake, SlackWare, Debian, SuSE, Corel, FreeBSD, StarOffice, книги и журналы о Linux.">
+<meta name="revisit-after" content="1 day">
+<meta name="ROBOTS" content="INDEX,FOLLOW">
+<link rel="alternate" type="application/rss+xml" title="RSS" href="http://www.linuxcenter.ru/trans/news.rss">
+<style type="text/css"><!--td {font-family: sans-serif}
+h1 {font-family: sans-serif; font-size: 1.5em;}
+h2 {font-family: sans-serif; font-size: 1em;}
+h3 {font-family: sans-serif; font-size: 1em;}
+tt {font-size: 1em;}
+.menulink {font-family: sans-serif; font-size: 12px; text-decoration: none; font-weight: bold}
+.form {font-family: sans-serif; font-size: 10px}
+a:hover {color: #000000}--></style></head>
+<body bgcolor=#FFFFFF leftmargin=10 topmargin=0 marginwidth=10 marginheight=0 background=/images/bg.gif text=#000000 link=#5B1900 vlink=#5B1900 alink=#5B1900>
+<table width=100% border=0 cellspacing=0 cellpadding=0><tr><td valign=bottom width=95%><table width=100% border=0 cellspacing=0 cellpadding=0><tr><td rowspan=2><a href=/><img src=/images/logo.gif width=258 height=119 alt="LINUXCENTER ON-LINE SHOP" border=0></a></td><td width=80% align=right valign=bottom nowrap><nobr><img src=/0.gif width=2 height=1><iframe src="http://ad.adriver.ru/cgi-bin/erle.cgi?sid=269?bn=1?bt=9?pz=1?rnd=1174810506" frameborder=0 vspace=0 hspace=0 width=150 height=60 marginwidth=0 marginheight=0 scrolling=no><a href="http://ad.adriver.ru/cgi-bin/click.cgi?sid=269?bn=1?bt=9?pz=1?rnd=1174810506"><img src="http://ad.adriver.ru/cgi-bin/rle.cgi?sid=269?bn=1?bt=9?pz=1?rnd=1174810506"  border=0 width=150 height=60></a></iframe><img src=/0.gif width=1 height=1><iframe src="http://ad.adriver.ru/cgi-bin/erle.cgi?sid=269?bn=2?bt=9?pz=1?rnd=1104952791" frameborder=0 vspace=0 hspace=0 width=150 height=60 marginwidth=0 marginheight=0 scrolling=no><a href="http://ad.adriver.ru/cgi-bin/click.cgi?sid=269?bn=2?bt=9?pz=1?rnd=1104952791"><img src="http://ad.adriver.ru/cgi-bin/rle.cgi?sid=269?bn=2?bt=9?pz=1?rnd=1104952791"  border=0 width=150 height=60></a></iframe><img src=/0.gif width=1 height=1><iframe src="http://ad.adriver.ru/cgi-bin/erle.cgi?sid=269?bn=3?bt=9?pz=1?rnd=1158632614" frameborder=0 vspace=0 hspace=0 width=150 height=60 marginwidth=0 marginheight=0 scrolling=no><a href="http://ad.adriver.ru/cgi-bin/click.cgi?sid=269?bn=3?bt=9?pz=1?rnd=1158632614"><img src="http://ad.adriver.ru/cgi-bin/rle.cgi?sid=269?bn=3?bt=9?pz=1?rnd=1158632614"  border=0 width=150 height=60></a></iframe><img src=/0.gif width=1 height=1><nobr></td></tr><tr><td width=80% valign=top><table width=100% border=0 cellspacing=0 cellpadding=0><tr><td bgcolor=#F8BA07 width=10%><img src=/0.gif width=1 height=1></td><td bgcolor=#F8BA07 width=45%><img src=/0.gif width=1 height=1></td><td bgcolor=#F8BA07 width=45%><img src=/0.gif width=1 height=1></td></tr><tr><td bgcolor=#FFF8E8 width=10% valign=top><img src=/0.gif width=1 height=53></td><td bgcolor=#FFF8E8 width=45% align=right valign=bottom><form action=/ method=get class=form><table border=0 cellspacing=0 cellpadding=0><tr><td class=form><b><font face=sans-serif size=2 color=#5B1900 class=menulink>Поиск&nbsp;&nbsp;</font></b></td><td class=form><input type=text name=query value="" size=14 maxlength=60 class=form></td><td><input type=image value=Искать src=/images/arrow2.gif alt=Искать width=31 height=27 name=Искать border=0></td></tr></table></form></td><td bgcolor=#FFF8E8 width=45% align=right valign=bottom><form name=subscribe method=post action=http://subscribe.ru/member/quick class=form><INPUT TYPE=hidden NAME=action VALUE=quick><INPUT TYPE=hidden NAME=grp VALUE=comp.soft.linux.lcnews>
+<table border=0 cellspacing=0 cellpadding=0><tr><td class=form><b><font face=sans-serif size=2 color=#5B1900 class=menulink>&nbsp;&nbsp;Рассылка&nbsp;&nbsp;</font></b></td><td class=form><input type=text name=email value="ваш@e-mail" size=14  maxlength=60 class=form></td>	<td><input type=image value=Подписаться src=/images/arrow2.gif alt='Подписаться на Subscribe.Ru' width=31 height=27 name=image2 border=0></td></tr></table></form></td></tr><tr><td bgcolor=#F8BA07 width=10%><img src=/0.gif width=1 height=4></td><td bgcolor=#F8BA07 width=45%><img src=/0.gif width=1 height=4></td><td bgcolor=#F8BA07 width=45%><img src=/0.gif width=1 height=4></td></tr></table>
+</td></tr></table></td><td background=/images/rightbg.gif valign=bottom width=5%><img src=/images/left1.gif width=44 height=58></td></tr><tr><td width=95% valign=top bgcolor=#FFF8E8>
+<table width=100% border=0 cellspacing=0 cellpadding=0><tr><td><img src=/0.gif width=169 height=1></td><td align=right><b><font face=sans-serif size=2 color=#5B1900><a href=/news/ class=menulink> &nbsp;Новости <img src=/images/arrow2.gif width=31 height=27 border=0 align=absmiddle></a><a href=/?wellcome=1 class=menulink> &nbsp;Магазин <img src=/images/arrow2.gif width=31 height=27 border=0 align=absmiddle></a><a href=/lib/ class=menulink> &nbsp;Библиотека <img src=/images/arrow2.gif width=31 height=27 border=0 align=absmiddle></a><a href=/?action=seller_warn class=menulink> &nbsp;Партнерам <img src=/images/arrow2.gif width=31 height=27 border=0 align=absmiddle></a><a href=/about.phtml class=menulink> &nbsp;О проекте <img src=/images/arrow2.gif width=31 height=27 border=0 align=absmiddle></a><a href=mailto:info@linuxcenter.ru class=menulink> &nbsp;Связь <img src=/images/arrow2.gif width=31 height=27 border=0 align=absmiddle></a></b></font></td></tr></table></td><td width=5% background=/images/rightbg.gif bgcolor=#FFF8E8 valign=top><img src=/images/left2.gif width=44 height=9></td></tr><tr><td width=95% valign=top bgcolor=#F8BA07><img src=/images/smline.gif width=197 height=2></td><td width=5% background=/images/rightbg.gif bgcolor=#F8BA07 valign=top><img src=/0.gif width=1 height=2></td></tr></table>
+<table width=100% border=0 cellspacing=0 cellpadding=0><tr><td width=95% valign=top><img src=/0.gif width=712 height=1><br><table width=100% border=0 cellspacing=0 cellpadding=0><tr><td width=19% valign=top><img src=/0.gif width=168 height=1><br><table width=168 border=0 cellspacing=0 cellpadding=0><tr bgcolor=#5B1900 align=center><td colspan=3>
+<table width=100% border=1 cellspacing=0 cellpadding=2 bordercolor=#5B1900 bordercolordark=#F8BB0B bordercolorlight=#5B1900><tr bgcolor=#F8BB0B align=center><td><a href=><font size=2 face=sans-serif color=#5B1900><b>Ваша корзина:</b></font></a></td></tr></table>
+</td></tr><tr><td valign=top width=1 bgcolor=#5B1900><img src=/0.gif width=1 height=8></td><td valign=top width=15 align=right></td><td width=152></td></tr><tr><td valign=top width=1 bgcolor=#5B1900><img src=/0.gif width=1 height=1></td><td valign=top width=15 align=right><img src=/0.gif width=1 height=1></td><td width=152 align=center><font color=#5B1900 size=2 face=sans-serif><table width=100% border=0 cellspacing=2 cellpadding=0><tr><td align=right><form action=/ method=post><font size=2 face=sans-serif color=#5B1900>Логин:</font></td><td align=left><input type=text name=login size=9 maxlength=200></td></tr><tr><td align=right><font size=2 face=sans-serif color=#5B1900>Пароль:</font></td><td align=left><input type=password name=pass size=9 maxlength=200></td></tr><tr><td align=right>&nbsp;</td><td><input type=submit value=login><input type=hidden name=action value=logon></td></tr><tr><td align=right></form>&nbsp;</td><td><a href=/?action=register><font size=2 face=sans-serif color=#5B1900>Регистрация</font></a><br>
+<a href=/?action=pass_send><font size=2 face=sans-serif color=#5B1900>Забыли&nbsp;пароль?</font></a>
+</td></tr></table><tr><td valign=top width=1 bgcolor=#5B1900><img src=/0.gif width=1 height=8></td><td valign=top width=15 align=right></td><td width=152></td></tr><tr><td valign=top height=1 bgcolor=#5B1900><img src=/0.gif width=1 height=1></td><td valign=top height=1 bgcolor=#5B1900><img src=/0.gif width=1 height=1></td><td height=1 bgcolor=#5B1900><img src=/0.gif width=1 height=1></td></tr></table></form><br><table width=168 border=0 cellspacing=0 cellpadding=0><tr align=center bgcolor=#5B1900><td colspan=2><a href=/lib/><font size=2 face=sans-serif color=#FFFFEE><b>Библиотека</b></font></a></td></tr>
+<tr><td valign=top width=1 bgcolor=#5B1900><img src=/0.gif width=1 height=1></td><td valign=top width=167><font size=2 face=sans-serif color=#5B1900><img src=/images/arrow.gif width=8 height=10 align=absmiddle vspace=6> <a href=/lib/books/><b>Книги и руководства</b></a><br>
+<img src=/images/arrow.gif width=8 height=10 align=absmiddle vspace=6> <a href=/lib/articles/><b>Статьи</b></a><br>
+<img src=/images/arrow.gif width=8 height=10 align=absmiddle vspace=6> <a href=/lib/press/><b>Пресс-релизы</b></a><br>
+<img src=/images/arrow.gif width=8 height=10 align=absmiddle vspace=6> <a href=/lib/history/><b>История Linux</b></a><br>
+<img src=/images/arrow.gif width=8 height=10 align=absmiddle vspace=6> <a href=/lib/humor/><b>Linux'оиды шутят</b></a><br>
+<img src=/images/arrow.gif width=8 height=10 align=absmiddle vspace=6> <a href=/enc/><b>Энциклопедия Linux</b></a><br>
+
+</font></td></tr>
+<tr bgcolor=#5B1900><td colspan=2 height=1><img src=/0.gif width=1 height=1></td></tr></table><br>
+
+<table width=168 border=0 cellspacing=0 cellpadding=0><tr bgcolor=#5B1900 align=center><td colspan=3><a href=/news/><font size=2 face=sans-serif color=#FFFFEE><b>Новостной канал</b></font></a></td></tr>
+<tr><td valign=top width=1 bgcolor=#5B1900><img src=/0.gif width=1 height=1></td><td valign=top width=167><font size=2 face=sans-serif color=#5B1900>
+ <img src=/0.gif width=1 height=6><br><img src=/images/arrow.gif width=8 height=10 align=absmiddle> <a href="/news/#5155">Knoppix 3.8 CeBIT Edition</a><br> <img src=/0.gif width=1 height=6><br><img src=/images/arrow.gif width=8 height=10 align=absmiddle> <a href="/news/#5154">Mandrakelinux 10.2 RC1</a><br> <img src=/0.gif width=1 height=6><br><img src=/images/arrow.gif width=8 height=10 align=absmiddle> <a href="/news/#5153">Lormalinux Web/MySQL Server Beta 1</a><br> <img src=/0.gif width=1 height=6><br><img src=/images/arrow.gif width=8 height=10 align=absmiddle> <a href="/news/#5152">Linux бьется за место на десктопе</a><br> <img src=/0.gif width=1 height=6><br><img src=/images/arrow.gif width=8 height=10 align=absmiddle> <a href="/news/#5150">События минувшей недели</a><br> <img src=/0.gif width=1 height=6><br><img src=/images/arrow.gif width=8 height=10 align=absmiddle> <a href=/news/><font size=2 face=sans-serif color=#5B1900><b>Все новости &gt;&gt;&gt;</b></a><br><img src=/images/arrow.gif width=8 height=10 align=absmiddle vspace=8> <a href=/publicnews.phtml><font size=2 face=sans-serif color=#5B1900><b>Прислать новость &gt;&gt;&gt;</b></a><br></font><div align=right><a href=http://www.linuxcenter.ru/trans/news.rss><img src=/images/xml.gif border=0 width=100 height=14></a></div>
+</td></tr><tr bgcolor=#5B1900><td colspan=2 height=1><img src=/0.gif width=1 height=1></td></tr></table><br>
+
+<table width=168 border=0 cellspacing=0 cellpadding=0><tr bgcolor=#5B1900 align=center><td colspan=3><a href="/goods/"><font size=2 face=sans-serif color=#FFFFEE><b>Интернет магазин</b></font></a></td></tr>
+<tr><td valign=top width=1 bgcolor=#5B1900><img src=/0.gif width=1 height=1></td><td valign=top width=167><font size=2 face=sans-serif color=#5B1900><img src=/images/arrow.gif width=8 height=10 align=absmiddle vspace=6> <a href=/?group=11>Книги</a><br>
+<img src=/images/arrow.gif width=8 height=10 align=absmiddle vspace=6> <a href=/?group=1><b>Дистрибутивы</b></a><br>
+<img src=/images/arrow.gif width=8 height=10 align=absmiddle vspace=6> <a href=/?type=46>Игры для Linux</a><br>
+<img src=/images/arrow.gif width=8 height=10 align=absmiddle vspace=6> <a href=/?group=6>Soft для Linux</a><br>
+<img src=/images/arrow.gif width=8 height=10 align=absmiddle vspace=6> <a href=/?group=14>Digital Security</a><br>
+<img src=/images/arrow.gif width=8 height=10 align=absmiddle vspace=6> <a href=/?type=42><b>Распродажа</b></a><br>
+<img src=/images/arrow.gif width=8 height=10 align=absmiddle vspace=6> <a href=/?group=13>Атрибутика</a><br>
+<img src=/images/arrow.gif width=8 height=10 align=absmiddle vspace=6> <a href=/mag.phtml><b>Магазины : оффлайн</b></a></font></td></tr>
+<tr bgcolor=#5B1900><td colspan=2 height=1><img src=/0.gif width=1 height=1></td></tr></table><br>
+
+<table width=168 border=0 cellspacing=0 cellpadding=0><tr align=center bgcolor=#5B1900><td colspan=3><a href=/help.phtml><font size=2 face=sans-serif color=#FFFFEE><b>Help</b></font></a></td></tr>
+<tr><td valign=top width=1 bgcolor=#5B1900><img src=/0.gif width=1 height=1></td><td valign=top width=167><font size=2 face=sans-serif color=#5B1900><img src=/images/arrow.gif width=8 height=10 align=absmiddle vspace=6>
+<a href=/help.phtml#5>Как заказать товар</a><br>
+<img src=/images/arrow.gif width=8 height=10 align=absmiddle vspace=6> <a href=/help.phtml#7>Как оформить заказ</a><br>
+<img src=/images/arrow.gif width=8 height=10 align=absmiddle vspace=6> <a href=/help.phtml#10>Как оплатить заказ</a></font></td></tr>
+<tr bgcolor=#5B1900><td colspan=2 height=1><img src=/0.gif width=1 height=1></td></tr></table><br>
+
+<table width=168 border=0 cellspacing=0 cellpadding=0><tr bgcolor=#5B1900 align=center><td colspan=3><font size=2 face=sans-serif color=#FFFFEE><b>Топ-10 популярных продуктов Linux Center</b></font></td></tr><tr><td valign=top width=1 bgcolor=#5B1900><img src=/0.gif width=1 height=1></td><td valign=top width=167><font size=2 face=sans-serif color=#5B1900><img src=/0.gif width=1 height=6><br><img src=/images/arrow.gif width=8 height=10 align=absmiddle> <a href="/index.phtml?good=1071">Knoppix 3.7 Russian Edition (1CD)</a><br><img src=/0.gif width=1 height=6><br><img src=/images/arrow.gif width=8 height=10 align=absmiddle> <a href="/index.phtml?good=1108">Книга Mandrakelinux. Полное руководство пользователя (+ DVD-ROM)</a><br><img src=/0.gif width=1 height=6><br><img src=/images/arrow.gif width=8 height=10 align=absmiddle> <a href="/index.phtml?good=1097">SUSE Linux 9.2 Download Version (1DVD)</a><br><img src=/0.gif width=1 height=6><br><img src=/images/arrow.gif width=8 height=10 align=absmiddle> <a href="/index.phtml?good=714">Кружка root (черная)</a><br><img src=/0.gif width=1 height=6><br><img src=/images/arrow.gif width=8 height=10 align=absmiddle> <a href="/index.phtml?good=1104">Slackware Linux 10.1 (1DVD)</a><br><img src=/0.gif width=1 height=6><br><img src=/images/arrow.gif width=8 height=10 align=absmiddle> <a href="/index.phtml?good=1115">Журнал "Системный администратор", 2005 год, февраль.</a><br><img src=/0.gif width=1 height=6><br><img src=/images/arrow.gif width=8 height=10 align=absmiddle> <a href="/index.phtml?good=1053">Mandrakelinux 10.1 Official LC Edition  - download version (1DVD)</a><br><img src=/0.gif width=1 height=6><br><img src=/images/arrow.gif width=8 height=10 align=absmiddle> <a href="/index.phtml?good=1079">LinuxCenter Games Collection vol.2 (1DVD)</a><br><img src=/0.gif width=1 height=6><br><img src=/images/arrow.gif width=8 height=10 align=absmiddle> <a href="/index.phtml?good=1106">Журнал "Системный администратор", 2005 год, январь.</a><br><img src=/0.gif width=1 height=6><br><img src=/images/arrow.gif width=8 height=10 align=absmiddle> <a href="/index.phtml?good=1067">FreeBSD 5.3 LinuxCenter Edition (4CD)</a><br><img src=/0.gif width=1 height=6><br></font></td></tr><tr bgcolor=#5B1900><td colspan=2 height=1><img src=/0.gif width=1 height=1></td></tr></table><br>
+<table width=168 border=0 cellspacing=0 cellpadding=0><tr bgcolor=#5B1900 align=center><td colspan=3><a href=/goods/><font size=2 face=sans-serif color=#FFFFEE><b>Новинки</b></font></a></td></tr>
+<tr><td valign=top width=1 bgcolor=#5B1900><img src=/0.gif width=1 height=1></td><td valign=top width=167><font size=2 face=sans-serif color=#5B1900>
+<img src=/0.gif width=1 height=6><br><img src=/images/arrow.gif width=8 height=10 align=absmiddle> <a href="http://www.linuxcenter.ru/goods/1115.html">Журнал "Системный администратор", февраль.</a><br>
+<img src=/0.gif width=1 height=6><br><img src=/images/arrow.gif width=8 height=10 align=absmiddle> <a href="http://www.linuxcenter.ru/goods/1114.html">ALT Linux Sisyphus Февраль 2005 (3DVD)</a><br>
+<img src=/0.gif width=1 height=6><br><img src=/images/arrow.gif width=8 height=10 align=absmiddle> <a href="http://www.linuxcenter.ru/goods/1113.html">Acronis True Image Server 8.0 для Linux (BOX)</a><br>
+<img src=/0.gif width=1 height=6><br><img src=/images/arrow.gif width=8 height=10 align=absmiddle> <a href="http://www.linuxcenter.ru/goods/1112.html">Xandros Desktop OS 3.0 Open Circulation Edition (1CD)</a><br>
+<img src=/0.gif width=1 height=6><br><img src=/images/arrow.gif width=8 height=10 align=absmiddle> <a href="http://www.linuxcenter.ru/goods/1110.html">Книга SUSE Linux Professional Administration Guide</a><br>
+<img src=/0.gif width=1 height=6><br><img src=/images/arrow.gif width=8 height=10 align=absmiddle> <a href="http://www.linuxcenter.ru/goods/1109.html">Книга SUSE Linux Professional User Guide</a><br>
+<img src=/0.gif width=1 height=6><br><img src=/images/arrow.gif width=8 height=10 align=absmiddle> <a href="http://www.linuxcenter.ru/goods/1108.html">Книга Mandrakelinux. Полное руководство пользователя</a><br>
+<img src=/0.gif width=1 height=6><br><img src=/images/arrow.gif width=8 height=10 align=absmiddle> <a href="http://www.linuxcenter.ru/goods/1104.html">Slackware Linux 10.1 (1DVD)</a><br>
+<img src=/0.gif width=1 height=6><br><img src=/images/arrow.gif width=8 height=10 align=absmiddle> <a href="http://www.linuxcenter.ru/goods/1103.html">FreeBSD 4.11 LinuxCenter Edition (2DVD)</a><br>
+<img src=/0.gif width=1 height=6><br><img src=/images/arrow.gif width=8 height=10 align=absmiddle> <a href="http://www.linuxcenter.ru/goods/1101.html">MandrakeMove 2.0 LinuxCenter Edition (1CD)</a><br>
+<img src=/0.gif width=1 height=6><br><img src=/images/arrow.gif width=8 height=10 align=absmiddle> <a href="http://www.linuxcenter.ru/goods/1100.html">OpenOffice.org - открытый офис для Linux и Windows (+ 1CD)</a><br>
+<img src=/0.gif width=1 height=6><br><img src=/images/arrow.gif width=8 height=10 align=absmiddle> <a href="http://www.linuxcenter.ru/goods/1096.html">Mandrakelinux Corporate Server 3.0 x86 (BOX) - предварительный заказ с 10% скидкой</a><br>
+
+
+
+
+
+<img src=/0.gif width=1 height=6></font></td></tr><tr bgcolor=#5B1900><td colspan=2 height=1><img src=/0.gif width=1 height=1></td></tr></table><br>
+
+<table width=168 border=0 cellspacing=0 cellpadding=0><tr bgcolor=#5B1900 align=center><td colspan=3><a href=http://ftp.linuxcenter.ru/projects/><font size=2 face=sans-serif color=#FFFFEE><b>Наши Проекты</b></font></a></td></tr>
+<tr><td valign=top width=1 bgcolor=#5B1900><img src=/0.gif width=1 height=1></td><td valign=top width=167><font size=2 face=sans-serif color=#5B1900>
+<img src=/0.gif width=1 height=6><br><img src=/images/arrow.gif width=8 height=10 align=absmiddle> <a href="/games/">Игры для Linux</a><br>
+<img src=/0.gif width=1 height=6><br><img src=/images/arrow.gif width=8 height=10 align=absmiddle> <a href="/history/">История Linux</a><br>
+<img src=/0.gif width=1 height=6><br>
+</font></td></tr><tr bgcolor=#5B1900><td colspan=2 height=1><img src=/0.gif width=1 height=1></td></tr></table><br>
+
+<table width=168 border=0 cellspacing=0 cellpadding=0><tr bgcolor=#5B1900 align=center><td colspan=3><a href=/mag.phtml><font size=2 face=sans-serif color=#FFFFEE><b>Наши Партнеры</b></font></a></td></tr>
+<tr><td valign=top width=1 bgcolor=#5B1900><img src=/0.gif width=1 height=1></td><td valign=top width=167><font size=2 face=sans-serif color=#5B1900>
+<img src=/0.gif width=1 height=6><br><img src=/images/arrow.gif width=8 height=10 align=absmiddle> <a href="http://www.linux.ru">Linux.Ru</a><br>
+<img src=/0.gif width=1 height=6><br><img src=/images/arrow.gif width=8 height=10 align=absmiddle> <a href="http://www.lenty.ru">Lenty.Ru</a><br>
+
+<img src=/0.gif width=1 height=6><br>
+</font></td></tr><tr bgcolor=#5B1900><td colspan=2 height=1><img src=/0.gif width=1 height=1></td></tr></table><br>
+
+
+<br><A HREF=http://subscribe.ru/catalog/comp.soft.linux.lcnews><IMG BORDER=0 SRC=http://subscribe.ru/stat/comp.soft.linux.lcnews/count.gif WIDTH=88 HEIGHT=31></A><br><a href=http://topshop.rambler.ru/go.html?ID=2435><img src=http://topshop-counter.rambler.ru/top100.cnt?2435 width=88 height=31 border=0></a><br><a href=http://top100.rambler.ru/top100/><img src=http://images.rambler.ru/top100/w2.gif width=88 height=31 border=0></a><img src=http://counter.rambler.ru/top100.cnt?174022 width=1 height=1><br><!--Rating@Mail.ru COUNTER--><script language="JavaScript"><!--
+d=document;a='';a+=';r='+escape(d.referrer)
+js=10//--></script><script language="JavaScript1.1"><!--
+a+=';j='+navigator.javaEnabled()
+js=11//--></script><script language="JavaScript1.2"><!--
+s=screen;a+=';s='+s.width+'*'+s.height
+a+=';d='+(s.colorDepth?s.colorDepth:s.pixelDepth)
+js=12//--></script><script language="JavaScript1.3"><!--
+js=13//--></script><script language="JavaScript"><!--
+d.write('<a href="http://top.mail.ru/jump?from=145476"'+
+' target=_top><img src="http://top.list.ru/counter'+
+'?id=145476;t=56;js='+js+a+';rand='+Math.random()+
+'" alt="Рейтинг@Mail.ru"'+' border=0 height=31 width=88></a>')
+if(js>11)d.write('<'+'!-- ')//--></script><noscript><a
+target=_top href="http://top.mail.ru/jump?from=145476"><img
+src="http://top.list.ru/counter?js=na;id=145476;t=56"
+border=0 height=31 width=88
+alt="Рейтинг@Mail.ru"></a></noscript><script language="JavaScript"><!--
+if(js>11)d.write('--'+'>')//--></script><!--/COUNTER-->
+<br><a href=http://u501.96.spylog.com/cnt?cid=50196&f=3&p=0><img src=http://u501.96.spylog.com/cnt?cid=50196&p=0 border='0' width=88 height=31></a></td><td width=2% valign=top><img src=/0.gif width=10 height=1></td><td width=79% valign=top><br>
+
+
+
+
+
+
+<table width=100% border=1 cellspacing=0 cellpadding=2 bordercolor=#F8BB0B bordercolordark=#F8BB0B bordercolorlight=#FFFFFF><tr bgcolor=#FFF8E8><td><font face=sans-serif color=#5B1900><b>Как на самом деле работает gcc</b></font></td></tr></table><table width=100% border=0 cellspacing=0 cellpadding=0><tr><td width=20><img src=/images/onepix.gif width=20 height=1></td><td bgcolor=#F8BB0B width=1><img src=/images/onepix.gif width=1 height=1></td><td width=5>&nbsp;</td><td><font size=2><br>
+<font color="#CA7622">
+<i>Автор проследил процесс превращения простой программы на C из исходного кода в исполняемый файл</i><br>
+<p align=right><b>[Mike Gerdts (<a href="mailto:gerdts@cae.wisc.edu">gerdts@cae.wisc.edu</a>). Перевод Sergei Karasiov.]</b></p>
+</font>
+
+
+
+
+
+<h1>Как на самом деле работает gcc</h1>
+<p>
+Оригинал: <a href="http://www.cae.wisc.edu/~gerdts/how_gcc_works.html" target="_new">http://www.cae.wisc.edu/~gerdts/how_gcc_works.html</a>
+<p>
+<h2>Предисловие</h2>
+<p>
+Данный материал не является дословным переводом оригинальной статьи. Дело
+в том, что у переводчика не оказалось под рукой ОС HP-UX для проверки
+утверждений автора исходного материала. Так что для завершения работы
+была использована ОС FreeBSD и весь машинный вывод соответсвует именно ей. 
+Первое лицо было изменено на безликое третье.Текст претерпел.
+В остальном изменений не последовало. 
+<p>
+<h2>Основной текст</h2>
+<p>
+В этом документе будет использована следующая простая программа. Она назывется
+"myprogram.c". Отладочный вывод gcc и других программ бывает довольно длинным.
+Для повышения удобочитаемости были вставлены переводы строк предваренные 
+символом '\'.
+<pre>
+#include &lt;math.h&gt;
+#include &lt;stdio.h&gt;
+
+#define PI   3.1415926543
+
+int main() &#123;
+       printf("sin(pi) = %f\n", sin(PI));
+       printf("sin(pi/2) = %f\n", sin(PI/2));
+       exit(0);
+&#125;
+</pre>
+Для того чтобы скомпилировать программу необходимо слинковать ее с библиотекой 
+математических функций libm. Это делается с помощью флага -l.
+<pre>
+%gcc -o myprogram myprogram.c -lm
+</pre>
+Сам по себе gcc не делает много работы, за исключением вызова различных утилит. Этот
+процесс можно наблюдать если дать gcc ключ -v. 
+<pre>
+%gcc -save-temps -v -o myprogram myprogram.c -lm
+</pre>
+Отладочный вывод можно увидеть ниже. 
+<pre>
+Using builtin specs.
+gcc version 2.95.3 20010315 (release) &#091;FreeBSD&#093;
+</pre>
+Предыдущие две строки не интересуют нас в данный момент.
+<p>
+Первая программа которую вызывает gcc -- это cpp, препроцессор языка С. Он обрабатывает
+строки содержащие #define, #ifdef, #include и тд. и приводит их к необходимому компилятору
+виду.
+<pre>
+ /usr/libexec/cpp0 -lang-c -v -D__GNUC__=2 -D__GNUC_MINOR__=95 -Di386 -D__FreeBSD__=4 \
+   -D__FreeBSD_cc_version=440000 -Dunix -D__i386__ -D__FreeBSD__=4 -D__FreeBSD_cc_version=440000 \
+   -D__unix__ -D__i386 -D__unix -Acpu(i386) -Amachine(i386) -Asystem(unix) -Asystem(FreeBSD) \
+   -Acpu(i386) -Amachine(i386) -Di386 -D__i386 -D__i386__ -D__ELF__ myprogram.c myprogram.i
+</pre>
+Эти строки -- отладочный вывод проепроцессора С, который получил ключ -v, 
+который в свою очередь ранее был передан программе gcc. Первая строка содержащяя
+#include говорит о том, что производится поиск файлов соответсвующих строкам вида
+#include "something.h", такой поиск производится только в текущей директории.
+Строка следующая за ней, говорит что производится поиск файлов соответвующих
+строкам вида #include &lt;something.h&gt;, и производится он в директориях указанных
+ниже.
+<pre>
+GNU CPP version 2.95.3 20010315 (release) &#091;FreeBSD&#093; (i386 FreeBSD/ELF)
+#include "..." search starts here:
+#include &lt;...&gt; search starts here:
+ /usr/include
+ /usr/include
+End of search list.
+The following default directories have been omitted from the search path:
+ /usr/include/g++
+End of omitted list.
+</pre>
+<p>
+<h3>Примечание переводчика</h3>
+<p>
+Три заключительных строки предыдущего фрагмента отсутсвуют в отладочном
+выводе оригинальной статьи. Предполагается различие версий.
+<p>
+На этом месте все строки начинающиеся с #ifdef, #if, #include, #define и тд.
+уходят. Добавляется содержимое всех #include-файлов. Все макросы (#define) расширяются.
+Строки стоящие между директивами #if (или #ifdef, или #ifndef) и #endif (или #else) 
+будут удалены если утверждения в них оказались ложными. Для того чтобы увидеть вывод
+препроцессора просмоьрите файл myprogram.i, который сохранился благодаря 
+ранее переданному ключу -save-temps.
+<p>
+Теперь за дело принимается собственно компилятор, который и превращает 
+препроцессированый код в программу на ассемблере (как видим gcc это оболочка).
+<pre>
+ /usr/libexec/cc1 myprogram.i -quiet -dumpbase myprogram.c -version -o myprogram.s
+GNU C version 2.95.3 20010315 (release) &#091;FreeBSD&#093; (i386-unknown-freebsd) compiled
+ by GNU C version 2.95.3 20010315 (release) &#091;FreeBSD&#093;.
+</pre>
+В данном месте будет создан файл myprogramm.s. Вы можете просмотреть его если любите
+читать ассемблерные листинги.
+<pre>
+ /usr/libexec/elf/as -v -o myprogram.o myprogram.s
+GNU assembler version 2.11.2 20010719 &#091;FreeBSD&#093; (i386-unknown-freebsd4) using 
+ BFD version 2.11.2 20010719 &#091;FreeBSD&#093;
+</pre>
+Далее для создания файла с машинными кодами вызывается ассемблер. Машинный код 
+помещается в обьектный файл (.o).
+<p>
+Теперь все готово к линковке. На этой стадии берутся различные обьектные (.о) и архивные (.а)
+(они так же называются статические библиотеки) файлы, разделяемые библиотеки (.sl или .so, 
+в зависимости от системы) и их содержимое вставляется в исполняемый файл. 
+<pre>
+/usr/libexec/elf/ld -m elf_i386 -dynamic-linker 
+/usr/libexec/ld-elf.so.1 -o myprogram 
+/usr/lib/crt1.o /usr/lib/crti.o /usr/lib/crtbegin.o 
+-L/usr/libexec/elf 
+-L/usr/libexec 
+-L/usr/lib myprogram.o 
+-lm -lgcc -lc -lgcc /usr/lib/crtend.o /usr/lib/crtn.o
+</pre>
+Каждый флаг -L указывает на директорию, в которой следует искать необходимые
+библиотеки. Сами библиотеки указываются с помощью ключа -l. Следует обратить
+внимание что последняя команда содержит в себе ключи "-lm, -lgcc, -lc". Этот
+шаг заверштся успешно только если все символы во всех обьектных (.о) файлах
+будут найдены или в обьектных файлах или в библиотеках libm.a, 
+libgcc.a и libc.a. 
+<p>
+Для того чтобы увидеть какие символы нужны файлу myprogram.o вы можете
+запустить утилиту nm.
+<pre>
+%nm myprogram.o
+
+         U exit
+00000000 t gcc2_compiled.
+00000000 T main
+         U printf
+         U sin
+</pre>
+Символы содержащие перед собой символ 'U' (undef) следует искать в других
+файлах. Если есть неоходимость самостоятельно найти какой либо символ, то
+можно вновь использовать программу nm.
+<p>
+<h3>Послесловие переводчика</h3>
+<p>
+Вывод программы nm на компьютере переводящего не имел ничего общего с тем
+что приведено в статье переводимого.  
+<p>
+Конец
+<p>
+Оригинал статьи можно найти по адресу: <a href="http://www.opennet.ru/base/dev/gcc_work.txt.html">http://www.opennet.ru/base/dev/gcc_work.txt.html</a>.<font color="#CA7622"><p align=right><b>[ опубликовано 28/11/2003 ]</b></p></font>
+<small>Mike Gerdts (<a href="mailto:gerdts@cae.wisc.edu">gerdts@cae.wisc.edu</a>). Перевод Sergei Karasiov., "Как на самом деле работает gcc" |  
+<a href="/lib/articles/programming/gcc_work.phtml?style=print" target="_new">Версия для печати</a></small>
+
+</font></td>
+        </tr>
+        <tr>
+          <td height=1><img src=/images/onepix.gif width=1 height=1></td> 
+          <td colspan=3 height=1 bgcolor=#F8BB0B><img src=/images/onepix.gif width=1 height=1></td>
+        </tr>
+      </table><br><table width=100% border=1 cellspacing=0 cellpadding=2 bordercolor=#F8BB0B bordercolordark=#F8BB0B bordercolorlight=#FFFFFF><tr bgcolor=#FFF8E8><td><font face=sans-serif color=#5B1900><b>Программирование: последние поступления</b></font></td></tr></table><table width=100% border=0 cellspacing=0 cellpadding=0><tr><td width=20><img src=/images/onepix.gif width=20 height=1></td><td bgcolor=#F8BB0B width=1><img src=/images/onepix.gif width=1 height=1></td><td width=5>&nbsp;</td><td><font size=2><br>
+<blockquote>
+
+
+<img src="/images/arrow.gif" width="8" height="10">&nbsp;<a href="/lib/articles/programming/hdd_struct.phtml">Логическая структура жесткого диска</a><br>
+В статье расcматривается логическая структура жесткого диска, соответствующая
+стандарту Microsoft - "основной раздел - расширенный раздел - разделы не-DOS",
+а также разбирается пример программы, осуществляющей чтение таблицы разделов.<br><font size="1" color="#CA7622">[Bob (ubob AT mail.ru) - 31/05/2005]</font><br><br>
+
+
+<img src="/images/arrow.gif" width="8" height="10">&nbsp;<a href="/lib/articles/programming/ruby1.phtml">Быстрый курс Ruby</a><br>
+
+
+<img src="/images/arrow.gif" width="8" height="10">&nbsp;<a href="/lib/articles/programming/ruby2.phtml">Обработка XML+XSL на Ruby</a><br>
+В данном цикле статей изложены основные принципы программирование на Ruby. Ruby ("рубин") - сравнительно молодой интерпретируемый
+язык программирования общего назначения, приобретающий все большую и большую популярность.
+Курс ориентирован на читателей, которые уже знают какой-либо язык программирования и понимают магию, с помощью которой из набора разрозненных операторов получается нечто действительно полезное.<br>
+<font size="1" color="#CA7622">[Александр Неткачев - 30/12/2004]</font><br><br>
+
+
+<img src="/images/arrow.gif" width="8" height="10">&nbsp;<a href="/lib/articles/programming/3tier.phtml">3-tier своими руками</a><br>
+Как-то давным давно случилось страшное. Наша фирма начала расширяться и открыла филиал. В другом городе.
+Проблемы конечно были всегда, но тут они стали быстро переходить в разряд неразрешимых. 
+Как привязать новый офис к информационной структуре фирмы, тем более что руководству хочется видеть что происходит в филиале?
+Вначале подумали создать какое-нибудь WEB приложение и заставить филиал работать с ним через браузер. 
+Но тут выяснилось, что к браузеру придется привязать сканеры, кассы и весы. Как это делать и во что это выльется мы представить себе не могли.
+Немного подумав, решили что если браузер не может работать с переферией, то нужно написать что-то свое.
+В этой статье будут описаны наши первые шаги по созданию распределенной системы на базе Apache, mod_perl и Delphi (клиентская часть).<br><font size="1" color="#CA7622">[Цуканов Андрей - 30/11/2004]</font><br><br>
+
+
+</blockquote>
+
+</font></td>
+        </tr>
+        <tr>
+          <td height=1><img src=/images/onepix.gif width=1 height=1></td> 
+          <td colspan=3 height=1 bgcolor=#F8BB0B><img src=/images/onepix.gif width=1 height=1></td>
+        </tr>
+      </table><br><table width=100% border=1 cellspacing=0 cellpadding=2 bordercolor=#F8BB0B bordercolordark=#F8BB0B bordercolorlight=#FFFFFF><tr bgcolor=#FFF8E8><td><font face=sans-serif color=#5B1900><b><a href="http://www.linuxcenter.ru/lib/">Библиотека ЛинуксЦентра</a>: список разделов</b></font></td></tr></table><table width=100% border=0 cellspacing=0 cellpadding=0><tr><td width=20><img src=/images/onepix.gif width=20 height=1></td><td bgcolor=#F8BB0B width=1><img src=/images/onepix.gif width=1 height=1></td><td width=5>&nbsp;</td><td><font size=2><br><ul style="list-style-image: url('/images/arrow.gif')">
+<li><a href="/lib/books/">Книги и руководства</a></li>
+<li><a href="/lib/articles/">Статьи</a></li>
+<ul style="list-style-image: url('/images/arrow.gif')">
+<li><a href="/lib/articles/distrib/">Дистрибутивы</a></li>
+<li><a href="/lib/articles/success/">Linux наступает!</a></li>
+<li><a href="/lib/articles/security/">Безопасность</a></li>
+<li><a href="/lib/articles/networking/">Сети</a></li>
+<li><a href="/lib/articles/hardware/">Аппаратное обеспечение</a></li>
+<li><a href="/lib/articles/ideology/">Идеологические вопросы</a></li>
+<li><a href="/lib/articles/gohome/">Windows, подвинься!</a></li>
+<li><a href="/lib/articles/programming/"><b>Программирование</b></a></li>
+<ul style="list-style-image: url('/images/arrow.gif')">
+</ul>
+<li><a href="/lib/articles/soft/">Программное обеспечение</a></li>
+<li><a href="/lib/articles/system/">Система, ядро, утилиты</a></li>
+</ul>
+<li><a href="/lib/press/">Пресс-релизы ЛинуксЦентра</a></li>
+<li><a href="/lib/history/">История Linux</a></li>
+<li><a href="/lib/humor/">Linux'оиды шутят</a></li>
+</ul>
+</font></td>
+        </tr>
+        <tr>
+          <td height=1><img src=/images/onepix.gif width=1 height=1></td> 
+          <td colspan=3 height=1 bgcolor=#F8BB0B><img src=/images/onepix.gif width=1 height=1></td>
+        </tr>
+      </table><br><br><br><br><br><br>
+<table width=100% border=1 cellspacing=0 cellpadding=2 bordercolor=#F8BB0B bordercolordark=#F8BB0B bordercolorlight=#FFFFFF><tr bgcolor=#FFF8E8><td><font face=sans-serif color=#5B1900><b>Три хита от Линукс Центра:
+</b></font></td></tr></table><table width=100% border=0 cellspacing=0 cellpadding=0><tr><td width=20><img src=/images/onepix.gif width=20 height=1></td><td bgcolor=#F8BB0B width=1><img src=/images/onepix.gif width=1 height=1></td><td width=5>&nbsp;</td><td><font size=2><br>Для тех, кто не знает, что выбрать в ЛинуксЦентре, рекомендуем лучшее, что у нас есть:<br>
+<br>1. <a href="http://www.linuxcenter.ru/index.phtml?good=1071"><b>Knoppix 3.7 Russian Edition (1CD) - 90 р.</b></a>
+<br>2. <a href="http://www.linuxcenter.ru/index.phtml?good=1053">Mandrakelinux 10.1 Official LC Edition - download version (1DVD) - 250 р.</a>
+<br>3. <a href="http://www.linuxcenter.ru/index.phtml?good=1056">Mandrakelinux 10.1 Official PowerPack+ (8CD+1DVD)</a> : 1545 р. 
+<br><br></font></td>
+        </tr>
+        <tr>
+          <td height=1><img src=/images/onepix.gif width=1 height=1></td> 
+          <td colspan=3 height=1 bgcolor=#F8BB0B><img src=/images/onepix.gif width=1 height=1></td>
+        </tr>
+      </table><br><br></td></tr></table><img src=/0.gif width=710 height=1><br></td><td width=5% background=/images/rightbg.gif><img src=/0.gif width=44 height=1></td></tr></table>
+<table width=100% border=0 cellspacing=0 cellpadding=0><tr><td width=95% valign=top><table width=100% border=0 cellspacing=0 cellpadding=0><tr valign=top><td valign=bottom><img src=/0.gif width=169 height=1><br></td><td align=center>
+<table width=472 border=0 cellspacing=0 cellpadding=1><tr><td>
+<a href=http://ad.adriver.ru/cgi-bin/click.cgi?sid=5150&bt=1&pz=0&rnd=1128659305 target=_top>
+<img src=http://ad.adriver.ru/cgi-bin/rle.cgi?sid=5150&bt=1&pz=0&rnd=1128659305 alt=-AdRiver- border=0 width=468 height=60></a> <br></td></tr></table></td></tr></table>
+</td><td width=5% background=/images/rightbg.gif valign=top><img src=/0.gif width=44 height=1></td></tr><tr><td width=95% valign=top bgcolor=#F8BA07><img src=/images/smline.gif width=197 height=2></td><td width=5% background=/images/rightbg.gif bgcolor=#F8BA07 valign=top><img src=/0.gif width=1 height=2></td></tr></table>
+
+<table width=100% border=0 cellspacing=0 cellpadding=0><tr><td width=95% valign=top bgcolor=#F8BA07><img src=/images/smline.gif width=197 height=2></td><td width=5% background=/images/rightbg.gif bgcolor=#F8BA07 valign=top><img src=/0.gif width=1 height=2></td></tr><tr><td width=95% valign=top bgcolor=#FFF8E8> <img src=/0.gif width=710 height=1><br>
+<table width=100% border=0 cellspacing=0 cellpadding=0><tr><td><font face=sans-serif size=1 color=#5B1900><a href=mailto:info@linuxcenter.ru>info@linuxcenter.ru</a><br>&copy;&nbsp;2000-2005 Linux Center<br>Проект компании <a href="http://www.mezon.ru/">Mezon.Ru</a></font></td><td align=right><nobr><b><font face=sans-serif size=2 color=#5B1900><a href=/news/ class=menulink> &nbsp;Новости <img src=/images/arrow2.gif width=31 height=27 border=0 align=absmiddle></a><a href=/?wellcome=1 class=menulink> &nbsp;Магазин <img src=/images/arrow2.gif width=31 height=27 border=0 align=absmiddle></a><a href=/lib/ class=menulink> &nbsp;Библиотека <img src=/images/arrow2.gif width=31 height=27 border=0 align=absmiddle></a><a href=/?action=seller_warn class=menulink> &nbsp;Партнерам <img src=/images/arrow2.gif width=31 height=27 border=0 align=absmiddle></a><a href=/about.phtml class=menulink> &nbsp;О проекте <img src=/images/arrow2.gif width=31 height=27 border=0 align=absmiddle></a><a href=mailto:info@linuxcenter.ru class=menulink> &nbsp;Связь <img src=/images/arrow2.gif width=31 height=27 border=0 align=absmiddle></a></b></font></td></tr></table>
+</td><td width=5% background=/images/rightbg.gif bgcolor=#FFF8E8 valign=top><img src=/0.gif width=44 height=1></td></tr></table>
+</body></html>

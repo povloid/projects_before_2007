@@ -1,0 +1,33 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1251"><title>www.ПЕРВЫЕ ШАГИ.ru :: Шаг 7 - Подробное описание функций контейнеров</title></head><link rel=stylesheet type=text/css href="2.css" tppabs="http://www.firststeps.ru/2.css"><body text=black bgcolor=white link=blue vlink=blue alink=red><h2>Шаг 7 - Подробное описание функций контейнеров</h2><div style="margin:10px;"><p>Как я и обещал, в этом шаге будут рассмотрены подробные описания функций создания и модификации контейнеров. Первая функция, которой скорее всего будут пользоваться:
+<pre>
+GtkWidget *gtk_hbox_new (gint homogeneous, gint spacing);
+GtkWidget *gtk_vbox_new (gint homogeneous, gint spacing);
+</pre>
+<p>Труднопроизносимый аргумент <b>homogeneous</b> отвечает за автоматическое распределение пространства для объектов. Если этот аргумент <b>TRUE</b>, то все объекты в вертикальном контейнере имеют одинаковую высоту, а в горизонтальном - ширину. Аргумент <b>spacing</b> контролирует расстояние (в пикселях) между объектами...
+<p>После того, как контейнер создан, необходимо добавить в него виджеты:
+<pre>
+void gtk_box_pack_start (
+	GtkBox *box,
+	GtkWidget *child,
+	gint expand,
+	gint fill,
+	gint padding
+);
+void gtk_box_pack_end (
+	GtkBox *box,
+	GtkWidget *child,
+	gint expand,
+	gint fill,
+	gint padding
+);
+</pre>
+<p>Единственная разница между этими двумя функциями в том, что <b>gtk_box_pack_start</b> при соответствии прочих параметров выравнивает виджеты по левому краю, а <b>gtk_box_pack_end</b> по правому.
+<p>Обратите внимание, что первый аргумент (сам контейнер) имеет тип <b>GtkBox</b>, поэтому необходимо использовать приведение типа <b>GTK_BOX</b> или заранее объявлять переменную как <b>GtkBox*</b>. Второй аргумент определяет виджет, который упаковывается.
+<p>Если параметр <b>expand</b> установлен в <b>TRUE</b>, то виджеты автоматически центрируются в контейнере (занимает всю отведенную для этого площадь). Иначе можно выполнить выравнивание налево или направо, в зависимости от того, какую из двух функций вы используете.
+<p>После всех этих добавлений нужно отобразить сам контейнер и находящиеся в нем компоненты:
+<pre>
+void gtk_widget_show (GtkWidget* widget);
+</pre>
+<p>А еще нужно не забыть сам контейнер добавить в само окно - тоже разновидность контейнера...
+<pre>void gtk_container_add(GtkContainer* container, GtkWidget* widget);</pre>
+<p>Это обычный порядок действий при распределении компонентов по окну. В следующием шаге мы рассмотрим альтернативный вариант - размещения в таблице.</div><center><hr><a href="r-1.php-6.htm" tppabs="http://www.firststeps.ru/linux/gtk/r.php?6">Предыдущий Шаг</a> | <a href="r-1.php-8.htm" tppabs="http://www.firststeps.ru/linux/gtk/r.php?8">Следующий Шаг</a> | <a href="gtk1.html" tppabs="http://www.firststeps.ru/linux/gtk/gtk1.html">Оглавление</a><br>Автор <a href="mailto:seavan@yandex.ru?SUBJECT=From_part_gtk#7'_on_[www.firststeps.ru]">Аванесов Самвел</a>.<hr><iframe src="javascript:if(confirm('http://ad.adriver.ru/cgi-bin/erle.cgi?sid=9595&target=blank&bt=1&pz=0&rnd=6557  \n\nThis file was not retrieved by Teleport Pro, because it did not meet the project\'s file type specifications.  \n\nDo you want to open it from the server?'))window.location='http://ad.adriver.ru/cgi-bin/erle.cgi?sid=9595&target=blank&bt=1&pz=0&rnd=6557'" tppabs="http://ad.adriver.ru/cgi-bin/erle.cgi?sid=9595&target=blank&bt=1&pz=0&rnd=6557" frameborder=0 vspace=0 hspace=0 width=468 height=60 marginwidth=0 marginheight=0 scrolling=no><a href="javascript:if(confirm('http://ad.adriver.ru/cgi-bin/click.cgi?sid=9595&bt=1&pz=0&rnd=6557  \n\nThis file was not retrieved by Teleport Pro, because it is addressed on a domain or path outside the boundaries set for its Starting Address.  \n\nDo you want to open it from the server?'))window.location='http://ad.adriver.ru/cgi-bin/click.cgi?sid=9595&bt=1&pz=0&rnd=6557'" tppabs="http://ad.adriver.ru/cgi-bin/click.cgi?sid=9595&bt=1&pz=0&rnd=6557" target=_blank><img src="rle.cgi-sid=9595&bt=1&pz=0&rnd=6557" tppabs="http://ad.adriver.ru/cgi-bin/rle.cgi?sid=9595&bt=1&pz=0&rnd=6557" alt="-AdRiver-" border=0 width=468 height=60></a></iframe></center><br><br>

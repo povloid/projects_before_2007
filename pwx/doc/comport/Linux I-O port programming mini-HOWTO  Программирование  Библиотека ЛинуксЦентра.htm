@@ -1,0 +1,1044 @@
+<html><head><title>Linux I/O port programming mini-HOWTO || Программирование || Библиотека ЛинуксЦентра</title>
+<meta name="keywords" content="LinuxCenter, Unix, Linux, RedHat, Mandrake,  SlackWare, Debian, SuSE, Corel, FreeBSD, StarOffice, Caldera, software, линукс, юникс, операционная система, русский, книги, литература, программа, продажа, магазин, купить">
+<meta name="description" content="ЛинуксЦентр - это портал, посвященный ОС Linux и другим Unix-системам: новостная лента, Виртуальная Энциклопедия Linux, подборка статей, а также он-лайн магазин, где можно купить CD-ROM с дистрибутивами RedHat, Mandrake, SlackWare, Debian, SuSE, Corel, FreeBSD, StarOffice, книги и журналы о Linux.">
+<meta name="revisit-after" content="1 day">
+<meta name="ROBOTS" content="INDEX,FOLLOW">
+<link rel="alternate" type="application/rss+xml" title="RSS" href="http://www.linuxcenter.ru/trans/news.rss">
+<style type="text/css"><!--td {font-family: sans-serif}
+h1 {font-family: sans-serif; font-size: 1.5em;}
+h2 {font-family: sans-serif; font-size: 1em;}
+h3 {font-family: sans-serif; font-size: 1em;}
+tt {font-size: 1em;}
+.menulink {font-family: sans-serif; font-size: 12px; text-decoration: none; font-weight: bold}
+.form {font-family: sans-serif; font-size: 10px}
+a:hover {color: #000000}--></style></head>
+<body bgcolor=#FFFFFF leftmargin=10 topmargin=0 marginwidth=10 marginheight=0 background=/images/bg.gif text=#000000 link=#5B1900 vlink=#5B1900 alink=#5B1900>
+<table width=100% border=0 cellspacing=0 cellpadding=0><tr><td valign=bottom width=95%><table width=100% border=0 cellspacing=0 cellpadding=0><tr><td rowspan=2><a href=/><img src=/images/logo.gif width=258 height=119 alt="LINUXCENTER ON-LINE SHOP" border=0></a></td><td width=80% align=right valign=bottom nowrap><nobr><img src=/0.gif width=2 height=1><iframe src="http://ad.adriver.ru/cgi-bin/erle.cgi?sid=269?bn=1?bt=9?pz=1?rnd=1153604859" frameborder=0 vspace=0 hspace=0 width=150 height=60 marginwidth=0 marginheight=0 scrolling=no><a href="http://ad.adriver.ru/cgi-bin/click.cgi?sid=269?bn=1?bt=9?pz=1?rnd=1153604859"><img src="http://ad.adriver.ru/cgi-bin/rle.cgi?sid=269?bn=1?bt=9?pz=1?rnd=1153604859"  border=0 width=150 height=60></a></iframe><img src=/0.gif width=1 height=1><iframe src="http://ad.adriver.ru/cgi-bin/erle.cgi?sid=269?bn=2?bt=9?pz=1?rnd=1025568906" frameborder=0 vspace=0 hspace=0 width=150 height=60 marginwidth=0 marginheight=0 scrolling=no><a href="http://ad.adriver.ru/cgi-bin/click.cgi?sid=269?bn=2?bt=9?pz=1?rnd=1025568906"><img src="http://ad.adriver.ru/cgi-bin/rle.cgi?sid=269?bn=2?bt=9?pz=1?rnd=1025568906"  border=0 width=150 height=60></a></iframe><img src=/0.gif width=1 height=1><iframe src="http://ad.adriver.ru/cgi-bin/erle.cgi?sid=269?bn=3?bt=9?pz=1?rnd=1025045700" frameborder=0 vspace=0 hspace=0 width=150 height=60 marginwidth=0 marginheight=0 scrolling=no><a href="http://ad.adriver.ru/cgi-bin/click.cgi?sid=269?bn=3?bt=9?pz=1?rnd=1025045700"><img src="http://ad.adriver.ru/cgi-bin/rle.cgi?sid=269?bn=3?bt=9?pz=1?rnd=1025045700"  border=0 width=150 height=60></a></iframe><img src=/0.gif width=1 height=1><nobr></td></tr><tr><td width=80% valign=top><table width=100% border=0 cellspacing=0 cellpadding=0><tr><td bgcolor=#F8BA07 width=10%><img src=/0.gif width=1 height=1></td><td bgcolor=#F8BA07 width=45%><img src=/0.gif width=1 height=1></td><td bgcolor=#F8BA07 width=45%><img src=/0.gif width=1 height=1></td></tr><tr><td bgcolor=#FFF8E8 width=10% valign=top><img src=/0.gif width=1 height=53></td><td bgcolor=#FFF8E8 width=45% align=right valign=bottom><form action=/ method=get class=form><table border=0 cellspacing=0 cellpadding=0><tr><td class=form><b><font face=sans-serif size=2 color=#5B1900 class=menulink>Поиск&nbsp;&nbsp;</font></b></td><td class=form><input type=text name=query value="" size=14 maxlength=60 class=form></td><td><input type=image value=Искать src=/images/arrow2.gif alt=Искать width=31 height=27 name=Искать border=0></td></tr></table></form></td><td bgcolor=#FFF8E8 width=45% align=right valign=bottom><form name=subscribe method=post action=http://subscribe.ru/member/quick class=form><INPUT TYPE=hidden NAME=action VALUE=quick><INPUT TYPE=hidden NAME=grp VALUE=comp.soft.linux.lcnews>
+<table border=0 cellspacing=0 cellpadding=0><tr><td class=form><b><font face=sans-serif size=2 color=#5B1900 class=menulink>&nbsp;&nbsp;Рассылка&nbsp;&nbsp;</font></b></td><td class=form><input type=text name=email value="ваш@e-mail" size=14  maxlength=60 class=form></td>	<td><input type=image value=Подписаться src=/images/arrow2.gif alt='Подписаться на Subscribe.Ru' width=31 height=27 name=image2 border=0></td></tr></table></form></td></tr><tr><td bgcolor=#F8BA07 width=10%><img src=/0.gif width=1 height=4></td><td bgcolor=#F8BA07 width=45%><img src=/0.gif width=1 height=4></td><td bgcolor=#F8BA07 width=45%><img src=/0.gif width=1 height=4></td></tr></table>
+</td></tr></table></td><td background=/images/rightbg.gif valign=bottom width=5%><img src=/images/left1.gif width=44 height=58></td></tr><tr><td width=95% valign=top bgcolor=#FFF8E8>
+<table width=100% border=0 cellspacing=0 cellpadding=0><tr><td><img src=/0.gif width=169 height=1></td><td align=right><b><font face=sans-serif size=2 color=#5B1900><a href=/news/ class=menulink> &nbsp;Новости <img src=/images/arrow2.gif width=31 height=27 border=0 align=absmiddle></a><a href=/?wellcome=1 class=menulink> &nbsp;Магазин <img src=/images/arrow2.gif width=31 height=27 border=0 align=absmiddle></a><a href=/lib/ class=menulink> &nbsp;Библиотека <img src=/images/arrow2.gif width=31 height=27 border=0 align=absmiddle></a><a href=/?action=seller_warn class=menulink> &nbsp;Партнерам <img src=/images/arrow2.gif width=31 height=27 border=0 align=absmiddle></a><a href=/about.phtml class=menulink> &nbsp;О проекте <img src=/images/arrow2.gif width=31 height=27 border=0 align=absmiddle></a><a href=mailto:info@linuxcenter.ru class=menulink> &nbsp;Связь <img src=/images/arrow2.gif width=31 height=27 border=0 align=absmiddle></a></b></font></td></tr></table></td><td width=5% background=/images/rightbg.gif bgcolor=#FFF8E8 valign=top><img src=/images/left2.gif width=44 height=9></td></tr><tr><td width=95% valign=top bgcolor=#F8BA07><img src=/images/smline.gif width=197 height=2></td><td width=5% background=/images/rightbg.gif bgcolor=#F8BA07 valign=top><img src=/0.gif width=1 height=2></td></tr></table>
+<table width=100% border=0 cellspacing=0 cellpadding=0><tr><td width=95% valign=top><img src=/0.gif width=712 height=1><br><table width=100% border=0 cellspacing=0 cellpadding=0><tr><td width=19% valign=top><img src=/0.gif width=168 height=1><br><table width=168 border=0 cellspacing=0 cellpadding=0><tr bgcolor=#5B1900 align=center><td colspan=3>
+<table width=100% border=1 cellspacing=0 cellpadding=2 bordercolor=#5B1900 bordercolordark=#F8BB0B bordercolorlight=#5B1900><tr bgcolor=#F8BB0B align=center><td><a href=><font size=2 face=sans-serif color=#5B1900><b>Ваша корзина:</b></font></a></td></tr></table>
+</td></tr><tr><td valign=top width=1 bgcolor=#5B1900><img src=/0.gif width=1 height=8></td><td valign=top width=15 align=right></td><td width=152></td></tr><tr><td valign=top width=1 bgcolor=#5B1900><img src=/0.gif width=1 height=1></td><td valign=top width=15 align=right><img src=/0.gif width=1 height=1></td><td width=152 align=center><font color=#5B1900 size=2 face=sans-serif><table width=100% border=0 cellspacing=2 cellpadding=0><tr><td align=right><form action=/ method=post><font size=2 face=sans-serif color=#5B1900>Логин:</font></td><td align=left><input type=text name=login size=9 maxlength=200></td></tr><tr><td align=right><font size=2 face=sans-serif color=#5B1900>Пароль:</font></td><td align=left><input type=password name=pass size=9 maxlength=200></td></tr><tr><td align=right>&nbsp;</td><td><input type=submit value=login><input type=hidden name=action value=logon></td></tr><tr><td align=right></form>&nbsp;</td><td><a href=/?action=register><font size=2 face=sans-serif color=#5B1900>Регистрация</font></a><br>
+<a href=/?action=pass_send><font size=2 face=sans-serif color=#5B1900>Забыли&nbsp;пароль?</font></a>
+</td></tr></table><tr><td valign=top width=1 bgcolor=#5B1900><img src=/0.gif width=1 height=8></td><td valign=top width=15 align=right></td><td width=152></td></tr><tr><td valign=top height=1 bgcolor=#5B1900><img src=/0.gif width=1 height=1></td><td valign=top height=1 bgcolor=#5B1900><img src=/0.gif width=1 height=1></td><td height=1 bgcolor=#5B1900><img src=/0.gif width=1 height=1></td></tr></table></form><br><table width=168 border=0 cellspacing=0 cellpadding=0><tr align=center bgcolor=#5B1900><td colspan=2><a href=/lib/><font size=2 face=sans-serif color=#FFFFEE><b>Библиотека</b></font></a></td></tr>
+<tr><td valign=top width=1 bgcolor=#5B1900><img src=/0.gif width=1 height=1></td><td valign=top width=167><font size=2 face=sans-serif color=#5B1900><img src=/images/arrow.gif width=8 height=10 align=absmiddle vspace=6> <a href=/lib/books/><b>Книги и руководства</b></a><br>
+<img src=/images/arrow.gif width=8 height=10 align=absmiddle vspace=6> <a href=/lib/articles/><b>Статьи</b></a><br>
+<img src=/images/arrow.gif width=8 height=10 align=absmiddle vspace=6> <a href=/lib/press/><b>Пресс-релизы</b></a><br>
+<img src=/images/arrow.gif width=8 height=10 align=absmiddle vspace=6> <a href=/lib/history/><b>История Linux</b></a><br>
+<img src=/images/arrow.gif width=8 height=10 align=absmiddle vspace=6> <a href=/lib/humor/><b>Linux'оиды шутят</b></a><br>
+<img src=/images/arrow.gif width=8 height=10 align=absmiddle vspace=6> <a href=/enc/><b>Энциклопедия Linux</b></a><br>
+
+</font></td></tr>
+<tr bgcolor=#5B1900><td colspan=2 height=1><img src=/0.gif width=1 height=1></td></tr></table><br>
+
+<table width=168 border=0 cellspacing=0 cellpadding=0><tr bgcolor=#5B1900 align=center><td colspan=3><a href=/news/><font size=2 face=sans-serif color=#FFFFEE><b>Новостной канал</b></font></a></td></tr>
+<tr><td valign=top width=1 bgcolor=#5B1900><img src=/0.gif width=1 height=1></td><td valign=top width=167><font size=2 face=sans-serif color=#5B1900>
+ <img src=/0.gif width=1 height=6><br><img src=/images/arrow.gif width=8 height=10 align=absmiddle> <a href="/news/#5155">Knoppix 3.8 CeBIT Edition</a><br> <img src=/0.gif width=1 height=6><br><img src=/images/arrow.gif width=8 height=10 align=absmiddle> <a href="/news/#5154">Mandrakelinux 10.2 RC1</a><br> <img src=/0.gif width=1 height=6><br><img src=/images/arrow.gif width=8 height=10 align=absmiddle> <a href="/news/#5153">Lormalinux Web/MySQL Server Beta 1</a><br> <img src=/0.gif width=1 height=6><br><img src=/images/arrow.gif width=8 height=10 align=absmiddle> <a href="/news/#5152">Linux бьется за место на десктопе</a><br> <img src=/0.gif width=1 height=6><br><img src=/images/arrow.gif width=8 height=10 align=absmiddle> <a href="/news/#5150">События минувшей недели</a><br> <img src=/0.gif width=1 height=6><br><img src=/images/arrow.gif width=8 height=10 align=absmiddle> <a href=/news/><font size=2 face=sans-serif color=#5B1900><b>Все новости &gt;&gt;&gt;</b></a><br><img src=/images/arrow.gif width=8 height=10 align=absmiddle vspace=8> <a href=/publicnews.phtml><font size=2 face=sans-serif color=#5B1900><b>Прислать новость &gt;&gt;&gt;</b></a><br></font><div align=right><a href=http://www.linuxcenter.ru/trans/news.rss><img src=/images/xml.gif border=0 width=100 height=14></a></div>
+</td></tr><tr bgcolor=#5B1900><td colspan=2 height=1><img src=/0.gif width=1 height=1></td></tr></table><br>
+
+<table width=168 border=0 cellspacing=0 cellpadding=0><tr bgcolor=#5B1900 align=center><td colspan=3><a href="/goods/"><font size=2 face=sans-serif color=#FFFFEE><b>Интернет магазин</b></font></a></td></tr>
+<tr><td valign=top width=1 bgcolor=#5B1900><img src=/0.gif width=1 height=1></td><td valign=top width=167><font size=2 face=sans-serif color=#5B1900><img src=/images/arrow.gif width=8 height=10 align=absmiddle vspace=6> <a href=/?group=11>Книги</a><br>
+<img src=/images/arrow.gif width=8 height=10 align=absmiddle vspace=6> <a href=/?group=1><b>Дистрибутивы</b></a><br>
+<img src=/images/arrow.gif width=8 height=10 align=absmiddle vspace=6> <a href=/?type=46>Игры для Linux</a><br>
+<img src=/images/arrow.gif width=8 height=10 align=absmiddle vspace=6> <a href=/?group=6>Soft для Linux</a><br>
+<img src=/images/arrow.gif width=8 height=10 align=absmiddle vspace=6> <a href=/?group=14>Digital Security</a><br>
+<img src=/images/arrow.gif width=8 height=10 align=absmiddle vspace=6> <a href=/?type=42><b>Распродажа</b></a><br>
+<img src=/images/arrow.gif width=8 height=10 align=absmiddle vspace=6> <a href=/?group=13>Атрибутика</a><br>
+<img src=/images/arrow.gif width=8 height=10 align=absmiddle vspace=6> <a href=/mag.phtml><b>Магазины : оффлайн</b></a></font></td></tr>
+<tr bgcolor=#5B1900><td colspan=2 height=1><img src=/0.gif width=1 height=1></td></tr></table><br>
+
+<table width=168 border=0 cellspacing=0 cellpadding=0><tr align=center bgcolor=#5B1900><td colspan=3><a href=/help.phtml><font size=2 face=sans-serif color=#FFFFEE><b>Help</b></font></a></td></tr>
+<tr><td valign=top width=1 bgcolor=#5B1900><img src=/0.gif width=1 height=1></td><td valign=top width=167><font size=2 face=sans-serif color=#5B1900><img src=/images/arrow.gif width=8 height=10 align=absmiddle vspace=6>
+<a href=/help.phtml#5>Как заказать товар</a><br>
+<img src=/images/arrow.gif width=8 height=10 align=absmiddle vspace=6> <a href=/help.phtml#7>Как оформить заказ</a><br>
+<img src=/images/arrow.gif width=8 height=10 align=absmiddle vspace=6> <a href=/help.phtml#10>Как оплатить заказ</a></font></td></tr>
+<tr bgcolor=#5B1900><td colspan=2 height=1><img src=/0.gif width=1 height=1></td></tr></table><br>
+
+<table width=168 border=0 cellspacing=0 cellpadding=0><tr bgcolor=#5B1900 align=center><td colspan=3><font size=2 face=sans-serif color=#FFFFEE><b>Топ-10 популярных продуктов Linux Center</b></font></td></tr><tr><td valign=top width=1 bgcolor=#5B1900><img src=/0.gif width=1 height=1></td><td valign=top width=167><font size=2 face=sans-serif color=#5B1900><img src=/0.gif width=1 height=6><br><img src=/images/arrow.gif width=8 height=10 align=absmiddle> <a href="/index.phtml?good=1071">Knoppix 3.7 Russian Edition (1CD)</a><br><img src=/0.gif width=1 height=6><br><img src=/images/arrow.gif width=8 height=10 align=absmiddle> <a href="/index.phtml?good=1108">Книга Mandrakelinux. Полное руководство пользователя (+ DVD-ROM)</a><br><img src=/0.gif width=1 height=6><br><img src=/images/arrow.gif width=8 height=10 align=absmiddle> <a href="/index.phtml?good=1097">SUSE Linux 9.2 Download Version (1DVD)</a><br><img src=/0.gif width=1 height=6><br><img src=/images/arrow.gif width=8 height=10 align=absmiddle> <a href="/index.phtml?good=714">Кружка root (черная)</a><br><img src=/0.gif width=1 height=6><br><img src=/images/arrow.gif width=8 height=10 align=absmiddle> <a href="/index.phtml?good=1104">Slackware Linux 10.1 (1DVD)</a><br><img src=/0.gif width=1 height=6><br><img src=/images/arrow.gif width=8 height=10 align=absmiddle> <a href="/index.phtml?good=1115">Журнал "Системный администратор", 2005 год, февраль.</a><br><img src=/0.gif width=1 height=6><br><img src=/images/arrow.gif width=8 height=10 align=absmiddle> <a href="/index.phtml?good=1053">Mandrakelinux 10.1 Official LC Edition  - download version (1DVD)</a><br><img src=/0.gif width=1 height=6><br><img src=/images/arrow.gif width=8 height=10 align=absmiddle> <a href="/index.phtml?good=1079">LinuxCenter Games Collection vol.2 (1DVD)</a><br><img src=/0.gif width=1 height=6><br><img src=/images/arrow.gif width=8 height=10 align=absmiddle> <a href="/index.phtml?good=1106">Журнал "Системный администратор", 2005 год, январь.</a><br><img src=/0.gif width=1 height=6><br><img src=/images/arrow.gif width=8 height=10 align=absmiddle> <a href="/index.phtml?good=1067">FreeBSD 5.3 LinuxCenter Edition (4CD)</a><br><img src=/0.gif width=1 height=6><br></font></td></tr><tr bgcolor=#5B1900><td colspan=2 height=1><img src=/0.gif width=1 height=1></td></tr></table><br>
+<table width=168 border=0 cellspacing=0 cellpadding=0><tr bgcolor=#5B1900 align=center><td colspan=3><a href=/goods/><font size=2 face=sans-serif color=#FFFFEE><b>Новинки</b></font></a></td></tr>
+<tr><td valign=top width=1 bgcolor=#5B1900><img src=/0.gif width=1 height=1></td><td valign=top width=167><font size=2 face=sans-serif color=#5B1900>
+<img src=/0.gif width=1 height=6><br><img src=/images/arrow.gif width=8 height=10 align=absmiddle> <a href="http://www.linuxcenter.ru/goods/1115.html">Журнал "Системный администратор", февраль.</a><br>
+<img src=/0.gif width=1 height=6><br><img src=/images/arrow.gif width=8 height=10 align=absmiddle> <a href="http://www.linuxcenter.ru/goods/1114.html">ALT Linux Sisyphus Февраль 2005 (3DVD)</a><br>
+<img src=/0.gif width=1 height=6><br><img src=/images/arrow.gif width=8 height=10 align=absmiddle> <a href="http://www.linuxcenter.ru/goods/1113.html">Acronis True Image Server 8.0 для Linux (BOX)</a><br>
+<img src=/0.gif width=1 height=6><br><img src=/images/arrow.gif width=8 height=10 align=absmiddle> <a href="http://www.linuxcenter.ru/goods/1112.html">Xandros Desktop OS 3.0 Open Circulation Edition (1CD)</a><br>
+<img src=/0.gif width=1 height=6><br><img src=/images/arrow.gif width=8 height=10 align=absmiddle> <a href="http://www.linuxcenter.ru/goods/1110.html">Книга SUSE Linux Professional Administration Guide</a><br>
+<img src=/0.gif width=1 height=6><br><img src=/images/arrow.gif width=8 height=10 align=absmiddle> <a href="http://www.linuxcenter.ru/goods/1109.html">Книга SUSE Linux Professional User Guide</a><br>
+<img src=/0.gif width=1 height=6><br><img src=/images/arrow.gif width=8 height=10 align=absmiddle> <a href="http://www.linuxcenter.ru/goods/1108.html">Книга Mandrakelinux. Полное руководство пользователя</a><br>
+<img src=/0.gif width=1 height=6><br><img src=/images/arrow.gif width=8 height=10 align=absmiddle> <a href="http://www.linuxcenter.ru/goods/1104.html">Slackware Linux 10.1 (1DVD)</a><br>
+<img src=/0.gif width=1 height=6><br><img src=/images/arrow.gif width=8 height=10 align=absmiddle> <a href="http://www.linuxcenter.ru/goods/1103.html">FreeBSD 4.11 LinuxCenter Edition (2DVD)</a><br>
+<img src=/0.gif width=1 height=6><br><img src=/images/arrow.gif width=8 height=10 align=absmiddle> <a href="http://www.linuxcenter.ru/goods/1101.html">MandrakeMove 2.0 LinuxCenter Edition (1CD)</a><br>
+<img src=/0.gif width=1 height=6><br><img src=/images/arrow.gif width=8 height=10 align=absmiddle> <a href="http://www.linuxcenter.ru/goods/1100.html">OpenOffice.org - открытый офис для Linux и Windows (+ 1CD)</a><br>
+<img src=/0.gif width=1 height=6><br><img src=/images/arrow.gif width=8 height=10 align=absmiddle> <a href="http://www.linuxcenter.ru/goods/1096.html">Mandrakelinux Corporate Server 3.0 x86 (BOX) - предварительный заказ с 10% скидкой</a><br>
+
+
+
+
+
+<img src=/0.gif width=1 height=6></font></td></tr><tr bgcolor=#5B1900><td colspan=2 height=1><img src=/0.gif width=1 height=1></td></tr></table><br>
+
+<table width=168 border=0 cellspacing=0 cellpadding=0><tr bgcolor=#5B1900 align=center><td colspan=3><a href=http://ftp.linuxcenter.ru/projects/><font size=2 face=sans-serif color=#FFFFEE><b>Наши Проекты</b></font></a></td></tr>
+<tr><td valign=top width=1 bgcolor=#5B1900><img src=/0.gif width=1 height=1></td><td valign=top width=167><font size=2 face=sans-serif color=#5B1900>
+<img src=/0.gif width=1 height=6><br><img src=/images/arrow.gif width=8 height=10 align=absmiddle> <a href="/games/">Игры для Linux</a><br>
+<img src=/0.gif width=1 height=6><br><img src=/images/arrow.gif width=8 height=10 align=absmiddle> <a href="/history/">История Linux</a><br>
+<img src=/0.gif width=1 height=6><br>
+</font></td></tr><tr bgcolor=#5B1900><td colspan=2 height=1><img src=/0.gif width=1 height=1></td></tr></table><br>
+
+<table width=168 border=0 cellspacing=0 cellpadding=0><tr bgcolor=#5B1900 align=center><td colspan=3><a href=/mag.phtml><font size=2 face=sans-serif color=#FFFFEE><b>Наши Партнеры</b></font></a></td></tr>
+<tr><td valign=top width=1 bgcolor=#5B1900><img src=/0.gif width=1 height=1></td><td valign=top width=167><font size=2 face=sans-serif color=#5B1900>
+<img src=/0.gif width=1 height=6><br><img src=/images/arrow.gif width=8 height=10 align=absmiddle> <a href="http://www.linux.ru">Linux.Ru</a><br>
+<img src=/0.gif width=1 height=6><br><img src=/images/arrow.gif width=8 height=10 align=absmiddle> <a href="http://www.lenty.ru">Lenty.Ru</a><br>
+
+<img src=/0.gif width=1 height=6><br>
+</font></td></tr><tr bgcolor=#5B1900><td colspan=2 height=1><img src=/0.gif width=1 height=1></td></tr></table><br>
+
+
+<br><A HREF=http://subscribe.ru/catalog/comp.soft.linux.lcnews><IMG BORDER=0 SRC=http://subscribe.ru/stat/comp.soft.linux.lcnews/count.gif WIDTH=88 HEIGHT=31></A><br><a href=http://topshop.rambler.ru/go.html?ID=2435><img src=http://topshop-counter.rambler.ru/top100.cnt?2435 width=88 height=31 border=0></a><br><a href=http://top100.rambler.ru/top100/><img src=http://images.rambler.ru/top100/w2.gif width=88 height=31 border=0></a><img src=http://counter.rambler.ru/top100.cnt?174022 width=1 height=1><br><!--Rating@Mail.ru COUNTER--><script language="JavaScript"><!--
+d=document;a='';a+=';r='+escape(d.referrer)
+js=10//--></script><script language="JavaScript1.1"><!--
+a+=';j='+navigator.javaEnabled()
+js=11//--></script><script language="JavaScript1.2"><!--
+s=screen;a+=';s='+s.width+'*'+s.height
+a+=';d='+(s.colorDepth?s.colorDepth:s.pixelDepth)
+js=12//--></script><script language="JavaScript1.3"><!--
+js=13//--></script><script language="JavaScript"><!--
+d.write('<a href="http://top.mail.ru/jump?from=145476"'+
+' target=_top><img src="http://top.list.ru/counter'+
+'?id=145476;t=56;js='+js+a+';rand='+Math.random()+
+'" alt="Рейтинг@Mail.ru"'+' border=0 height=31 width=88></a>')
+if(js>11)d.write('<'+'!-- ')//--></script><noscript><a
+target=_top href="http://top.mail.ru/jump?from=145476"><img
+src="http://top.list.ru/counter?js=na;id=145476;t=56"
+border=0 height=31 width=88
+alt="Рейтинг@Mail.ru"></a></noscript><script language="JavaScript"><!--
+if(js>11)d.write('--'+'>')//--></script><!--/COUNTER-->
+<br><a href=http://u501.96.spylog.com/cnt?cid=50196&f=3&p=0><img src=http://u501.96.spylog.com/cnt?cid=50196&p=0 border='0' width=88 height=31></a></td><td width=2% valign=top><img src=/0.gif width=10 height=1></td><td width=79% valign=top><br>
+
+
+
+
+
+
+<table width=100% border=1 cellspacing=0 cellpadding=2 bordercolor=#F8BB0B bordercolordark=#F8BB0B bordercolorlight=#FFFFFF><tr bgcolor=#FFF8E8><td><font face=sans-serif color=#5B1900><b>Linux I/O port programming mini-HOWTO</b></font></td></tr></table><table width=100% border=0 cellspacing=0 cellpadding=0><tr><td width=20><img src=/images/onepix.gif width=20 height=1></td><td bgcolor=#F8BB0B width=1><img src=/images/onepix.gif width=1 height=1></td><td width=5>&nbsp;</td><td><font size=2><br>
+<font color="#CA7622">
+<i>Этот документ описывает программирование аппаратных портов ввода/вывода и
+организацию коротких задержек в пользовательских программах, работающих на
+архитектуре Intel x86.</i><br>
+<p align=right><b>[Riku Saikkonen (<a href="mailto:Riku.Saikkonen@hut.fi">Riku.Saikkonen@hut.fi</a>). Перевод Павел Гашев (<a href="pax@asp-linux.com">pax@asp-linux.com</a>)]</b></p>
+</font>
+
+
+
+
+
+<DIV CLASS="ARTICLE">
+<DIV CLASS="TITLEPAGE">
+<H1 CLASS="TITLE">
+<A NAME="AEN2">Linux I/O port programming mini-HOWTO</A>
+</H1>
+<DIV CLASS="AUTHORGROUP">
+<A NAME="AEN4">
+</A>
+<H3 CLASS="AUTHOR">
+<A NAME="AEN5">Riku Saikkonen</A>
+</H3>
+<DIV CLASS="AFFILIATION">
+<DIV CLASS="ADDRESS">
+<P CLASS="ADDRESS">&nbsp;&nbsp;&nbsp;&nbsp;     Riku.Saikkonen@hut.fi
+    <br>
+&nbsp;&nbsp;&nbsp;</P>
+</DIV>
+</DIV>
+<H3 CLASS="CORPAUTHOR">  Перевод: <A HREF="mailto:pax@asp-linux.com" TARGET="_top">Павел Гашев</A>,
+  <A HREF="http://www.asplinux.com" TARGET="_top">SWSoft Pte Ltd.</A>
+ </H3>
+</DIV>
+<P CLASS="PUBDATE">v, 28 December 1997<BR>
+</P>
+<DIV>
+<DIV CLASS="ABSTRACT">
+<A NAME="AEN15">
+</A>
+<P>
+</P>
+<P>Этот документ описывает программирование аппаратных портов ввода/вывода и
+организацию коротких задержек в пользовательских программах, работающих на
+архитектуре Intel x86.</P>
+<P>
+</P>
+</DIV>
+</DIV>
+<HR>
+</DIV>
+<DIV CLASS="TOC">
+<DL>
+<DT>
+<B>Содержание</B>
+</DT>
+<DT>1. <A HREF="#AEN17">Введение</A>
+</DT>
+<DD>
+<DL>
+<DT>1.1. <A HREF="#AEN38">Авторские права</A>
+</DT>
+</DL>
+</DD>
+<DT>2. <A HREF="#AEN47">Использование портов ввода/вывода в программах на C</A>
+</DT>
+<DD>
+<DL>
+<DT>2.1. <A HREF="#AEN49">Стандартный способ</A>
+</DT>
+<DT>2.2. <A HREF="#AEN102">Альтернативный способ: <TT CLASS="LITERAL">/dev/port</TT>
+</A>
+</DT>
+</DL>
+</DD>
+<DT>3. <A HREF="#AEN116">Доступ к прерываниям (IRQ) и DMA</A>
+</DT>
+<DT>4. <A HREF="#AEN121">Очень точная синхронизация</A>
+</DT>
+<DD>
+<DL>
+<DT>4.1. <A HREF="#AEN123">Задержки</A>
+</DT>
+<DD>
+<DL>
+<DT>4.1.1. <A HREF="#AEN130">Засыпание: <TT CLASS="LITERAL">sleep()</TT> и <TT CLASS="LITERAL">usleep()</TT>
+</A>
+</DT>
+<DT>4.1.2. <A HREF="#AEN141">
+<TT CLASS="LITERAL">nanosleep()</TT>
+</A>
+</DT>
+<DT>4.1.3. <A HREF="#AEN153">Задержка через порты ввода/вывода</A>
+</DT>
+<DT>4.1.4. <A HREF="#AEN160">Задержка при помощи команд ассемблера</A>
+</DT>
+<DT>4.1.5. <A HREF="#AEN178">
+<TT CLASS="LITERAL">rdtsc</TT> на процессорах Пентиум</A>
+</DT>
+</DL>
+</DD>
+<DT>4.2. <A HREF="#AEN185">Точность</A>
+</DT>
+</DL>
+</DD>
+<DT>5. <A HREF="#AEN194">Другие языки программирования</A>
+</DT>
+<DT>6. <A HREF="#AEN201">Некоторые полезные порты</A>
+</DT>
+<DD>
+<DL>
+<DT>6.1. <A HREF="#AEN209">Параллельный порт</A>
+</DT>
+<DT>6.2. <A HREF="#AEN261">Игровой порт (джойстик)</A>
+</DT>
+<DT>6.3. <A HREF="#AEN300">Последовательный порт</A>
+</DT>
+</DL>
+</DD>
+<DT>7. <A HREF="#AEN307">Подсказки</A>
+</DT>
+<DT>8. <A HREF="#AEN315">Устранение возможных проблем</A>
+</DT>
+<DT>9. <A HREF="#AEN364">Пример кода</A>
+</DT>
+<DT>10. <A HREF="#AEN369">Благодарности</A>
+</DT>
+</DL>
+</DIV>
+<DIV CLASS="SECT1">
+<H1 CLASS="SECT1">
+<A NAME="AEN17">1. Введение</A>
+</H1>
+<P>Это HOWTO описывает программирование аппаратных портов ввода/вывода и
+организацию коротких задержек в пользовательских программах, работающих на
+архитектуре Intel x86. Этот документ представляет из себя дополненное
+IO-Port mini-HOWTO того же автора.</P>
+<P>&#13;Copyright 1995-1997 Riku Saikkonen. See <A HREF="http://sunsite.unc.edu/pub/Linux/docs/HOWTO/COPYRIGHT" TARGET="_top">Linux HOWTO copyright</A>.</P>
+<P>Если у вас есть исправления или добавления, напишите мне
+(<TT CLASS="LITERAL">Riku.Saikkonen@hut.fi</TT>)...</P>
+<P>Изменения относительно последней версии (30 марта 1997):
+<P>
+</P>
+<UL>
+<LI>
+<P>Даны разъяснения относительно <TT CLASS="LITERAL">inb_p</TT>/<TT CLASS="LITERAL">outb_p</TT> и port 0x80.</P>
+</LI>
+<LI>
+<P>Убрана информация о <TT CLASS="LITERAL">udelay()</TT>, т.к. лучше использовать <TT CLASS="LITERAL">nanosleep()</TT>.</P>
+</LI>
+<LI>
+<P>Преобразовано в формат Linuxdoc-SGML, и кое-что реорганизовано.</P>
+</LI>
+<LI>
+<P>Масса незначительных дополнений и изменений.</P>
+</LI>
+</UL>&#13;</P>
+<DIV CLASS="SECT2">
+<HR>
+<H2 CLASS="SECT2">
+<A NAME="AEN38">1.1. Авторские права</A>
+</H2>
+<P>Авторские права на русский перевод этого текста принадлежат &copy; 2000 SWSoft Pte Ltd.
+Все права зарезервированы.</P>
+<P>Этот документ является частью проекта Linux HOWTO.</P>
+<P>Авторские права на документы Linux HOWTO принадлежат их авторам, если явно
+не указано иное. Документы Linux HOWTO, а также их переводы, могут
+быть воспроизведены и распространены полностью или частично на любом
+носителе, физическом или электронном, при условии сохранения этой заметки об
+авторских правах на всех копиях. Коммерческое распространение разрешается и
+поощряется; но, так или иначе, автор текста и автор перевода желали бы знать о
+таких дистрибутивах.</P>
+<P>Все переводы и производные работы, выполненные по документам Linux HOWTO,
+должны сопровождаться этой заметкой об авторских правах. Это делается в
+целях предотвращения случаев наложения дополнительных ограничений на
+распространение документов HOWTO. Исключения могут составить случаи
+получения специального разрешения у координатора Linux HOWTO, с которым
+можно связаться по адресу приведенному ниже.</P>
+<P>Мы бы хотели распространить эту информацию по всем возможным каналам. Но
+при этом сохранить авторские права и быть уведомленными о всех планах
+распространения HOWTO. Если у вас возникли вопросы, пожалуйста, обратитесь
+к координатору проекта Linux HOWTO по электронной почте:
+<TT CLASS="EMAIL">&#60;<A HREF="mailto:linux-howto@metalab.unc.edu">linux-howto@metalab.unc.edu</A>&#62;</TT> или к координатору русского
+перевода Linux HOWTO компании SWSoft Pte Ltd. по адресу
+<TT CLASS="EMAIL">&#60;<A HREF="mailto:linux-howto@asplinux.ru">linux-howto@asplinux.ru</A>&#62;</TT>
+</P>
+</DIV>
+</DIV>
+<DIV CLASS="SECT1">
+<HR>
+<H1 CLASS="SECT1">
+<A NAME="AEN47">2. Использование портов ввода/вывода в программах на C</A>
+</H1>
+<DIV CLASS="SECT2">
+<H2 CLASS="SECT2">
+<A NAME="AEN49">2.1. Стандартный способ</A>
+</H2>
+<P>Процедуры доступа к портам ввода/выводы находятся в
+<TT CLASS="FILENAME">/usr/include/asm/io.h</TT> (или в
+<TT CLASS="FILENAME">linux/include/asm-i386/io.h</TT> в некоторых дистрибутивах
+ядра). Процедуры представляют собой встроенные (inline) макроопределения,
+так что вам не нужны никакие библиотеки, и достаточно просто добавить
+<TT CLASS="LITERAL">#include &lt;asm/io.h&gt;</TT>.</P>
+<P>Из-за ограничения в gcc (присутствующего, как минимум, в версии 2.7.2.3 и
+ниже) и в egcs (всех версий), вы должны компилировать любые исходные
+тексты, использующие эти процедуры, с включенной оптимизацией (<TT CLASS="LITERAL">gcc -O1</TT> или
+выше), или же определить пустое <TT CLASS="LITERAL">#define extern</TT> перед <TT CLASS="LITERAL">#include &lt;asm/io.h&gt;</TT>..</P>
+<P>Для отладки вы можете использовать <TT CLASS="LITERAL">gcc -g -O</TT> (по крайней мере, с
+современными версиями gcc), хотя оптимизация может привести к немного
+странному поведению отладчика. Если это вам мешает, поместите подпрограммы,
+работающие с портами ввода/вывода, в отдельный файл и компилируйте с
+оптимизацией только его.</P>
+<P>Перед тем, как вы получите доступ к какому-нибудь порту, вы должны дать
+вашей программе права на это. Это выполняется, при помощи функции <TT CLASS="LITERAL">ioperm</TT>(from, num, turn_on) (определенной в
+<TT CLASS="FILENAME">unistd.h</TT> и находящейся в ядре), где <TT CLASS="LITERAL">from</TT> это первый порт, а <TT CLASS="LITERAL">num</TT> это количество подряд идущих портов, которым нужно
+дать доступ. Например, <TT CLASS="LITERAL">ioperm(0x300, 5, 1)</TT>
+дает доступ к порту с 0x300 по 0x304 (всего 5 портов). Последний аргумент -
+это двоичное значение, определяющее, дать ли доступ к портам (истина (1))
+или запретить его (ложь (0)). Для включения портов, идущих не подряд, вы
+можете вызывать <TT CLASS="LITERAL">ioperm()</TT> несколько раз. Для
+дополнительной информации читайте руководство <TT CLASS="LITERAL">ioperm(2)</TT>.</P>
+<P>Для вызова <TT CLASS="LITERAL">ioperm()</TT> необходимо иметь права
+root; таким образом, вы должны запускать программу от пользователя root или
+установить на файл флаг setuid. После того, как определен доступ к портам,
+права суперпользователя больше вам не нужны. Вам не нужно непосредственно
+освобождать порты при помощи <TT CLASS="LITERAL">ioperm(..., 0)</TT>,
+т.к. это делается автоматически, когда программа заканчивает работу.</P>
+<P>Выполнение <TT CLASS="LITERAL">setuid()</TT> для переключения на
+другого пользователя не отключает доступ к портам, данный <TT CLASS="LITERAL">ioperm()</TT>, но это происходит при <TT CLASS="LITERAL">fork</TT> (наследованный процесс теряет доступ, когда как у
+порождающего процесса он остается).</P>
+<P>
+<TT CLASS="LITERAL">ioperm()</TT> может дать доступ только к портам с 0x000 по 0x3ff; для других
+портов вам нужно использовать <TT CLASS="LITERAL">iopl()</TT> (который дает доступ ко всем портам
+сразу). Используйте уровень 3 (<TT CLASS="LITERAL">iopl(3)</TT>), чтобы дать доступ вашей программе
+ко всем портам ввода/вывода (но будьте осторожны --- доступ к неправильным
+портам может сделать некоторые нехорошие вещи с вашим компьютером). Опять
+таки, вам необходимы привилегии root. Дополнительно читайте руководство
+<TT CLASS="LITERAL">iopl(2)</TT>.</P>
+<P>Теперь собственно о доступе к портам: Чтобы считать байт (8 бит) из порта,
+вызовите функцию <TT CLASS="LITERAL">inb(port)</TT>, возвращающую
+считанный байт. Чтобы вывести байт в порт, вызовите процедуру <TT CLASS="LITERAL">outb(value, port)</TT> (обратите внимание на порядок
+аргументов). Чтобы считать компьютерное слово (16 бит) из портов <TT CLASS="LITERAL">x</TT> и <TT CLASS="LITERAL">x+1</TT> (по одному байту
+из каждого образуют слово), вызовите функцию <TT CLASS="LITERAL">inw(x)</TT>. Чтобы вывести слово в два порта, используйте
+<TT CLASS="LITERAL">outw(value, x)</TT>. Если вы не уверены, работать с
+одинарным или двойным портом, вам, скорее всего, нужны <TT CLASS="LITERAL">inb()</TT> и <TT CLASS="LITERAL">outb()</TT>, т.к.
+порты большинства устройств имеют однобайтный доступ. Также замечу, что все
+функции, работающие с портами, требуют, как минимум, около микросекунды для
+выполнения.</P>
+<P>Макросы <TT CLASS="LITERAL">inb_p()</TT>, <TT CLASS="LITERAL">outb_p()</TT>, <TT CLASS="LITERAL">inw_p()</TT> и
+<TT CLASS="LITERAL">outw_p()</TT> работают аналогично вышеуказанным,
+но добавляют короткую (около микросекунды) задержку после доступа к порту;
+вы можете установить задержку около четырех микросекунд при помощи <TT CLASS="LITERAL">#define REALLY_SLOW_IO</TT> перед <TT CLASS="LITERAL">#include &lt;asm/io.h&gt;</TT>. Обычно эти макросы (за
+исключением случаев с <TT CLASS="LITERAL">#define
+SLOW_IO_BY_JUMPING</TT>, при которых выполнение становится менее
+точным) используют вывод в порт 0x80 в качестве задержки, так что вам
+необходимо сначала дать доступ к порту 0x80, при помощи <TT CLASS="LITERAL">ioperm()</TT> (вывод в порт 0x80 никак не влияет на
+систему). О других способах задержки см. руководства.</P>
+<P>См. руководства по <TT CLASS="LITERAL">ioperm(2)</TT>, <TT CLASS="LITERAL">iopl(2)</TT> и вышеуказанных макросах.</P>
+</DIV>
+<DIV CLASS="SECT2">
+<HR>
+<H2 CLASS="SECT2">
+<A NAME="AEN102">2.2. Альтернативный способ: <TT CLASS="LITERAL">/dev/port</TT>
+</A>
+</H2>
+<P>Другой путь доступа к портам ввода/вывода лежит через открытие файла
+<TT CLASS="LITERAL">/dev/port</TT> (символьное устройство - major 1, minor 4) на чтение и/или запись
+(функции <TT CLASS="LITERAL">f*()</TT> из <TT CLASS="FILENAME">stdio.h</TT> работают через буфер, поэтому избегайте их). Затем
+выполняем <TT CLASS="LITERAL">lseek()</TT> на необходимый байт в файле (позиция файла 0 = порт 0x00,
+позиция файла 1 = порт 0x01, и т.д.), и считываем/записываем байт или слово
+при помощи <TT CLASS="LITERAL">read()</TT> или <TT CLASS="LITERAL">write()</TT>.</P>
+<P>Естественно, для работы программы вам нужен доступ на чтение/запись к файлу
+<TT CLASS="FILENAME">/dev/port</TT>. Этот способ конечно медленней, чем стандартный, но не требует ни
+оптимизации при компиляции, ни <TT CLASS="LITERAL">ioperm()</TT>. Кроме того, если вы дадите доступ
+соответствующим пользователю/группе к файлу <TT CLASS="FILENAME">/dev/port</TT>, вашей программе не
+нужны права root --- впрочем, это не очень хорошая вещь с точки зрения
+безопасности, поскольку это может нарушить работу системы путем получения
+прав root через доступ к диску, сетевой плате и т.д. напрямую.</P>
+</DIV>
+</DIV>
+<DIV CLASS="SECT1">
+<HR>
+<H1 CLASS="SECT1">
+<A NAME="AEN116">3. Доступ к прерываниям (IRQ) и DMA</A>
+</H1>
+<P>В своих программах вы не можете напрямую использовать прерывания (IRQ) или
+DMA. Вам нужно написать драйвер для ядра; для получения дополнительной
+информации и примеров см. <A HREF="http://www.redhat.com:8080/HyperNews/get/khg.html" TARGET="_top">The Linux Kernel Hacker's Guide</A>.</P>
+<P>Кроме того, вы не можете отключить прерывания из пользовательской программы.</P>
+</DIV>
+<DIV CLASS="SECT1">
+<HR>
+<H1 CLASS="SECT1">
+<A NAME="AEN121">4. Очень точная синхронизация</A>
+</H1>
+<DIV CLASS="SECT2">
+<H2 CLASS="SECT2">
+<A NAME="AEN123">4.1. Задержки</A>
+</H2>
+<P>Прежде всего, я должен сказать, что в следствии многозадачной природы
+Linux, вы не можете гарантировать точную синхронизацию в пользовательской
+программе. Ваш процесс может выйти из расписания выполняемых задач на
+интервал от 10 миллисекунд до нескольких секунд (на системе с высокой
+загрузкой). Тем не менее, к большинству приложений, использующих порты
+ввода/вывода, это не относится. Чтобы свести это к минимуму, вы можете
+выполнять свой процесс при высоком приоритете (см. руководство <TT CLASS="LITERAL">nice(2)</TT>) или
+использовать расписание задач в реальном времени (см. ниже).</P>
+<P>Если вам нужна более точная синхронизация в обычных пользовательских
+программах, существует несколько возможностей поддержки `реального времени'
+в пользовательском режиме. Ядра Linux версий 2.x имеют относительную
+поддержку реального времени; см. руководство по <TT CLASS="LITERAL">sched_setscheduler(2)</TT>.
+Кроме того, существует специальное ядро, жестко поддерживающее реальное
+время; см.
+<A HREF="http://luz.cs.nmt.edu/~rtlinux/" TARGET="_top">http://luz.cs.nmt.edu/~rtlinux/.</A>
+</P>
+<DIV CLASS="SECT3">
+<HR>
+<H3 CLASS="SECT3">
+<A NAME="AEN130">4.1.1. Засыпание: <TT CLASS="LITERAL">sleep()</TT> и <TT CLASS="LITERAL">usleep()</TT>
+</A>
+</H3>
+<P>Итак, начнем с самых простых процедур синхронизации. Для задержки в
+несколько секунд, лучше всего использовать <TT CLASS="LITERAL">sleep()</TT>. Для задержек, с точностью до десятков
+миллисекунд может работать <TT CLASS="LITERAL">usleep()</TT>. Во время
+выполнения этих функций, процессор приостанавливает данный процесс
+на заданное время (``засыпает'') и выполняет другие процессы. Для детальной
+информации см. руководство <TT CLASS="LITERAL">sleep(3)</TT> и
+<TT CLASS="LITERAL">usleep(3)</TT>.</P>
+<P>Задержки менее 50 миллисекунд (в зависимости от скорости процессора,
+машины, и загрузки системы) не представляются возможными, т.к. для
+возвращения управления процессу в Linux тратится, как минимум, 10-30
+миллисекунд. Указание таких задержек для <TT CLASS="LITERAL">usleep(3)</TT>, на самом деле, приведет к большей задержке
+(уж, как минимум, в 10 мс).</P>
+</DIV>
+<DIV CLASS="SECT3">
+<HR>
+<H3 CLASS="SECT3">
+<A NAME="AEN141">4.1.2. <TT CLASS="LITERAL">nanosleep()</TT>
+</A>
+</H3>
+<P>В серии 2.0.x ядр Linux существует системный вызов <TT CLASS="LITERAL">nanosleep()</TT> (см.
+руководство <TT CLASS="LITERAL">nanosleep(2)</TT>), который позволяет выполнить самую короткую
+задержку (в несколько микросекунд и выше).</P>
+<P>Задержки &#60;= 2 мс, если (и только если) ваш процесс находится в
+относительном режиме реального времени (soft real time scheduling),
+<TT CLASS="LITERAL">nanosleep()</TT> выполняет при помощи цикла; иначе
+он работает так же, как и <TT CLASS="LITERAL">usleep()</TT>.</P>
+<P>В циклах используется <TT CLASS="LITERAL">udelay()</TT>(внутренняя фунция ядра), а длина цикла
+вычисляется в зависимости от значения BogoMips. Для более детальной
+информации, как это работает см. <TT CLASS="FILENAME">/usr/include/asm/delay.h.</TT>
+</P>
+</DIV>
+<DIV CLASS="SECT3">
+<HR>
+<H3 CLASS="SECT3">
+<A NAME="AEN153">4.1.3. Задержка через порты ввода/вывода</A>
+</H3>
+<P>Другой способ обеспечить задержку в несколько микросекунд - это порты
+ввода/вывода. Запись или чтение любого значения из порта 0x80 (о том, как
+это сделать, см. выше) обеспечивает задержку почти точно равную одной
+микросекунде, независимо от типа и скорости вашего процессора. Чтобы
+обеспечить задержку в несколько микросекунд, вы можете выполнить эту
+операцию несколько раз. Запись в этот порт не оказывает никакого влияния на
+компьютер (и некоторые драйверы используют это). Таким образом, обычно
+выполняется задержка в <TT CLASS="LITERAL">{in|out}[bw]_p()</TT> (см.
+<TT CLASS="FILENAME">asm/io.h</TT>).</P>
+<P>На самом деле, операции ввода/вывода на большинство портов в диапазоне от 0
+до 0x3ff тоже дают задержку около одной микросекунды. Так что, если вы,
+например, производите запись в параллельный порт, для обеспечения задержки,
+просто добавьте дополнительные <TT CLASS="LITERAL">inb()</TT> из порта.</P>
+</DIV>
+<DIV CLASS="SECT3">
+<HR>
+<H3 CLASS="SECT3">
+<A NAME="AEN160">4.1.4. Задержка при помощи команд ассемблера</A>
+</H3>
+<P>Если вы знаете тип и частоту процессора машины, на которой будет работать
+программа, вы можете вставить меньшие задержки, путем выполнения
+определенных инструкций ассемблера (но помните, что ваш процесс может быть
+в любое время исключен из расписания, так что задержка может быть на много
+больше, чем вы хотите). В нижеуказанной таблице скорость процессора
+определяет число необходимых тактовых циклов для задержки; например, для
+процессора с частотой 50МГц (напр. 486DX-50 или 486DX2-50), один такт дает
+1/50000000 секунд (=200 наносекунд).</P>
+<P>&#13;<PRE CLASS="SCREEN">Инструкция        такты i386         такты i486
+nop                   3                   1
+xchg %ax,%ax          3                   3
+or %ax,%ax            2                   1
+mov %ax,%ax           2                   1
+add %ax,0             2                   1</PRE>&#13;</P>
+<P>(Прошу прощения, но я не знаю о Пентиуме; скорее всего, они близки к
+i486. На i386 я не смог найти инструкцию, выполняемую за один такт. В общем
+случае, лучше всего использовать одно-тактовые инструкции, иначе
+конвейерная обработка в современных процессорах может сократить задержку.)</P>
+<P>Инструкции <TT CLASS="LITERAL">nop</TT> и <TT CLASS="LITERAL">xchg</TT> не должны давать посторонние эффекты. Остальные
+команды могут изменять регистр флагов процессора. Впрочем, это уже не имеет
+значение, т.к. gcc должен заметить это. Самый лучший выбор это <TT CLASS="LITERAL">nop</TT>.</P>
+<P>Чтобы использовать это метод, выполните в вашей программе функцию
+<TT CLASS="LITERAL">asm("инструкция")</TT>. Синтаксис инструкций указан в таблице выше; если вы
+хотите указать несколько инструкций в одном <TT CLASS="LITERAL">asm()</TT>, разделите их точкой с
+запятой. Например, <TT CLASS="LITERAL">asm("nop ; nop ; nop ; nop")</TT> выполняет четыре инструкции
+<TT CLASS="LITERAL">nop</TT>, делая задержку в четыре такта на i486 или Pentium (или 12 тактов на
+i386).</P>
+<P>Gcc непосредственно вставляет код из <TT CLASS="LITERAL">asm()</TT> в программу (inline), так что
+здесь нет никаких других задержек, связанных с вызовом функций.</P>
+<P>Задержки менее одного такта невозможны на архитектуре Intel x86.</P>
+</DIV>
+<DIV CLASS="SECT3">
+<HR>
+<H3 CLASS="SECT3">
+<A NAME="AEN178">4.1.5. <TT CLASS="LITERAL">rdtsc</TT> на процессорах Пентиум</A>
+</H3>
+<P>На процессорах Пентиум вы можете узнать количество тактов, прошедших со
+времени последней перезагрузки, при помощи следующей функции:</P>
+<P>&#13;<PRE CLASS="PROGRAMLISTING">   extern __inline__ unsigned long long int rdtsc()
+   {
+     unsigned long long int x;
+     __asm__ volatile (".byte 0x0f, 0x31" : "=A" (x));
+     return x;
+   }</PRE>&#13;</P>
+<P>Вы можете отслеживать это значение для задержки на любое количество тактов,
+на сколько хотите.</P>
+</DIV>
+</DIV>
+<DIV CLASS="SECT2">
+<HR>
+<H2 CLASS="SECT2">
+<A NAME="AEN185">4.2. Точность</A>
+</H2>
+<P>Для задержек с точностью до одной секунды, лучше всего использовать <TT CLASS="LITERAL">time()</TT>.
+Для более точных задержек, <TT CLASS="LITERAL">gettimeofday()</TT> имеет точность около одной
+микросекунды (см. выше, насчет многозадачности). На пентиумах же функция
+<TT CLASS="LITERAL">rdtsc</TT> (см. выше) дает точность до одного такта.</P>
+<P>Если после истечения какого-то количества времени вы хотите получить в
+программу сигнал, используйте <TT CLASS="LITERAL">setitimer()</TT> или <TT CLASS="LITERAL">alarm()</TT>. Для подробной
+информации об этих функциях см. соответствующее руководство.</P>
+</DIV>
+</DIV>
+<DIV CLASS="SECT1">
+<HR>
+<H1 CLASS="SECT1">
+<A NAME="AEN194">5. Другие языки программирования</A>
+</H1>
+<P>Все вышесказанное может быть использовано на C++ и Objective C без
+каких-либо комментариев. На ассемблере (как и на C) перед операциями с
+портами вы должны выполнить <TT CLASS="LITERAL">ioperm()</TT> или <TT CLASS="LITERAL">iopl()</TT>.</P>
+<P>На других языках, если вы не можете использовать текст на ассемблере или на
+C, или выполнить упомянутые системные вызовы, самое простое - написать
+необходимые процедуры на C и собрать их вместе с оставшейся программой. Или
+же использовать файл <TT CLASS="FILENAME">/dev/port</TT>.</P>
+</DIV>
+<DIV CLASS="SECT1">
+<HR>
+<H1 CLASS="SECT1">
+<A NAME="AEN201">6. Некоторые полезные порты</A>
+</H1>
+<P>Вот некоторая информация по программированию основных портов, которые можно
+использовать для ввода/вывода на устройствах общего назначения (TTL или
+CMOS).</P>
+<P>Если вы хотите использовать эти или другие порты по их непосредственному
+назначению (напр. для управления принтером или модемом), лучше всего
+использовать существующие драйвера (которые обычно включены в ядро) вместо
+того, чтобы работать с портами так, как это описано в этом HOWTO. Этот
+раздел предназначен для людей, желающих подключить ЖК-индикатор, шаговый
+двигатель или другую электронику к стандартным портам компьютера.</P>
+<P>Если вы хотите работать с таким распространенным устройством, как сканер,
+сначала поищите для него драйвер под Linux. Начать лучше всего с
+<A HREF="http://sunsite.unc.edu/pub/Linux/docs/HOWTO/Hardware-HOWTO" TARGET="_top">Hardware-HOWTO</A>.</P>
+<P>&#13;<A HREF="http://www.hut.fi/Misc/Electronics/" TARGET="_top">http://www.hut.fi/Misc/Electronics/ </A>
+</P>
+<DIV CLASS="SECT2">
+<HR>
+<H2 CLASS="SECT2">
+<A NAME="AEN209">6.1. Параллельный порт</A>
+</H2>
+<P>Основной адрес параллельного порта (далее "<TT CLASS="LITERAL">БАЗА</TT>") - 0x3bc для <TT CLASS="FILENAME">/dev/lp0</TT>,
+0x378 для <TT CLASS="FILENAME">/dev/lp1</TT> и 0x278 для
+<TT CLASS="FILENAME">/dev/lp2</TT>. Если вы хотите управлять чем-то вроде
+обычного принтера, см. <A HREF="http://sunsite.unc.edu/pub/Linux/docs/HOWTO/Printing-HOWTO" TARGET="_top">Printing-HOWTO</A>.</P>
+<P>В дополнение к стандартному режиму только вывода, описываемому ниже, в
+большинстве параллельных портов существует `расширенный' двунаправленный
+режим. Для дополнительной информации по этому и более новому режиму ECP/EPP
+(и стандарт IEEE 1284 в общих чертах), см. 
+<A HREF="http://www.fapo.com/" TARGET="_top">http://www.fapo.com/</A> и <A HREF="http://www.senet.com.au/~cpeacock/parallel.htm" TARGET="_top">http://www.senet.com.au/~cpeacock/parallel.htm.</A> Только помните, что вы не
+можете в ваших программах использовать IRQ и DMA, и для использования
+ECP/EPP. Вам скорее всего придется написать свой драйвер ядра; хотя, я думаю,
+что кто-нибудь уже написал его.</P>
+<P>Порт <TT CLASS="LITERAL">БАЗА+0</TT> (Порт данных) соответственно
+управляет сигналами данных на параллельном порту (от D0 до D7 для битов от
+0 до 7, соответствуют значения: 0 = 0В, 1 = 5В). Запись в этот порт
+устанавливает соответствующие уровни напряжения на контактах разъема
+принтера. При чтении возвращается последнее записанное значение в
+стандартном или расширенном режиме записи, или данные на разъеме от другого
+устройства в расширенном режиме чтения.</P>
+<P>Порт <TT CLASS="LITERAL">БАЗА+1</TT> (Порт состояния) предназначен только для чтения и возвращает следующие входные сигналы: 
+<P>
+</P>
+<UL>
+<LI>
+<P>Биты 0 и 1 зарезервированы. </P>
+</LI>
+<LI>
+<P>Бит 2 состояние IRQ (его нет на разъеме и я не знаю как он работает)</P>
+</LI>
+<LI>
+<P>Бит 3 ERROR (1=ОШИБКА)</P>
+</LI>
+<LI>
+<P>Бит 4 SLCT (1=ВЫБОР)</P>
+</LI>
+<LI>
+<P>Бит 5 PE (1=ГОТОВ)</P>
+</LI>
+<LI>
+<P>Бит 6 ACK (1=ПОДТВЕРЖДЕНИЕ)</P>
+</LI>
+<LI>
+<P>Бит 7 -BUSY (0=ЗАНЯТ)</P>
+</LI>
+</UL>
+(Я не уверен насчет их значений)</P>
+<P>Порт <TT CLASS="LITERAL">БАЗА+2</TT> (Порт управления) предназначен только для записи (чтение
+возвращает последнее записанное значение) и управляет следующими сигналами:
+<P>
+</P>
+<UL>
+<LI>
+<P>Bit 0 -STROBE (0=СТРОБ)</P>
+</LI>
+<LI>
+<P>Бит 1 AUTO_FD_XT (1=АВТО_ПЕРЕВОД_СТРОКИ) </P>
+</LI>
+<LI>
+<P>Бит 2 -INIT (0=СБРОС) </P>
+</LI>
+<LI>
+<P>Бит 3 SLCT_IN (1=ВЫБРАН)</P>
+</LI>
+<LI>
+<P>Бит 4 включает IRQ параллельно порта (которое возникает при изменении ACK с
+нуля на еденицу) (1=IRQ включено).</P>
+</LI>
+<LI>
+<P>Бит 5 управляет направлением работы порта в расширенным режиме (0 = запись,
+1 = чтение) и предназначен только для записи (чтение не возвращает ничего
+полезного).</P>
+</LI>
+<LI>
+<P>Биты 6 и 7 зарезервированы. </P>
+</LI>
+</UL>
+(Опять же, я не уверен насчет этих значений)</P>
+<P>Разводка (25-разъемный разъем (мама)) (i=ввод, o=вывод):
+<PRE CLASS="SCREEN">1io -STROBE, 2io D0, 3io D1, 4io D2, 5io D3, 6io D4, 7io D5, 8io D6,
+9io D7, 10i ACK, 11i -BUSY, 12i PE, 13i SLCT, 14o AUTO_FD_XT,
+15i ERROR, 16o -INIT, 17o SLCT_IN, 18-25 Ground</PRE>&#13;</P>
+<P>Спецификация IBM говорит, что контакты 1, 14, 16 и 17 (управляющий вывод)
+подключены через открытый коллектор на 5В через резистор 4.7 КОм (рабочий
+ток 20 mA, холостой 0.55 mA, рабочее напряжение 5.0 В). Остальные контакты
+дают рабочий ток 24 mA, холостой 15 mA, и рабочее напряжение 2.4 В. В
+низком состоянии оба они дают максимум 0.5 В. Параллельный порты не-IBM
+могут отличаться от этого стандарта. Для дополнительной информации см.
+<A HREF="http://www.hut.fi/Misc/Electronics/circuits/lptpower.html" TARGET="_top">http://www.hut.fi/Misc/Electronics/circuits/lptpower.html</A>.</P>
+<P>И наконец, предупреждение: будьте осторожны с заземлением. Я сжег несколько
+параллельных портов, подключая принтеры к ним при включенном компьютере. Для таких
+случаев лучше всего использовать параллельный порты, не встроенные в
+материнскую плату. (Обычно вы можете установить второй параллельный порт
+при помощи дешевой `мультикарты'; просто отключите порты, которые вам не
+нужны, и установить адрес параллельного порта на карте на любой свободный
+адрес. Вам не нужно заботится о IRQ параллельного порта, если только он
+используется другим устройством)</P>
+</DIV>
+<DIV CLASS="SECT2">
+<HR>
+<H2 CLASS="SECT2">
+<A NAME="AEN261">6.2. Игровой порт (джойстик)</A>
+</H2>
+<P>Игровой порт находится по адресам 0x200-0x207. Для управления обычным
+джойстиком существует драйвер на уровне ядра. См.
+<A HREF="ftp://sunsite.unc.edu/pub/Linux/kernel/patches/" TARGET="_top">ftp://sunsite.unc.edu/pub/Linux/kernel/patches/</A>
+, имя файла <TT CLASS="LITERAL">joystick-*</TT>.</P>
+<P>Разводка (15-контактный разъем (мама)):
+<P>
+</P>
+<UL>
+<LI>
+<P>1,8,9,15: +5В (питание)</P>
+</LI>
+<LI>
+<P>4,5,12: Земля</P>
+</LI>
+<LI>
+<P>2,7,10,14: Цифровые входы BA1, BA2, BB1 и BB2, соответственно</P>
+</LI>
+<LI>
+<P>3,6,11,13: ``Аналоговые'' входы AX, AY, BX и BY, соответственно</P>
+</LI>
+</UL>&#13;</P>
+<P>Контакты +5В обычно подключены прямо к питанию материнской платы и не
+обеспечивают большую загрузку (в зависимости от материнской платы, блока
+питания и игрового порта).</P>
+<P>Цифровые входы используются для определения состояния кнопок на двух
+джойстиках (джойстик A и джойстик B, по две кнопки на каждом), подключаемых
+к порту. Это должны быть обычные входы TTL, и вы можете считывать их
+состояние непосредственно из регистра состояния (см. ниже). Обычные
+джойстики устанавливают ноль (0В), при нажатой кнопке, и единицу (5В от
+питания через резистор 1КОм), в противном случае.</P>
+<P>Так называемые аналоговые входы, на самом деле, измеряют сопротивление.
+Игровой порт имеет четыре одноимпульсных мультивибратора, подключенных к
+четырем входам. На каждом входе стоит резистор 2.2КОм между выходом
+мультивибратора и землей. Обычные джойстики имеют потенциометр по каждой
+оси (X и Y), связанный с +5В и соответствующим входным контактом (AX или AY
+для джойстика A, и BX или BY для джойстика B).</P>
+<P>Во время включения, мультивибратор устанавливает напряжение +5В и ждет,
+когда напряжение на конденсаторе достигнет 3.3В, а затем сбрасывает
+напряжение. Таким образом, длительность импульса мультивибратора
+прямопропорциональна сопротивлению потенциометра на джойстике (т.е.
+положению джойстика по соответствующей оси):
+<SPAN CLASS="QUOTE">"R = (t - 24.2) / 0.011,"</SPAN>
+где R - сопротивление (Ом) потенциометра, а t - длительность импульса (секунд). 
+&#13;</P>
+<P>Таким образом, чтобы считать состояние аналогового входа, сначала нужно
+включить мультивибратор (путем записи в порт; см. ниже), а затем считывать
+состояние всех четырех осей, пока они сбросятся с 1 на 0, измеряя
+длительность сигнала. Такое считывание требует много процессорного времени
+и на многозадачных операционных системах, таких как Linux (для
+пользовательских программ), результат будет не очень точен, т.к. вы не
+можете считывать из порта постоянно (если только не используете драйвер
+на уровне ядра и отключаете прерывания, что, впрочем, требует еще больше
+процессорного времени). Если вы знаете, что сигнал будет продолжаться
+достаточно долгое время (десятки миллисекунд), вы можете использовать
+usleep() перед считыванием, передав процессорное время другим процессам.</P>
+<P>Вам нужно использовать только один порт - 0x201 (другие порты идентичны или
+вообще ничего не делают). Любая запись в этот порт (не важно, что вы
+записываете) включает мультивибратор. Чтение из порта возвращает состояние
+входных сигналов:
+<P>
+</P>
+<UL>
+<LI>
+<P>Бит 0: AX (состояние на выходе мультивибратора) </P>
+</LI>
+<LI>
+<P>Бит 1: AY (состояние на выходе мультивибратора)</P>
+</LI>
+<LI>
+<P>Бит 2: BX (состояние на выходе мультивибратора)</P>
+</LI>
+<LI>
+<P>Бит 3: BY (состояние на выходе мультивибратора)</P>
+</LI>
+<LI>
+<P>Бит 4: BA1 (цифровой вход)</P>
+</LI>
+<LI>
+<P>Бит 5: BA2 (цифровой вход</P>
+</LI>
+<LI>
+<P>Бит 6: BB1 (цифровой вход)</P>
+</LI>
+<LI>
+<P>Бит 7: BB2 (цифровой вход)</P>
+</LI>
+</UL>&#13;</P>
+</DIV>
+<DIV CLASS="SECT2">
+<HR>
+<H2 CLASS="SECT2">
+<A NAME="AEN300">6.3. Последовательный порт</A>
+</H2>
+<P>Если устройство, с которым вы хотите общаться, поддерживает что-то похожее
+на RS-232, вы можете использовать последовательный порт. Драйвер Linux для
+последовательного порта должен быть достаточен для всех приложений (вам не
+нужно иметь непосредственный доступ к порту, или же для этого нужно
+написать драйвер ядра); он достаточно универсален, т.к. использует
+нестандартные скорости обмена и т.д., так что у вас не должно быть проблем.</P>
+<P>Для дополнительной информации см. руководство <TT CLASS="LITERAL">termios(3)</TT>, исходные тексты
+драйвера (<TT CLASS="FILENAME">linux/drivers/char/serial.c</TT>), и
+<A HREF="http://www.easysw.com/~mike/serial/index.html" TARGET="_top">http://www.easysw.com/~mike/serial/index.html.</A>
+</P>
+</DIV>
+</DIV>
+<DIV CLASS="SECT1">
+<HR>
+<H1 CLASS="SECT1">
+<A NAME="AEN307">7. Подсказки</A>
+</H1>
+<P>Если вы хотите хороший аналоговый ввод/вывод, можете подключить АЦП
+и/или ЦАП к параллельному порту (подсказка: если у вас маломощное
+устройство, для питания используйте игровой порт или свободный разъем
+питания внутренних устройств, выведенный наружу, или же используйте внешний
+источник питания) или купите специальную карту
+аналого-цифрового/цифро-аналогого преобразования (большинство из
+старых/медленных карт управляются через порты ввода/вывода). Или, если вы
+удовлетворитесь одним или двумя каналами, погрешностью и (возможно)
+неправильным уровнем нуля, дешевая звуковая карта, поддерживаемая драйвером
+Linux, должна тоже сработать (и очень быстро).</P>
+<P>С точным аналоговым устройством; неправильное заземление может вызвать
+ошибки в аналоговом входе или выходе. Если у вас есть такой опыт, можете
+попробовать электрически развязать устройство с компьютером, при помощи
+оптопары (на <I CLASS="EMPHASIS">всех</I> сигналах между компьютером и вашим устройством). Для
+лучшей изоляции попробуйте взять питание для оптопары от компьютера
+(свободный сигнал на порту может дать достаточно напряжения).</P>
+<P>Если вы ищете программное обеспечение под Linux для разработки вашей платы,
+есть бесплатная программа под названием Pcb (по крайней мере, если не
+делаете ничего уж очень навороченного). Она включен в большинство
+дистрибутивов Linux и доступна по адресу
+<A HREF="ftp://sunsite.unc.edu/pub/Linux/apps/circuits/" TARGET="_top">ftp://sunsite.unc.edu/pub/Linux/apps/circuits/</A>
+ (имя файла <TT CLASS="LITERAL">pcb-*</TT>).</P>
+</DIV>
+<DIV CLASS="SECT1">
+<HR>
+<H1 CLASS="SECT1">
+<A NAME="AEN315">8. Устранение возможных проблем</A>
+</H1>
+<P>
+<P>
+</P>
+<DIV CLASS="VARIABLELIST">
+<DL>
+<DT>Q1.</DT>
+<DD>
+<P>Я получаю segmentation faults, когда пытаюсь получить доступ к порту.</P>
+</DD>
+<DT>A1.</DT>
+<DD>
+<P>Т.к. ваша программа не имеет прав root, или по каким-то причинам <TT CLASS="LITERAL">ioperm()</TT>
+вызвана неудачно. Проверьте значение возвращаемое <TT CLASS="LITERAL">ioperm()</TT>. Также,
+проверьте обращаетесь ли вы к тем портам, которые разрешили с помощью
+<TT CLASS="LITERAL">ioperm()</TT> (см. Q3). Если вы используете макросы, добавляющие задержку
+(<TT CLASS="LITERAL">inb_p()</TT>, <TT CLASS="LITERAL">outb_p()</TT>, and so on), не забудьте вызвать <TT CLASS="LITERAL">ioperm()</TT>, чтобы
+получить доступ к порту 0x80 тоже.</P>
+</DD>
+<DT>Q2.</DT>
+<DD>
+<P>Я не могу найти функции <TT CLASS="LITERAL">in*()</TT>, <TT CLASS="LITERAL">out*()</TT> определенные где-нибудь, и gcc
+жалуется по поводу неопределенных ссылок.</P>
+</DD>
+<DT>A2.</DT>
+<DD>
+<P>Вы не компилировали свою программу со включенной оптимизацией (<TT CLASS="LITERAL">-O</TT>), и, таким образом, gcc не мог разобрать макросы в
+<TT CLASS="FILENAME">asm/io.h</TT>. Или вы не подключили <TT CLASS="LITERAL">#include &lt;asm/io.h&gt;</TT>.</P>
+</DD>
+<DT>Q3.</DT>
+<DD>
+<P>
+<TT CLASS="LITERAL">out*()</TT> не делает ничего, или делает что-то непонятное. </P>
+</DD>
+<DT>A3.</DT>
+<DD>
+<P>Проверьте порядок параметров; они должны быть outb(value, port), но не
+<TT CLASS="LITERAL">outb(value, port)</TT>, как обычно в MS-DOS.</P>
+</DD>
+<DT>Q4.</DT>
+<DD>
+<P>Я хочу управлять стандартным устройством RS-232/параллельным
+портом/джойстиком...</P>
+</DD>
+<DT>A4.</DT>
+<DD>
+<P>Вы, вероятно, больше выиграете, используя существующие драйверы (в ядре Linux,
+в X server или где-то еще), чтобы сделать это. Драйверы обычно
+универсальные, такие, что даже нестандартные устройства могут работать с
+ними. См. информацию по стандартным портам, выше даны ссылки на
+документацию по ним.</P>
+</DD>
+</DL>
+</DIV>
+</P>
+</DIV>
+<DIV CLASS="SECT1">
+<HR>
+<H1 CLASS="SECT1">
+<A NAME="AEN364">9. Пример кода</A>
+</H1>
+<P>Здесь приведен кусок простого примера для доступа к портам ввода/вывода:</P>
+<P>&#13;<PRE CLASS="PROGRAMLISTING">/*
+ * example.c: очень простой пример для порта ввода/вывода
+ *
+ * Этот код не делает ничего полезного, только запись в порт, пауза,
+ * и чтение из порта. Откомпилируйте `gcc -O2 -o example example.c',
+ * и запустите под root `./example'.
+ */
+
+#include &lt;stdio.h&gt;
+#include &lt;unistd.h&gt;
+#include &lt;asm/io.h&gt;
+
+#define BASEPORT 0x378 /* lp1 */
+
+int main()
+{
+  /* Получить доступ к порту */
+  if (ioperm(BASEPORT, 3, 1)) {perror("ioperm"); exit(1);}
+  
+  /* Вывод в порт (0) */
+  outb(0, BASEPORT);
+  
+  /* Задержка (100 мс) */
+  usleep(100000);
+  
+  /* Чтение из порта (BASEPORT+1) и вывод результатов на экран */
+  printf("статус: %d\n", inb(BASEPORT + 1));
+
+  /* Мы больше не нуждаемся больше в порту */
+  if (ioperm(BASEPORT, 3, 0)) {perror("ioperm"); exit(1);}
+
+  exit(0);
+}
+
+/* конец example.c */
+&#13;</PRE>&#13;</P>
+</DIV>
+<DIV CLASS="SECT1">
+<HR>
+<H1 CLASS="SECT1">
+<A NAME="AEN369">10. Благодарности</A>
+</H1>
+<P>Слишком много людей содействовали мне для того, чтобы перечислять всех, однако,
+всем огромное спасибо, каждому. Я ответил не всем, кто мне написал; прошу
+прощения за это, и еще раз спасибо за помощь.</P>
+</DIV>
+</DIV>
+<P>
+[Источник: <a href="http://linux-ve.net">linux-ve.net</a>]
+<font color="#CA7622"><p align=right><b>[ опубликовано 20/06/2003 ]</b></p></font>
+<small>Riku Saikkonen (<a href="mailto:Riku.Saikkonen@hut.fi">Riku.Saikkonen@hut.fi</a>). Перевод Павел Гашев (<a href="pax@asp-linux.com">pax@asp-linux.com</a>), "Linux I/O port programming mini-HOWTO" |  
+<a href="/lib/articles/programming/io_port_prog_minihowto.phtml?style=print" target="_new">Версия для печати</a></small>
+
+</font></td>
+        </tr>
+        <tr>
+          <td height=1><img src=/images/onepix.gif width=1 height=1></td> 
+          <td colspan=3 height=1 bgcolor=#F8BB0B><img src=/images/onepix.gif width=1 height=1></td>
+        </tr>
+      </table><br><table width=100% border=1 cellspacing=0 cellpadding=2 bordercolor=#F8BB0B bordercolordark=#F8BB0B bordercolorlight=#FFFFFF><tr bgcolor=#FFF8E8><td><font face=sans-serif color=#5B1900><b>Программирование: последние поступления</b></font></td></tr></table><table width=100% border=0 cellspacing=0 cellpadding=0><tr><td width=20><img src=/images/onepix.gif width=20 height=1></td><td bgcolor=#F8BB0B width=1><img src=/images/onepix.gif width=1 height=1></td><td width=5>&nbsp;</td><td><font size=2><br>
+<blockquote>
+
+
+<img src="/images/arrow.gif" width="8" height="10">&nbsp;<a href="/lib/articles/programming/hdd_struct.phtml">Логическая структура жесткого диска</a><br>
+В статье расcматривается логическая структура жесткого диска, соответствующая
+стандарту Microsoft - "основной раздел - расширенный раздел - разделы не-DOS",
+а также разбирается пример программы, осуществляющей чтение таблицы разделов.<br><font size="1" color="#CA7622">[Bob (ubob AT mail.ru) - 31/05/2005]</font><br><br>
+
+
+<img src="/images/arrow.gif" width="8" height="10">&nbsp;<a href="/lib/articles/programming/ruby1.phtml">Быстрый курс Ruby</a><br>
+
+
+<img src="/images/arrow.gif" width="8" height="10">&nbsp;<a href="/lib/articles/programming/ruby2.phtml">Обработка XML+XSL на Ruby</a><br>
+В данном цикле статей изложены основные принципы программирование на Ruby. Ruby ("рубин") - сравнительно молодой интерпретируемый
+язык программирования общего назначения, приобретающий все большую и большую популярность.
+Курс ориентирован на читателей, которые уже знают какой-либо язык программирования и понимают магию, с помощью которой из набора разрозненных операторов получается нечто действительно полезное.<br>
+<font size="1" color="#CA7622">[Александр Неткачев - 30/12/2004]</font><br><br>
+
+
+<img src="/images/arrow.gif" width="8" height="10">&nbsp;<a href="/lib/articles/programming/3tier.phtml">3-tier своими руками</a><br>
+Как-то давным давно случилось страшное. Наша фирма начала расширяться и открыла филиал. В другом городе.
+Проблемы конечно были всегда, но тут они стали быстро переходить в разряд неразрешимых. 
+Как привязать новый офис к информационной структуре фирмы, тем более что руководству хочется видеть что происходит в филиале?
+Вначале подумали создать какое-нибудь WEB приложение и заставить филиал работать с ним через браузер. 
+Но тут выяснилось, что к браузеру придется привязать сканеры, кассы и весы. Как это делать и во что это выльется мы представить себе не могли.
+Немного подумав, решили что если браузер не может работать с переферией, то нужно написать что-то свое.
+В этой статье будут описаны наши первые шаги по созданию распределенной системы на базе Apache, mod_perl и Delphi (клиентская часть).<br><font size="1" color="#CA7622">[Цуканов Андрей - 30/11/2004]</font><br><br>
+
+
+</blockquote>
+
+</font></td>
+        </tr>
+        <tr>
+          <td height=1><img src=/images/onepix.gif width=1 height=1></td> 
+          <td colspan=3 height=1 bgcolor=#F8BB0B><img src=/images/onepix.gif width=1 height=1></td>
+        </tr>
+      </table><br><table width=100% border=1 cellspacing=0 cellpadding=2 bordercolor=#F8BB0B bordercolordark=#F8BB0B bordercolorlight=#FFFFFF><tr bgcolor=#FFF8E8><td><font face=sans-serif color=#5B1900><b><a href="http://www.linuxcenter.ru/lib/">Библиотека ЛинуксЦентра</a>: список разделов</b></font></td></tr></table><table width=100% border=0 cellspacing=0 cellpadding=0><tr><td width=20><img src=/images/onepix.gif width=20 height=1></td><td bgcolor=#F8BB0B width=1><img src=/images/onepix.gif width=1 height=1></td><td width=5>&nbsp;</td><td><font size=2><br><ul style="list-style-image: url('/images/arrow.gif')">
+<li><a href="/lib/books/">Книги и руководства</a></li>
+<li><a href="/lib/articles/">Статьи</a></li>
+<ul style="list-style-image: url('/images/arrow.gif')">
+<li><a href="/lib/articles/distrib/">Дистрибутивы</a></li>
+<li><a href="/lib/articles/success/">Linux наступает!</a></li>
+<li><a href="/lib/articles/security/">Безопасность</a></li>
+<li><a href="/lib/articles/networking/">Сети</a></li>
+<li><a href="/lib/articles/hardware/">Аппаратное обеспечение</a></li>
+<li><a href="/lib/articles/ideology/">Идеологические вопросы</a></li>
+<li><a href="/lib/articles/gohome/">Windows, подвинься!</a></li>
+<li><a href="/lib/articles/programming/"><b>Программирование</b></a></li>
+<ul style="list-style-image: url('/images/arrow.gif')">
+</ul>
+<li><a href="/lib/articles/soft/">Программное обеспечение</a></li>
+<li><a href="/lib/articles/system/">Система, ядро, утилиты</a></li>
+</ul>
+<li><a href="/lib/press/">Пресс-релизы ЛинуксЦентра</a></li>
+<li><a href="/lib/history/">История Linux</a></li>
+<li><a href="/lib/humor/">Linux'оиды шутят</a></li>
+</ul>
+</font></td>
+        </tr>
+        <tr>
+          <td height=1><img src=/images/onepix.gif width=1 height=1></td> 
+          <td colspan=3 height=1 bgcolor=#F8BB0B><img src=/images/onepix.gif width=1 height=1></td>
+        </tr>
+      </table><br><br><br><br><br><br>
+<table width=100% border=1 cellspacing=0 cellpadding=2 bordercolor=#F8BB0B bordercolordark=#F8BB0B bordercolorlight=#FFFFFF><tr bgcolor=#FFF8E8><td><font face=sans-serif color=#5B1900><b>Три хита от Линукс Центра:
+</b></font></td></tr></table><table width=100% border=0 cellspacing=0 cellpadding=0><tr><td width=20><img src=/images/onepix.gif width=20 height=1></td><td bgcolor=#F8BB0B width=1><img src=/images/onepix.gif width=1 height=1></td><td width=5>&nbsp;</td><td><font size=2><br>Для тех, кто не знает, что выбрать в ЛинуксЦентре, рекомендуем лучшее, что у нас есть:<br>
+<br>1. <a href="http://www.linuxcenter.ru/index.phtml?good=1071"><b>Knoppix 3.7 Russian Edition (1CD) - 90 р.</b></a>
+<br>2. <a href="http://www.linuxcenter.ru/index.phtml?good=1053">Mandrakelinux 10.1 Official LC Edition - download version (1DVD) - 250 р.</a>
+<br>3. <a href="http://www.linuxcenter.ru/index.phtml?good=1056">Mandrakelinux 10.1 Official PowerPack+ (8CD+1DVD)</a> : 1545 р. 
+<br><br></font></td>
+        </tr>
+        <tr>
+          <td height=1><img src=/images/onepix.gif width=1 height=1></td> 
+          <td colspan=3 height=1 bgcolor=#F8BB0B><img src=/images/onepix.gif width=1 height=1></td>
+        </tr>
+      </table><br><br></td></tr></table><img src=/0.gif width=710 height=1><br></td><td width=5% background=/images/rightbg.gif><img src=/0.gif width=44 height=1></td></tr></table>
+<table width=100% border=0 cellspacing=0 cellpadding=0><tr><td width=95% valign=top><table width=100% border=0 cellspacing=0 cellpadding=0><tr valign=top><td valign=bottom><img src=/0.gif width=169 height=1><br></td><td align=center>
+<table width=472 border=0 cellspacing=0 cellpadding=1><tr><td>
+<a href=http://ad.adriver.ru/cgi-bin/click.cgi?sid=5150&bt=1&pz=0&rnd=1078589963 target=_top>
+<img src=http://ad.adriver.ru/cgi-bin/rle.cgi?sid=5150&bt=1&pz=0&rnd=1078589963 alt=-AdRiver- border=0 width=468 height=60></a> <br></td></tr></table></td></tr></table>
+</td><td width=5% background=/images/rightbg.gif valign=top><img src=/0.gif width=44 height=1></td></tr><tr><td width=95% valign=top bgcolor=#F8BA07><img src=/images/smline.gif width=197 height=2></td><td width=5% background=/images/rightbg.gif bgcolor=#F8BA07 valign=top><img src=/0.gif width=1 height=2></td></tr></table>
+
+<table width=100% border=0 cellspacing=0 cellpadding=0><tr><td width=95% valign=top bgcolor=#F8BA07><img src=/images/smline.gif width=197 height=2></td><td width=5% background=/images/rightbg.gif bgcolor=#F8BA07 valign=top><img src=/0.gif width=1 height=2></td></tr><tr><td width=95% valign=top bgcolor=#FFF8E8> <img src=/0.gif width=710 height=1><br>
+<table width=100% border=0 cellspacing=0 cellpadding=0><tr><td><font face=sans-serif size=1 color=#5B1900><a href=mailto:info@linuxcenter.ru>info@linuxcenter.ru</a><br>&copy;&nbsp;2000-2005 Linux Center<br>Проект компании <a href="http://www.mezon.ru/">Mezon.Ru</a></font></td><td align=right><nobr><b><font face=sans-serif size=2 color=#5B1900><a href=/news/ class=menulink> &nbsp;Новости <img src=/images/arrow2.gif width=31 height=27 border=0 align=absmiddle></a><a href=/?wellcome=1 class=menulink> &nbsp;Магазин <img src=/images/arrow2.gif width=31 height=27 border=0 align=absmiddle></a><a href=/lib/ class=menulink> &nbsp;Библиотека <img src=/images/arrow2.gif width=31 height=27 border=0 align=absmiddle></a><a href=/?action=seller_warn class=menulink> &nbsp;Партнерам <img src=/images/arrow2.gif width=31 height=27 border=0 align=absmiddle></a><a href=/about.phtml class=menulink> &nbsp;О проекте <img src=/images/arrow2.gif width=31 height=27 border=0 align=absmiddle></a><a href=mailto:info@linuxcenter.ru class=menulink> &nbsp;Связь <img src=/images/arrow2.gif width=31 height=27 border=0 align=absmiddle></a></b></font></td></tr></table>
+</td><td width=5% background=/images/rightbg.gif bgcolor=#FFF8E8 valign=top><img src=/0.gif width=44 height=1></td></tr></table>
+</body></html>

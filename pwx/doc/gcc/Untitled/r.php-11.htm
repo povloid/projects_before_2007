@@ -1,0 +1,281 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1251"><title>www.ПЕРВЫЕ ШАГИ.ru :: Шаг 11 - Передача длинных опций в программу - getopt_long</title></head><link rel=stylesheet type=text/css href="2.css" tppabs="http://www.firststeps.ru/2.css"><body text=black bgcolor=white link=blue vlink=blue alink=red><h2>Шаг 11 - Передача длинных опций в программу - getopt_long</h2><div style="margin:10px;"><p>Парсинг длинных параметров командной строки достаточно сложный процесс, поэтому
+бибилиотека <b>GNU C Library</b> имеет специальную функцию <b>getopt_long()</b>,
+которая может работать одновременно и с длинными и с короткими параметрами. Для работы
+только с длинными именами параметров существует функция <b>getopt_long_only</b>.
+<p>Для того, чтобы работать с этими функциями Вам потребуется подключить файл <b>getopt.h</b>. Выглядят эти функции следующим образом:
+<pre>
+#define _GNU_SOURCE
+#include &lt;getopt.h&gt;
+
+int getopt_long(int argc, char * const argv[],
+	const char *optstring,
+	const struct option *longopts, int *longindex);
+
+int getopt_long_only(int argc, char * const argv[],
+	const char *optstring,
+	const struct option *longopts, int *longindex);
+</pre>
+<p>Для работы функции <b>getopt_long</b> ей нужны следующие данные:
+<ul>
+<li><b>argc</b> - счетчик количества параметров командой строки <b>argc</b>.
+<li><b>argv</b> - значения парамеров командной строки <b>argv[]</b>.
+<li><b>shortopts</b> - список коротких названий параметров, которые мы изучали в <a href="r.php-10.htm" tppabs="http://www.firststeps.ru/linux/r.php?10">"Шаг 10 - Передача опций в программу - getopt"</a>.
+<li><b>longopts</b> - специальный массив с названиями длинных параметров.
+<li><b>longindex</b> - указатель на переменную, в которую будет помещен индекс текущего параметра из массива <b>longopts</b>.
+</ul>
+<p>Основным отличием этих фукнций от <b>getopt</b> является потребность в специальном массиве. О нем и поговорим. Массив <b>longopts</b> состоит из записей <b>struct option</b> имеющих следующий вид:
+<pre>
+struct option {
+	const char *name;
+	int has_arg;
+	int *flag;
+	int val;
+};
+</pre>
+<p>В первом поле <b>name</b> задается название длинного параметра.
+<p>Поле <b>has_arg</b> определяет нужно ли для этого параметра значение. Для этого в <b>getopt.h</b> определены специальные значения:
+<pre>
+#define no_argument            0
+#define required_argument      1
+#define optional_argument      2
+</pre>
+<p>Как видите, если значение <b>has_arg</b> равно 0 (<b>no_argument</b>), то параметр не должен иметь значение, если 1 (<b>required_argument</b>), то параметр должен иметь значение. Если же значение для параметра опционально, то <b>has_arg</b> равен 3 (<b>optional_argument</b>).
+<p>Поле <b>flag</b> задает указатель на флаг, в который помещается значение <b>val</b>, если найден данный параметр (сама функция при этом возвращает 0). Если указатель равен <b>NULL</b>, то функция возвращает значение <b>val</b> в качестве результата работы.
+<p>Поле <b>var</b> содержит значение, которое помещается в <b>flag</b> или возвращается в качестве результата работы функции.
+<p>Последняя запись массива <b>longopts</b> должна содержать нулевые значения, для того чтобы функция могла однозначно определить конец массива.
+<p>Использовать данную функцию можно несколькими способами. Первый способ самый простой, и заключается в установке флажков программы с помощью данной функции в зависимости от входных параметров.
+<p>Давайте посмотрим пример <b>longopt1.c</b>:
+<pre>
+#include &lt;stdlib.h&gt;
+#include &lt;stdio.h&gt;
+#include &lt;getopt.h&gt;
+
+
+int main (int argc, char *argv[]){
+
+    int flag_a = 0;
+    int flag_b = 0;
+    int flag_c = 0;
+
+    const char* short_options = "abc";
+
+    const struct option long_options[] = {
+        {"opta",no_argument,&flag_a,1},
+        {"optb",no_argument,&flag_b,10},
+        {"optc",no_argument,&flag_c,-121},
+        {NULL,0,NULL,0}
+    };
+
+    while (getopt_long(argc,argv,short_options,
+        long_options,NULL)!=-1);
+
+    printf("flag_a = %d\n",flag_a);
+    printf("flag_b = %d\n",flag_b);
+    printf("flag_c = %d\n",flag_c);
+	printf("\n");
+};
+</pre>
+<p>После компиляции <b>gcc longopt1.c -o longopt1</b> получим программу. Вот некоторые результаты работы:
+<pre>
+dron~# ./longopt1
+flag_a = 0
+flag_b = 0
+flag_c = 0
+
+dron~# ./longopt1 --opta
+flag_a = 1
+flag_b = 0
+flag_c = 0
+
+dron~# ./longopt1 --optb --optc
+flag_a = 0
+flag_b = 10
+flag_c = -121
+
+dron~# ./longopt1 -a -b -c
+flag_a = 0
+flag_b = 0
+flag_c = 0
+</pre>
+<p>Как видите, когда функция увидела параметры <b>--opta</b>, <b>--optb</b> или <b>--optc</b> она сразу же установила переменные <b>flag_a</b>, <b>flag_b</b> и <b>flag_с</b> значениями, которые были указаны в массиве <b>long_options</b>. Но посмотрите на короткие параметры <b>-a</b>, <b>-b</b> и <b>-c</b>. Они не были задействованы. А все от того, что в качестве результата работы функция возвращает:
+<ul>
+<li>если короткий параметр, то его название (т.е. символ)
+<li>если длинный параметр, то значение <b>val</b> при <b>flag=NULL</b>, иначе <b>0</b> и флагу <b>flag</b> присваивается значение <b>val</b>.
+</ul>
+<p>Мы с вами обработку коротких параметров не предусмотрели, если Вы сейчас модифицируете код, то сможете увидеть и их:
+<pre>
+// добавьте переменную
+int rez;
+
+// новый цикл обработки параметров
+while ((rez=getopt_long(argc,argv,short_options,
+	long_options,NULL))!=-1)
+{
+	printf("rez: %d = \'%c\'\n",rez,rez);
+};
+
+</pre>
+<p>Если сейчас запустить программу, то она выдаст следующее:
+<pre>
+dron~# ./longopt1 -abc
+rez: 97 = 'a'
+rez: 98 = 'b'
+rez: 99 = 'c'
+flag_a = 0
+flag_b = 0
+flag_c = 0
+
+dron~# ./longopt1 -a -c -g
+rez: 97 = 'a'
+rez: 99 = 'c'
+./a.out: invalid option -- g
+rez: 63 = '?'
+flag_a = 0
+flag_b = 0
+flag_c = 0
+</pre>
+<p>Теперь можно обрабатывать и короткие параметры, а чтобы это делать все сразу, существует как раз второй метод использования этой функции. Это когда указатели <b>flag</b> устанавливают в <b>NULL</b>, а значения <b>val</b> устанавливают в названия коротких параметров. При этом вся обработка результатов происходит в <b>switch</b> структуре. Давайте попробуем создать файл <b>longopt2.c</b>:
+<pre>
+#include &lt;stdlib.h&gt;
+#include &lt;stdio.h&gt;
+#include &lt;getopt.h&gt;
+
+
+int main (int argc, char *argv[]){
+
+	const char* short_options = "hs::f:";
+
+	const struct option long_options[] = {
+		{"help",no_argument,NULL,'h'},
+		{"size",optional_argument,NULL,'s'},
+		{"file",required_argument,NULL,'f'},
+		{NULL,0,NULL,0}
+	};
+
+	int rez;
+	int option_index;
+
+	while ((rez=getopt_long(argc,argv,short_options,
+		long_options,&option_index))!=-1){
+
+		switch(rez){
+			case 'h': {
+				printf("This is demo help. Try -h or --help.\n");
+				printf("option_index = %d (\"%s\",%d,%c)\n",
+					option_index,
+					long_options[option_index].name,
+					long_options[option_index].has_arg,
+					long_options[option_index].val
+				);
+				break;
+			};
+			case 's': {
+				if (optarg!=NULL)
+					printf("found size with value %s\n",optarg);
+				else
+					printf("found size without value\n");
+				break;
+			};
+	
+			case 'f': {
+				printf("file = %s\n",optarg);
+				break;
+			};
+			case '?': default: {
+				printf("found unknown option\n");
+				break;
+			};
+		};
+	};
+	return 0;
+};
+</pre>
+<p>Теперь посмотрите на работу программы. Попробуем параметр <b>--help</b> и <b>-h</b>.
+<pre>
+dron~# ./longopt2 --help
+This is demo help. Try -h or --help.
+option_index = 0 ("help",0,h)
+
+dron~# ./longopt2 -h
+This is demo help. Try -h or --help.
+Segmentation fault
+</pre>
+<p>В первом случае все удачно, вывелась помощь и значение <b>option_index</b>. Во втором случае программа "упала" с сообщением об ошибке. Почему ? Ошибка <b>Segmentation fault</b> выдается когда программа пытается работать с неверными указателями. А в нашем случае мы пытаемся получить по <b>option_index</b> название параметра. В случае когда найден короткий параметр значение <b>option_index</b> не определено. Что же делать ?! А все просто. Модифицируем код чуток:
+<pre>
+int option_index=-1; //обнулим в начале (установим признак ошибки)
+
+while (...){
+	switch(...){
+	};
+	option_index = -1; // снова делаем ошибку
+};
+</pre>
+<p>При такой работе <b>option_index</b> можно применять для определения типа переданного параметра. Если он был длинным, то это значение будет больше нуля и равно порядковому номеру параметра в массиве. Если же <b>-1</b>, то это значит, что параметр короткий:
+<pre>
+if (option_index&lt;0)
+	printf("short help option\n");
+else
+	printf("option_index = %d (\"%s\",%d,%c)\n",
+		option_index,
+		long_options[option_index].name,
+		long_options[option_index].has_arg,
+		long_options[option_index].val
+	);
+</pre>
+<p>Теперь все работает:
+<pre>
+dron~# ./longopt2 --help
+This is demo help. Try -h or --help.
+option_index = 0 ("help",0,h)
+
+dron~# ./longopt2 -h
+This is demo help. Try -h or --help.
+short help option
+</pre>
+<p>Но это еще не все фокусы :) Попробуйте поиграть с параметрами <b>size</b> и <b>file</b>:
+<pre>
+dron~# ./longopt2 -s 10
+found size without value
+
+dron~# ./longopt2 -s10
+found size with value 10
+
+dron~# ./longopt2 --size 10
+found size without value
+
+dron~# ./longopt2 --size=10
+found size with value 10
+
+dron~# ./longopt2 -f asd
+file = asd
+
+dron~# ./longopt2 -fasd
+file = asd
+
+dron~# ./longopt2 --file asd
+file = asd
+
+dron~# ./longopt2 --file=asd
+file = asd
+</pre>
+<p>Как видите не все так просто. У нас <b>size</b> задан в массиве как <b>optional_argument</b>, т.е. параметр с опциональным аргументом. И получается, что когда нет явного признака присвоения, т.е. когда в коротком виде значение не стоит рядом с названием, а в длинном виде нет знака "=", наш параметр не получает никакого значения.
+<p>А вот параметр <b>file</b> заданный как <b>required_argument</b> получает свое значение в любом случае. И в этом заключается отличие типов аргументов. Теперь при разработке программ надо всегда учитывать, что если вы используете опциональный аргумент, то пользователь может ошибочно ввести командную строку, и вместо значения введенного пользователем Ваша программа будет использовать значение, которое вы используете по умолчанию. Незнаю, помоему достаточно значительная проблема, о которой следует помнить.
+<p>Осталось лишь сказать о функции <b>getopt_long_only( )</b>, которая является полным аналогом <b>getopt_long()</b> за исключением того, что даже короткие параметры она пытается сравнить с длинными. Модифицируйте название функции и попробуйте запустить программу:
+<pre>
+dron~# ./longopt3 -f 10
+file = 10
+
+dron~# ./longopt3 -f10
+file = 10
+
+dron~# ./longopt3 --file=10
+file = 10
+
+dron~# ./longopt3 -file 10
+file = 10
+
+dron~# ./longopt3 -fil 100
+file = 100
+</pre>
+<p>Вот так вот. Данная возможность может являться и плюсом и минусом. Полезной она оказывается, когда пользователь ошибочно набирает строку и указывает вместо <b>--opt</b> параметр <b>-opt</b>. Но эта функция может сыграть злую шутку, если вдруг из коротких названий параметров получится название длинного параметра и вместо перечисления <b>'-size' = '-s -i -z -e'</b> у Вас получится название длинного параметра <b>--size</b> от <b>-s</b>. Вообще работа данной функции несколько загадочна и неоднозначна, поэтому сами попробуйте ее в действии. Я же думаю, что в программах со сложными входными параметрами лучше воздержаться от ее использования. Зато в программах с небольшим количеством параметров эта функция может позволить игнорировать ошибки пользователя.
+<p>Будьте бдительны и Ваши программы будут работать без ошибок !!!</div><center><hr><a href="r.php-10.htm" tppabs="http://www.firststeps.ru/linux/r.php?10">Предыдущий Шаг</a> | <a href="r.php-12.htm" tppabs="http://www.firststeps.ru/linux/r.php?12">Следующий Шаг</a> | <a href="general1.html" tppabs="http://www.firststeps.ru/linux/general1.html">Оглавление</a><br>Автор <a href="mailto:kuzinandrey@yandex.ru?SUBJECT=From_part_general#11'_on_[www.firststeps.ru]">Кузин Андрей</a>.<hr><iframe src="javascript:if(confirm('http://ad.adriver.ru/cgi-bin/erle.cgi?sid=9595&target=blank&bt=1&pz=0&rnd=17022  \n\nThis file was not retrieved by Teleport Pro, because it did not meet the project\'s file type specifications.  \n\nDo you want to open it from the server?'))window.location='http://ad.adriver.ru/cgi-bin/erle.cgi?sid=9595&target=blank&bt=1&pz=0&rnd=17022'" tppabs="http://ad.adriver.ru/cgi-bin/erle.cgi?sid=9595&target=blank&bt=1&pz=0&rnd=17022" frameborder=0 vspace=0 hspace=0 width=468 height=60 marginwidth=0 marginheight=0 scrolling=no><a href="javascript:if(confirm('http://ad.adriver.ru/cgi-bin/click.cgi?sid=9595&bt=1&pz=0&rnd=17022  \n\nThis file was not retrieved by Teleport Pro, because it is addressed on a domain or path outside the boundaries set for its Starting Address.  \n\nDo you want to open it from the server?'))window.location='http://ad.adriver.ru/cgi-bin/click.cgi?sid=9595&bt=1&pz=0&rnd=17022'" tppabs="http://ad.adriver.ru/cgi-bin/click.cgi?sid=9595&bt=1&pz=0&rnd=17022" target=_blank><img src="rle.cgi-sid=9595&bt=1&pz=0&rnd=17022" tppabs="http://ad.adriver.ru/cgi-bin/rle.cgi?sid=9595&bt=1&pz=0&rnd=17022" alt="-AdRiver-" border=0 width=468 height=60></a></iframe></center><br><br>

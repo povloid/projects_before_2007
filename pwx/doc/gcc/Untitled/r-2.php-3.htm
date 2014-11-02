@@ -1,0 +1,31 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1251"><title>www.ПЕРВЫЕ ШАГИ.ru :: Шаг 3 - События GTK</title></head><link rel=stylesheet type=text/css href="2.css" tppabs="http://www.firststeps.ru/2.css"><body text=black bgcolor=white link=blue vlink=blue alink=red><h2>Шаг 3 - События GTK</h2><div style="margin:10px;"><p>Я думаю, читатель меня извинит, если я буду иногда обращаться к терминам оконного программирования, принятых в <b>Windows</b>, поскольку, как это пошло и некруто не звучит, оно мне ближе. Так вот. Аналогично понятию "события" <b>event</b> в <b>Windows</b>, в <b>GTK</b> используется понятие сигнала (<b>signal</b>) и опять-таки события (<b>event</b>). Причем предполагается, что сигнал передается через подсистему событий <b>GTK</b>, а событие - через <b>X</b>. Сигнал передается обрабатывающей процедуре, которая уже делает, что хочет. Надо отметить некоторое отличие обработчиков событий в <b>GTK 2.0</b> от <b>WinAPI</b> - здесь можно подсоединять более одного обработчика к данному объекту. То есть например - по очереди выполняются несколько обработчиков, очередь определяется местом в списке.
+<p>Собственно присоединение обработчика достигается функцией:
+<pre>
+int gtk_signal_connect(
+	GtkObject *object, <i>// объект, к которому все совершаемые действия относятся</i>
+	gchar *name,	<i>// символическое имя события, например "clicked"</i>
+	GtkSignalFunc func,	<i>// обработчик события</i>
+	gpointer func_data );	<i>// данные, передаваемые обработчику события</i>
+</pre>
+<p>Соответственно обработчик должен выглядеть так:
+<pre>
+void callback_func(
+	GtkWidget *widget,	<i>// опять-таки тот самый виджет</i>
+	gpointer callback_data );	<i>// те самые данные</i>
+</pre>
+<p>В общем-то я не знаю, нужны ли здесь какие-либо пояснения. Хотелось бы обратить ваше внимание на то, что большинство простых перечислимых типов данных в <b>Gtk</b> имеют собственные эквиваленты (<b>gint, glong, gchar, gpointer</b>). Сделано это из соображений переносимости - мало ли, вдруг кто-нибудь вашу программу будет компилировать на Амиге, мэйнфрейме каком-нибудь или еще где похуже... А разрядность чисел может быть там иной. Это источник нескончаемых ошибок... Так что... Ударим типизацией и разрядностью по...!!! (вместо точек впечатать что-нибудь подходящее)...
+<p>Кроме этого способа, есть еще и "усеченный" вариант, имеющий следующий вид:
+<pre>
+gint gtk_signal_connect_object(
+	GtkObject *object,
+	gchar *name,
+	GtkSignalFunc func,
+	GtkObject *slot_object
+);
+</pre>
+<p>Его отличие от обыного <b>gtk_signal_connect</b> заключается в том, что обработчик должен описываться как:
+<pre>
+void callback_func( GtkObject *object );
+</pre>
+<p>Ну здесь видно, что единственный параметр - указатель на объект. Используйте, впрочем, что Вам больше нравится.
+<p>В следующем шаге взглянем на события <b>X</b>.</div><center><hr><a href="r-3.php-2.htm" tppabs="http://www.firststeps.ru/linux/gtk/r.php?2">Предыдущий Шаг</a> | <a href="r-2.php-4.htm" tppabs="http://www.firststeps.ru/linux/gtk/r.php?4">Следующий Шаг</a> | <a href="gtk1.html" tppabs="http://www.firststeps.ru/linux/gtk/gtk1.html">Оглавление</a><br>Автор <a href="mailto:seavan@yandex.ru?SUBJECT=From_part_gtk#3'_on_[www.firststeps.ru]">Аванесов Самвел</a>.<hr><iframe src="javascript:if(confirm('http://ad.adriver.ru/cgi-bin/erle.cgi?sid=9595&target=blank&bt=1&pz=0&rnd=15852  \n\nThis file was not retrieved by Teleport Pro, because it did not meet the project\'s file type specifications.  \n\nDo you want to open it from the server?'))window.location='http://ad.adriver.ru/cgi-bin/erle.cgi?sid=9595&target=blank&bt=1&pz=0&rnd=15852'" tppabs="http://ad.adriver.ru/cgi-bin/erle.cgi?sid=9595&target=blank&bt=1&pz=0&rnd=15852" frameborder=0 vspace=0 hspace=0 width=468 height=60 marginwidth=0 marginheight=0 scrolling=no><a href="javascript:if(confirm('http://ad.adriver.ru/cgi-bin/click.cgi?sid=9595&bt=1&pz=0&rnd=15852  \n\nThis file was not retrieved by Teleport Pro, because it is addressed on a domain or path outside the boundaries set for its Starting Address.  \n\nDo you want to open it from the server?'))window.location='http://ad.adriver.ru/cgi-bin/click.cgi?sid=9595&bt=1&pz=0&rnd=15852'" tppabs="http://ad.adriver.ru/cgi-bin/click.cgi?sid=9595&bt=1&pz=0&rnd=15852" target=_blank><img src="rle.cgi-sid=9595&bt=1&pz=0&rnd=15852" tppabs="http://ad.adriver.ru/cgi-bin/rle.cgi?sid=9595&bt=1&pz=0&rnd=15852" alt="-AdRiver-" border=0 width=468 height=60></a></iframe></center><br><br>

@@ -1,0 +1,84 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1251"><title>www.ПЕРВЫЕ ШАГИ.ru :: Шаг 15 - Всплывающие подсказки</title></head><link rel=stylesheet type=text/css href="2.css" tppabs="http://www.firststeps.ru/2.css"><body text=black bgcolor=white link=blue vlink=blue alink=red><h2>Шаг 15 - Всплывающие подсказки</h2><div style="margin:10px;"><p>В общем-то неплохая вещь... В большинстве <b>end-user</b> программ используется... Для примера возьмем программу с пятью автоматически создаваемыми полями ввода. Все изменения я выделил жирным шрифтом:
+<pre>
+#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;gtk/gtk.h&gt;
+
+void delete_event(GtkObject* object)
+{
+	gtk_main_quit();
+};
+
+int main(int argc, char* argv[])
+{
+	GtkWidget* window;
+	GtkWidget* edit[5];
+	GtkWidget* label[5];
+	GtkWidget* vbox;
+	<b>GtkTooltips* tooltips = NULL;</b>
+
+	char str[] = "Edit x";
+	gtk_init(&amp;argc,&amp;argv);
+
+	vbox = gtk_vbox_new(0,0);
+
+	window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+ 
+	<i>//Никогда не забывайте устанвливать этот обработчик</i>
+	gtk_signal_connect_object (GTK_OBJECT (window),
+		"delete_event",GTK_SIGNAL_FUNC (delete_event), NULL);
+
+	<i>//Вы же не хотите, чтобы элементы прилипали к краям?</i>
+	gtk_container_set_border_width (GTK_CONTAINER (window), 10);
+	tooltips = gtk_tooltips_new();
+	GdkColor fg,bg;
+	fg.red = 65536;
+	fg.blue = 0;
+	fg.green=0;
+	bg.blue = 255;
+	bg.red =0;
+	bg.green = 0;
+
+	<i>//Создаем и упаковываем по пять меток и пять полей ввода...</i>
+	for(int i=0;i&lt;5;i++)
+	{
+		edit[i] = gtk_entry_new();
+		sprintf(str,"Edit %d",i);
+		<b>gtk_tooltips_set_tip(tooltips,edit[i],str,NULL);</b>
+		label[i] = gtk_label_new(str);
+
+		<i>//Загоняем сначала метку, а затем и поле ввода в контейнер</i>
+		gtk_box_pack_start(GTK_BOX(vbox), label[i],TRUE,0,5);
+		gtk_box_pack_start(GTK_BOX(vbox), edit[i],TRUE,0,5);
+		gtk_widget_show(edit[i]);
+		gtk_widget_show(label[i]);
+	};
+
+	<i>//Чтобы добавить контейнер в окно...</i>
+	gtk_container_add(GTK_CONTAINER(window), vbox);
+  
+	gtk_widget_show(window); 
+	gtk_widget_show(GTK_WIDGET(vbox));
+  
+	gtk_window_set_title(GTK_WINDOW(window),"Step 6");
+	gtk_main();
+	return 0;
+};
+</pre>
+<p>Не очень много изменений, правда? Что подтверждает легкость использования этого виджета... Помимо всего прочего, используются следующие функции:
+<pre>
+<i>// Разрешить отображение данного набора 
+// всплывающих подсказок. По умолчанию.</i>
+void gtk_tooltips_enable( GtkTooltips *tooltips );
+
+<i>// Запретить отображение.</i>
+void gtk_tooltips_disable( GtkTooltips *tooltips );
+
+<i>// Задержка до появления подсказки (по умолчанию - 500мс)</i>
+void gtk_tooltips_set_delay( GtkTooltips *tooltips, gint delay );
+
+<i>// Цвета для подсказки, описанные в структурах <b>GdkColor</b></i>
+void gtk_tooltips_set_colors( GtkTooltips *tooltips,
+	GdkColor *background, GdkColor *foreground );
+</pre>
+<p>Скриншот давать не буду, поскольку всплывающие подсказки не захватываются снимком экрана.</div><center><hr><a href="r-1.php-14.htm" tppabs="http://www.firststeps.ru/linux/gtk/r.php?14">Предыдущий Шаг</a> | <a href="gtk1.html" tppabs="http://www.firststeps.ru/linux/gtk/gtk1.html">Оглавление</a><br>Автор <a href="mailto:seavan@yandex.ru?SUBJECT=From_part_gtk#15'_on_[www.firststeps.ru]">Аванесов Самвел</a>.<hr><iframe src="javascript:if(confirm('http://ad.adriver.ru/cgi-bin/erle.cgi?sid=9595&target=blank&bt=1&pz=0&rnd=21526  \n\nThis file was not retrieved by Teleport Pro, because it did not meet the project\'s file type specifications.  \n\nDo you want to open it from the server?'))window.location='http://ad.adriver.ru/cgi-bin/erle.cgi?sid=9595&target=blank&bt=1&pz=0&rnd=21526'" tppabs="http://ad.adriver.ru/cgi-bin/erle.cgi?sid=9595&target=blank&bt=1&pz=0&rnd=21526" frameborder=0 vspace=0 hspace=0 width=468 height=60 marginwidth=0 marginheight=0 scrolling=no><a href="javascript:if(confirm('http://ad.adriver.ru/cgi-bin/click.cgi?sid=9595&bt=1&pz=0&rnd=21526  \n\nThis file was not retrieved by Teleport Pro, because it is addressed on a domain or path outside the boundaries set for its Starting Address.  \n\nDo you want to open it from the server?'))window.location='http://ad.adriver.ru/cgi-bin/click.cgi?sid=9595&bt=1&pz=0&rnd=21526'" tppabs="http://ad.adriver.ru/cgi-bin/click.cgi?sid=9595&bt=1&pz=0&rnd=21526" target=_blank><img src="rle.cgi-sid=9595&bt=1&pz=0&rnd=21526" tppabs="http://ad.adriver.ru/cgi-bin/rle.cgi?sid=9595&bt=1&pz=0&rnd=21526" alt="-AdRiver-" border=0 width=468 height=60></a></iframe></center><br><br>

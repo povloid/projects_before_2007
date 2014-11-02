@@ -1,0 +1,396 @@
+/******************************************************************************/
+/***          								    ***/
+/******************************************************************************/
+
+SET SQL DIALECT 3;
+
+SET NAMES UNICODE_FSS;
+
+CREATE DATABASE '127.0.0.1:/home/mybase/dsp.fdb'
+--CREATE DATABASE '192.168.0.186:/mnt/hda11/dsp/dsp.fdb'
+USER 'SYSDBA' PASSWORD 'masterkey'
+PAGE_SIZE 4096
+DEFAULT CHARACTER SET UNICODE_FSS;
+
+
+/******************************************************************************/
+/***                                 Tables                                 ***/
+/******************************************************************************/
+
+
+/*************************************************
+S_PPROST - База-справочник "Причины простоев".
+Inde on kod
+*/
+
+CREATE TABLE S_PPROST (
+KOD	SMALLINT  	NOT NULL,	
+NAME	VARCHAR(30) 	NOT NULL
+);
+ALTER TABLE S_PPROST ADD CONSTRAINT PK_S_PPROST PRIMARY KEY (KOD);
+CREATE UNIQUE INDEX S_PPROST_IDX1 ON S_PPROST ( NAME );
+--
+
+/*************************************************
+S_DEP - База-справочник "Цеха".
+Inde on kod
+*/
+
+CREATE TABLE S_DEP (
+KOD	SMALLINT  	NOT NULL,	
+NAME	VARCHAR(30) 	NOT NULL
+);
+ALTER TABLE S_DEP ADD CONSTRAINT PK_S_DEP PRIMARY KEY (KOD);
+--CREATE UNIQUE INDEX S_DEP_IDX1 ON S_DEP ( NAME );
+
+--
+
+/*************************************************
+S_OB - База-справочник "Оборудование".
+Inde on kod
+*/
+
+CREATE TABLE S_OB (                                                           
+
+KOD     SMALLINT 	NOT NULL,                                            
+NAME    VARCHAR(30) 	DEFAULT NULL,
+DEP     SMALLINT	NOT NULL,
+POZ     VARCHAR(4)	DEFAULT NULL,
+N       NUMERIC(2,0)	DEFAULT 0 NOT NULL,
+K       NUMERIC(2,0)	DEFAULT 0 NOT NULL,
+
+FOREIGN KEY (DEP) REFERENCES S_DEP (KOD)
+ON DELETE NO ACTION ON UPDATE CASCADE,
+
+-- Целостность ссылок
+CONSTRAINT FK_S_OB_DEP CHECK (EXISTS(
+SELECT KOD FROM S_DEP WHERE S_OB.DEP = S_DEP.KOD))
+
+);
+ALTER TABLE S_OB ADD CONSTRAINT PK_S_OB PRIMARY KEY (KOD);
+CREATE UNIQUE INDEX S_OB_IDX1 ON S_OB ( KOD, DEP );
+
+
+/*************************************************
+S_POST - База-справочник "Поставщики".
+Inde on kod
+*/
+
+CREATE TABLE S_POST (
+KOD	SMALLINT  	NOT NULL,	
+NAME	VARCHAR(30) 	NOT NULL
+);
+ALTER TABLE S_POST ADD CONSTRAINT PK_S_POST PRIMARY KEY (KOD);
+CREATE UNIQUE INDEX S_POST_IDX1 ON S_POST ( NAME );
+
+/*************************************************
+S_POTR - База-справочник "Потребители".
+Inde on kod
+*/
+
+CREATE TABLE S_POTR (
+KOD	SMALLINT  	NOT NULL,	
+NAME	VARCHAR(30) 	NOT NULL
+);
+ALTER TABLE S_POTR ADD CONSTRAINT PK_S_POTR PRIMARY KEY (KOD);
+CREATE UNIQUE INDEX S_POTR_IDX1 ON S_POTR ( NAME );
+
+
+/*************************************************
+S_VYR - База-справочник по выработке.
+Inde on kod
+*/
+-- Справочник единиц измерения ---------------------------------------------
+CREATE TABLE S_ED_MASS (
+ED	  VARCHAR(3) 	NOT NULL,
+FULL_NAME VARCHAR(30) 	NOT NULL
+);
+ALTER TABLE S_ED_MASS ADD CONSTRAINT PK_ED_MASS PRIMARY KEY (ED);
+
+-- Справочник по выработке -------------------------------------------------
+CREATE TABLE S_VYR (
+KOD	SMALLINT  	NOT NULL,
+NAME	VARCHAR(30) 	NOT NULL,
+ED	VARCHAR(3) 	NOT NULL,
+KOD_DEP     SMALLINT  	NOT NULL,
+
+FOREIGN KEY (ED) REFERENCES S_ED_MASS(ED)
+ON DELETE NO ACTION ON UPDATE CASCADE,
+-- Целостность ссылок
+CONSTRAINT FK_S_VYR_ED CHECK (EXISTS(
+SELECT ED FROM S_ED_MASS WHERE S_VYR.ED = S_ED_MASS.ED)),
+
+FOREIGN KEY (KOD_DEP) REFERENCES S_DEP(KOD)
+ON DELETE NO ACTION ON UPDATE CASCADE,
+-- Целостность ссылок
+CONSTRAINT FK_S_VYR_KOD_DEP CHECK (EXISTS(
+SELECT KOD FROM S_DEP WHERE S_VYR.KOD_DEP = S_DEP.KOD))
+);
+ALTER TABLE S_VYR ADD CONSTRAINT PK_S_VYR PRIMARY KEY (KOD);
+CREATE UNIQUE INDEX S_VYR_IDX1 ON S_VYR ( NAME );
+
+--Накопительная таблица по выработке ---------------------------------------
+CREATE TABLE VYR (
+
+KOD     INTEGER 	NOT NULL,
+PDATE   DATE 		NOT NULL,
+S_DAY	NUMERIC(10,2) 	DEFAULT 0 NOT NULL,
+S_NOT	NUMERIC(10,2) 	DEFAULT 0 NOT NULL,
+
+FOREIGN KEY (KOD) REFERENCES S_VYR(KOD)
+ON DELETE NO ACTION ON UPDATE CASCADE,
+-- Целостность ссылок
+CONSTRAINT FK_KOD_KOD CHECK (EXISTS(
+SELECT KOD FROM S_VYR WHERE VYR.KOD = S_VYR.KOD))
+);
+
+ALTER TABLE VYR ADD CONSTRAINT PK_VYR PRIMARY KEY (KOD,PDATE);
+--CREATE UNIQUE INDEX VYR_IDX1 ON VYR ( PDATE );
+
+--CREATE VIEW VYR_SUM ( KOD , SUM_S_DAY ) AS 
+--SELECT KOD, SUM(S_DAY) AS SUM_S_DAY 
+--FROM VYR 
+--WHERE PDATE BETWEEN '1.08.2006' AND '20.08.2006' 
+--GROUP BY KOD;
+
+/*************************************************
+S_PROD - База-справочник продукции.
+Inde on kod+kodm
+
+*/
+-- Группы
+CREATE TABLE S_PROD_GR (
+KOD	SMALLINT	NOT NULL,	
+NAME    VARCHAR(30) 	NOT NULL,
+K       NUMERIC(13,5) 	DEFAULT 0 NOT NULL,
+ED	VARCHAR(3) 	NOT NULL,
+
+FOREIGN KEY (ED) REFERENCES S_ED_MASS(ED)
+ON DELETE NO ACTION ON UPDATE CASCADE,
+-- Целостность ссылок
+CONSTRAINT FK_S_PROD_GR_ED CHECK (EXISTS(
+SELECT ED FROM S_ED_MASS WHERE S_PROD_GR.ED = S_ED_MASS.ED))
+);
+ALTER TABLE S_PROD_GR ADD CONSTRAINT PK_S_PROD_GR PRIMARY KEY (KOD);
+
+-- Подгруппы
+CREATE TABLE S_PROD_PGR (
+KOD	 SMALLINT   	NOT NULL,
+NAME     VARCHAR(30)    NOT NULL,
+K        NUMERIC(13,5)  DEFAULT 0 NOT NULL,
+KODM	 SMALLINT   	NOT NULL,
+KOD_DEP     SMALLINT  	NOT NULL,
+
+FOREIGN KEY (KODM) REFERENCES S_PROD_GR (KOD) ON DELETE NO ACTION ON UPDATE CASCADE,
+-- Целостность ссылок
+CONSTRAINT FK_S_PROD_KODM CHECK (EXISTS( 
+SELECT KOD FROM S_PROD_GR WHERE S_PROD_PGR.KODM = S_PROD_Gr.KOD)),
+
+FOREIGN KEY (KOD_DEP) REFERENCES S_DEP(KOD)
+ON DELETE NO ACTION ON UPDATE CASCADE,
+-- Целостность ссылок
+CONSTRAINT FK_S_PROD_PGR_KOD_DEP CHECK (EXISTS(
+SELECT KOD FROM S_DEP WHERE S_PROD_PGR.KOD_DEP = S_DEP.KOD))
+);
+ALTER TABLE S_PROD_PGR ADD CONSTRAINT PK_S_PROD_PGR PRIMARY KEY (KOD);
+CREATE UNIQUE INDEX S_PROD_PGR_IDX1 ON S_PROD_PGR ( KOD, KODM);
+CREATE UNIQUE INDEX S_PROD_PGR_IDX2 ON S_PROD_PGR ( NAME, KODM );
+
+CREATE GENERATOR S_PROD_PGR_KOD;
+SET GENERATOR S_PROD_PGR_KOD TO 0;
+
+SET TERM ^ ;
+
+/* Trigger: FOSFOR_BI */
+CREATE TRIGGER S_PROD_PGR_BI FOR S_PROD_PGR
+ACTIVE BEFORE INSERT POSITION 0
+AS 
+BEGIN
+  IF (NEW.KOD IS NULL) THEN
+    NEW.KOD = GEN_ID(S_PROD_PGR_KOD,1);
+END
+^
+
+SET TERM ; ^
+
+
+--Накопительная таблица по отгрузке ---------------------------------------
+CREATE TABLE OTGRUZKA (
+
+KOD     INTEGER 	NOT NULL,
+PDATE   DATE 		NOT NULL,
+VAG	NUMERIC(10,2) 	DEFAULT 0 NOT NULL,
+MASS	NUMERIC(10,2) 	DEFAULT 0 NOT NULL,
+KOD_POTR    SMALLINT   	NOT NULL,
+
+FOREIGN KEY (KOD_POTR) REFERENCES S_POTR(KOD) ON DELETE NO ACTION ON UPDATE CASCADE,
+-- Целостность ссылок-
+CONSTRAINT FK_S_POTR_OTGRUZKA CHECK (EXISTS( 
+	SELECT KOD FROM S_POTR WHERE OTGRUZKA.KOD_POTR = S_POTR.KOD)),
+
+FOREIGN KEY (KOD) REFERENCES S_PROD_GR(KOD) ON DELETE NO ACTION ON UPDATE CASCADE,
+-- Целостность ссылок	
+CONSTRAINT FK_S_PROD_KOD_OTGRUZKA CHECK (EXISTS( 
+	SELECT KOD FROM S_PROD_GR WHERE OTGRUZKA.KOD = S_PROD_GR.KOD))
+);
+ALTER TABLE OTGRUZKA ADD CONSTRAINT PK_OTGRUZKA PRIMARY KEY (KOD,PDATE,KOD_POTR);
+
+--Накопительная таблица по отгрузке ---------------------------------------
+CREATE TABLE PRIHOD (
+
+KOD     INTEGER 	NOT NULL,
+PDATE   DATE 		NOT NULL,
+VAG	NUMERIC(10,2) 	DEFAULT 0 NOT NULL,
+MASS	NUMERIC(10,2) 	DEFAULT 0 NOT NULL,
+KOD_POST    SMALLINT   	NOT NULL,
+
+FOREIGN KEY (KOD_POST) REFERENCES S_POST(KOD) ON DELETE NO ACTION ON UPDATE CASCADE,
+-- Целостность ссылок-
+CONSTRAINT FK_S_POST_PRIHOD CHECK (EXISTS( 
+	SELECT KOD FROM S_POST WHERE PRIHOD.KOD_POST = S_POST.KOD)),
+
+FOREIGN KEY (KOD) REFERENCES S_PROD_GR(KOD) ON DELETE NO ACTION ON UPDATE CASCADE,
+-- Целостность ссылок	
+CONSTRAINT FK_S_PROD_KOD_PRIHOD CHECK (EXISTS( 
+	SELECT KOD FROM S_PROD_GR WHERE PRIHOD.KOD = S_PROD_GR.KOD))
+);
+ALTER TABLE PRIHOD ADD CONSTRAINT PK_PRIHOD PRIMARY KEY (KOD,PDATE,KOD_POST);
+
+
+
+-- Накопительная база по остаткам продукции --------------------
+
+CREATE TABLE OSTAT_PROD_PGR (
+
+KOD     INTEGER 	NOT NULL,
+PDATE   DATE 		NOT NULL,
+MASS	NUMERIC(10,2) 	DEFAULT 0 NOT NULL,
+
+FOREIGN KEY (KOD) REFERENCES S_PROD_PGR (KOD) ON DELETE NO ACTION ON UPDATE CASCADE,
+
+-- Целостность ссылок
+CONSTRAINT FK_OSTAT_PROD_PGR_KOD CHECK (EXISTS( 
+SELECT KOD FROM S_PROD_PGR WHERE OSTAT_PROD_PGR.KOD = S_PROD_PGR.KOD))
+
+);
+ALTER TABLE OSTAT_PROD_PGR ADD CONSTRAINT PK_OSTAT_PROD_PGR PRIMARY KEY (KOD,PDATE);
+
+/******************************************************************************************/
+--------------------------------------------------------------------------------------------
+
+/*************************************************
+S_BAL - База-справочник "Баланс фосфора".
+Inde on kod
+*/
+
+CREATE TABLE S_BAL (
+KOD	SMALLINT  	NOT NULL,	
+NAME	VARCHAR(30) 	NOT NULL
+);
+ALTER TABLE S_BAL ADD CONSTRAINT PK_S_BAL PRIMARY KEY (KOD);
+
+
+
+
+/*************************************************
+S_SYR - База-справочник сырья.
+Inde on kod+kodm
+*/
+-- Группы
+
+CREATE TABLE S_SYR_Gr (
+KOD	 SMALLINT   	NOT NULL,	
+NAME     VARCHAR(30)	NOT NULL,
+K        NUMERIC(13,5) 	DEFAULT 0 NOT NULL,
+VAG_D    NUMERIC(3,0)  	DEFAULT 0 NOT NULL,
+VES_D    NUMERIC(8,2)  	DEFAULT 0 NOT NULL,
+VAG_M    NUMERIC(5,0)  	DEFAULT 0 NOT NULL,
+VES_M    NUMERIC(10,2) 	DEFAULT 0 NOT NULL,
+NAME_KR  VARCHAR(30) 	DEFAULT NULL
+);
+ALTER TABLE S_SYR_Gr ADD CONSTRAINT PK_S_SYR_Gr PRIMARY KEY (KOD);
+
+
+-- Подгруппы
+CREATE TABLE S_SYR_PGr (
+KOD	 SMALLINT   	NOT NULL,	
+NAME     VARCHAR(30)    NOT NULL,
+K        NUMERIC(13,5)  DEFAULT 0 NOT NULL,
+KODM	 SMALLINT   	NOT NULL,
+VAG_D    NUMERIC(3,0)   DEFAULT 0 NOT NULL,
+VES_D    NUMERIC(8,2)   DEFAULT 0 NOT NULL,
+VAG_M    NUMERIC(5,0)   DEFAULT 0 NOT NULL,
+VES_M    NUMERIC(10,2)  DEFAULT 0 NOT NULL,
+NAME_KR  VARCHAR(30)    DEFAULT NULL,
+
+FOREIGN KEY (KODM) REFERENCES S_SYR_Gr (KOD)
+ON DELETE NO ACTION ON UPDATE CASCADE,
+
+-- Целостность ссылок
+CONSTRAINT FK_S_SYR_KODM CHECK (EXISTS(
+SELECT KOD FROM S_SYR_Gr WHERE S_SYR_PGr.KODM = S_SYR_Gr.KOD))
+);
+ALTER TABLE S_SYR_PGr ADD CONSTRAINT PK_S_SYR_PGr PRIMARY KEY (KOD);
+CREATE UNIQUE INDEX S_SYR_PGr_IDX1 ON S_SYR_PGr (KOD, KODM);
+
+-- -------------------------------------------------------
+-- Оперативная работа ------------------------------------
+-- -------------------------------------------------------
+
+CREATE TABLE FOSFOR (                                                           
+ID             INTEGER NOT NULL,
+PDATE          DATE NOT NULL,
+P5_MW          NUMERIC(10,2) DEFAULT 0 NOT NULL,
+P6_MW          NUMERIC(10,2) DEFAULT 0 NOT NULL,
+P7_MW          NUMERIC(10,2) DEFAULT 0 NOT NULL,
+P8_MW          NUMERIC(10,2) DEFAULT 0 NOT NULL,
+P_MW_SUM       COMPUTED BY (P5_MW+P6_MW+P7_MW+P8_MW),	
+P5_NIGHT_MW    NUMERIC(10,2) DEFAULT 0 NOT NULL,
+P6_NIGHT_MW    NUMERIC(10,2) DEFAULT 0 NOT NULL,
+P7_NIGHT_MW    NUMERIC(10,2) DEFAULT 0 NOT NULL,
+P8_NIGHT_MW    NUMERIC(10,2) DEFAULT 0 NOT NULL,
+P_NIGHT_MW_SUM COMPUTED BY (P5_NIGHT_MW+P6_NIGHT_MW+P7_NIGHT_MW+P8_NIGHT_MW),	
+P5_PUMP_P4     NUMERIC(10,2) DEFAULT 0 NOT NULL,
+P6_PUMP_P4     NUMERIC(10,2) DEFAULT 0 NOT NULL,
+P7_PUMP_P4     NUMERIC(10,2) DEFAULT 0 NOT NULL,
+P8_PUMP_P4     NUMERIC(10,2) DEFAULT 0 NOT NULL,
+P5_PUMP_SLUDGE NUMERIC(10,2) DEFAULT 0 NOT NULL,
+P6_PUMP_SLUDGE NUMERIC(10,2) DEFAULT 0 NOT NULL,
+P7_PUMP_SLUDGE NUMERIC(10,2) DEFAULT 0 NOT NULL,
+P8_PUMP_SLUDGE NUMERIC(10,2) DEFAULT 0 NOT NULL,
+P5_P4          COMPUTED BY ( P5_PUMP_P4 + P5_PUMP_SLUDGE * 0.33 ),
+P6_P4          COMPUTED BY ( P6_PUMP_P4 + P6_PUMP_SLUDGE * 0.33 ),
+P7_P4          COMPUTED BY ( P7_PUMP_P4 + P7_PUMP_SLUDGE * 0.33 ),
+P8_P4          COMPUTED BY ( P8_PUMP_P4 + P8_PUMP_SLUDGE * 0.33 ),
+P_P4_SUM       COMPUTED BY (P5_P4+P6_P4+P7_P4+P8_P4),
+KBALK	       NUMERIC(10,4) DEFAULT 0 NOT NULL
+);
+
+ALTER TABLE FOSFOR ADD CONSTRAINT PK_FOSFOR PRIMARY KEY (ID,PDATE);
+CREATE UNIQUE INDEX FOSFOR_IDX1 ON FOSFOR ( PDATE );
+
+/******************************************************************************/
+/***                               Generators                               ***/
+/******************************************************************************/
+
+CREATE GENERATOR GEN_FOSFOR_ID;
+SET GENERATOR GEN_FOSFOR_ID TO 0;
+
+/******************************************************************************/
+/***                                Triggers                                ***/
+/******************************************************************************/
+ 
+
+SET TERM ^ ;
+
+/* Trigger: FOSFOR_BI */
+CREATE TRIGGER FISFOR_BI FOR FOSFOR
+ACTIVE BEFORE INSERT POSITION 0
+AS 
+BEGIN
+  IF (NEW.ID IS NULL) THEN
+    NEW.ID = GEN_ID(GEN_FOSFOR_ID,1);
+END
+^
+
+SET TERM ; ^

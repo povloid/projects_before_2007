@@ -1,0 +1,3 @@
+g++ -c pwx-users.cpp
+g++ pwx-users.o -L /usr/lib/ -lgds -o pwx-users
+

@@ -1,0 +1,740 @@
+<HTML><HEAD><META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=koi8-r"><TITLE>
+OpenNET: статья - Написание программы для копирования треков с Audio-CD (cdrom audio sound gcc example)
+</TITLE>
+<meta name="KeyWords" content="cdrom, audio, sound, gcc, example">
+</HEAD><BODY BGCOLOR="#DDE1C2" TEXT="#002040">
+<!--htdig_noindex-->
+<LINK REL="stylesheet" href="/opennet.css" type="text/css">
+<FORM method="get" action="http://www.opennet.ru/search.shtml">
+<TABLE BORDER=0 CELLSPACING=0 CELLPADDING=0 WIDTH="100%">
+<TR>
+<TD VALIGN="BOTTOM" BGCOLOR="#E9EAD6" style="background: #E9EAD6 url('/back.gif') repeat-x bottom left">
+<A HREF="http://www.opennet.ru"><IMG SRC="/opennet2.gif" HEIGHT=60 WIDTH=249 ALT="The OpenNET Project" BORDER="0"></A><br>
+</TD>
+
+<TD BGCOLOR="#B0B190" WIDTH="1"><IMG SRC="/p.gif" HEIGHT=1 WIDTH=1 ALT=""></TD>
+
+<TD VALIGN=TOP ALIGN=RIGHT WIDTH="470" BGCOLOR="#D9DAC6">
+<TABLE BORDER=0 CELLPADDING=1 WIDTH="470">
+<TR>
+<TD HEIGHT=60 BGCOLOR="#D9DAC6">
+
+<b>Новость:</b> <a href="http://www.opennet.ru/opennews/art.shtml?num=5996">Просьба к CodeWeavers реализовать CrossOver Office  для FreeBSD</a>
+
+
+</TD>
+</TR>
+</TABLE>
+</TD>
+
+<TD BGCOLOR="#B0B190" WIDTH="1"><IMG SRC="/p.gif" HEIGHT=1 WIDTH=1 ALT=""></TD>
+<TD WIDTH="40" BGCOLOR="#E9EAD6" style="background: #E9EAD6 url('/back.gif') repeat-x bottom left">&nbsp;</TD>
+<TD BGCOLOR="#B0B190" WIDTH="1"><IMG SRC="/p.gif" HEIGHT=1 WIDTH=1 ALT=""></TD>
+
+<TD VALIGN=TOP ALIGN=RIGHT WIDTH="130" BGCOLOR="#E9EAD6" ROWSPAN=3>
+<script type="text/javascript"><!--
+google_ad_client = "pub-2075278885744463";
+google_ad_width = 125;
+google_ad_height = 125;
+google_ad_format = "125x125_as";
+google_ad_channel ="";
+google_color_border = "E9EAD6";
+google_color_bg = "E9EAD6";
+google_color_link = "0000FF";
+google_color_url = "008000";
+google_color_text = "000000";
+google_language = 'ru';
+google_alternate_color = "E9EAD6";
+//--></script>
+<script type="text/javascript"
+  src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+</script>
+</TD>
+
+</TR>
+
+<TR BGCOLOR="#B0B190"><TD COLSPAN=6><IMG SRC="/p.gif" HEIGHT=1 WIDTH=1 ALT=""></TD></TR>
+
+
+<TR BGCOLOR="#E9EAD6">
+<TD ALIGN=CENTER COLSPAN=5>
+<table width="100%">
+<tr>
+<td rowspan=2 width=300 nowrap class="h">
+<INPUT type=hidden name=exclude value="index|/man.shtml"><A HREF="../../search.shtml" class="h"><u>Поиск</u></A>&nbsp;(<A HREF="../../keywords/" class="h">ключи</A>):&nbsp;<INPUT type="text" size="20" name="words" value="">
+</td><td width="25%">
+   <A HREF="../../prog/sml/" class="h"><b><u>ПРОГРАММЫ</u></b></A>
+</td><td width="25%">
+   <A HREF="../../filebase.shtml" class="h"><b><u>СТАТЬИ</u></b></A>
+</td><td width="25%">
+   <A HREF="../../tips/sml/" class="h"><b><u>СОВЕТЫ</u></b></A>
+</td><td width="25%">
+   <A HREF="http://forum.opennet.ru" class="h"><b><u>ФОРУМ</u></b></A>
+</td></tr>
+<tr><td>
+   <A HREF="../../links/sml/" class="h"><b><u>ССЫЛКИ</u></b></A>
+</td><td class="h">
+   <A HREF="../../opennews/" class="h"><b><u>НОВОСТИ</u></b></A> (<a href="../../news/grab.shtml" class="h">+</a>)
+</td><td>
+   <A HREF="../../man.shtml" class="h"><b><u>MAN'ы</u></b></A>
+</td><td>
+   <A HREF="../../docs/" class="h"><b><u>ДОКУМЕНТАЦИЯ</u></b></A>
+</td></tr>
+</table>
+</TD>
+<TD BGCOLOR="#B0B190" WIDTH="1"><IMG SRC="/p.gif" HEIGHT=1 WIDTH=1 ALT=""></TD>
+</TR>
+<TR BGCOLOR="#B0B190"><TD COLSPAN=7><IMG SRC="/p.gif" HEIGHT=2 WIDTH=1 ALT=""></TD></TR>
+</TABLE>
+<script language="JavaScript"><!--
+d=document;a='';r=escape(d.referrer);a+=';r='+r;
+js=10; d.write('<img src="http://top.list.ru/counter'+
+'?id=77689;js='+js+a+';rand='+Math.random()+
+'" alt="" height=1 width=1>');
+if(js>11)d.write('<'+'!-- ')//--></script><noscript><img
+src="http://top.list.ru/counter?js=na;id=77689"
+height=1 width=1 alt="">
+</noscript>
+</FORM>
+<!--/htdig_noindex-->
+
+<!--htdig_noindex-->
+
+<style>
+table.opensource {
+font: 12px Arial, Helvetica;
+border: 1px solid black;
+background: #dfc;
+}
+table.opensource td {
+font: bold 12px Arial, Helvetica;
+text-align:center;
+}
+table.opensource td.osc {
+border-right:1px solid silver;
+}
+table.opensource li{
+margin-left: 2px;
+}
+table.opensource a, table.opensource a:visited{
+text-decoration:none;
+color: blue;
+}
+table.opensource a:hover{
+text-decoration:underline;
+}
+</style>
+<table width='760' height='60' class='opensource' cellpadding='1' cellspacing='0' align='center' bgcolor='#FFF'>
+<tr>
+<td colspan='4' align='center' style='border-bottom: 1px solid silver'>
+<A href='http://opensource.com.ua/?rID=1816'>OpenSource.com.ua &ndash; <font color='red'>Диски с Linux, FreeBSD, OpenOffice, Книги</font>. CD - 5 грн, DVD - 14.95 грн!</A>
+</td>
+</tr>
+<tr>
+<td nowrap='yes' class='osc'>
+    <a href='http://opensource.com.ua/index.php?rID=1816&cPath=34'>
+<font color='red'>ASPLinux 10 DVD - 14.95 грн.</font>
+</a>
+    <br>
+<a href='http://opensource.com.ua/index.php?rID=1816&cPath=37'>SUSE 9.3 DVD - 14.95 грн.</a>
+</td>
+<td nowrap='yes' class='osc'>
+    <a href='http://opensource.com.ua/index.php?rID=1816&cPath=36'>Debian Sarge 3.1r0a 2 DVD - 29,90 грн.</a>
+    <br>
+<a href='http://opensource.com.ua/index.php?rID=1816&cPath=44'>
+<font color='red'>Fedora Core 4 DVD - 14,95 грн.</font>
+</a>
+</td>
+<td nowrap='yes' class='osc'>
+    <a href='http://opensource.com.ua/index.php?rID=1816&cPath=120'>
+<font color='red'>Ultimate Boot CD - 5 грн.</font>
+</a>
+    <br>
+<a href='http://opensource.com.ua/index.php?rID=1816&cPath=32'>Mandriva 2005 LE DVD - 14,95 грн.</a>
+</td>
+<td nowrap='yes'>
+    <a href='http://opensource.com.ua/index.php?rID=1816&cPath=38'>FreeBSD 5.4 2CD - 10 грн.</a>
+    <br>
+<a href='http://opensource.com.ua/index.php?rID=1816&cPath=70'>
+<font color='red'>Кружка "Linux" белая - 19.95 грн.</font>
+</a>
+</td>
+</tr>
+</table>
+
+
+<!--/htdig_noindex-->
+
+
+<CENTER><H3><FONT COLOR="#000090">
+Написание программы для копирования треков с Audio-CD (cdrom audio sound gcc example)
+</FONT></H3></CENTER>
+<BR>
+<TABLE BORDER=0 CELLSPACING=0 CELLPADDING=1 BGCOLOR="#B0B190" WIDTH="100%">
+<TR><TD>
+<TABLE BORDER=0 CELLSPACING=0 CELLPADDING=0 BGCOLOR="#E9EAD6" ALIGN=CENTER WIDTH="100%">
+<TR BGCOLOR="#000000"><TD COLSPAN=7><IMG SRC="/p.gif" HEIGHT=1 WIDTH=1 ALT=""></TD></TR>
+<TR ALIGN=CENTER>
+<TD><small><A HREF="/cgi-bin/opennet/jump.cgi?name=audio_cd_grab.txt&ref=prev">&lt;&lt; Предыдущая</A></TD>
+<TD><small><A HREF="/cgi-bin/opennet/jump.cgi?name=audio_cd_grab.txt&ref=index">ИНДЕКС</A></TD>
+<TD><small><A HREF="/search.shtml">Поиск в статьях</A></TD>
+<TD><small><A HREF="/cgi-bin/opennet/jump.cgi?name=audio_cd_grab.txt&ref=raw">src</A></TD>
+<TD><small><A HREF="/cgi-bin/opennet/jump.cgi?name=audio_cd_grab.txt&ref=setbookmark">Установить закладку</A></TD>
+<TD><small><A HREF="/cgi-bin/opennet/jump.cgi?name=audio_cd_grab.txt&ref=getbookmark">Перейти на закладку</A></TD>
+<TD><small><A HREF="/cgi-bin/opennet/jump.cgi?name=audio_cd_grab.txt&ref=next">Следующая &gt;&gt;</A></TD>
+</TR><TR BGCOLOR="#000000"><TD COLSPAN=7><IMG SRC="/p.gif" HEIGHT=1 WIDTH=1 ALT=""></TD></TR>
+</TR></TABLE></TD></TR></TABLE>
+<PRE>
+<b>Ключевые слова:</b> <A href="/cgi-bin/opennet/ks.cgi?mask=cdrom">cdrom</a>, <A href="/cgi-bin/opennet/ks.cgi?mask=audio">audio</a>, <A href="/cgi-bin/opennet/ks.cgi?mask=sound">sound</a>, <A href="/cgi-bin/opennet/ks.cgi?mask=gcc">gcc</a>, <A href="/cgi-bin/opennet/ks.cgi?mask=example">example</a>,  (<a href="/cgi-bin/opennet/ks.cgi?mask=cdrom%20audio%20sound%20gcc%20example">найти похожие документы</a>)<br>
+<FONT COLOR="#0000C0">From: Bob &lt;<A HREF="mailto:ubob@REMOVE-THIS-FAKE.mail.ru">ubob&#064;mail.ru&#046;</A>&gt;</FONT>
+<FONT COLOR="#0000C0">Newsgroups: email</FONT>
+<FONT COLOR="#0000C0">Date: Mon, 28 Jan 2005 14:31:37 +0000 (UTC)</FONT>
+<FONT COLOR="#0000C0"><B>Subject: Написание программы для копирования треков с Audio-CD</B></FONT>
+
+
+Копирование треков с Audio-CD
+
+В статье рассматривается исходный текст программы для считывания
+аудиоданных с музыкального компакт-диска (Audio-CD)
+
+и сохранения их в WAV-файле. Программа функционирует под управлением ОС Linux.
+
+Для понимания изложенного в статье материала необходимо знать структуру
+и форматы данных, хранящихся на компакт-диске.
+
+Эту информацию можно получить из следующих источников:
+<font color="#461b7e">
+1. Information specification INF-8020i Rev 2.6. ATA Packet Interface for
+   CD-ROMs SFF-8020i, <a href="http://www.stanford.edu/~csapuntz/specs/INF-8020.PDF">http://www.stanford.edu/~csapuntz/specs/INF-8020.PDF</a>
+
+</font><font color="#461b7e">
+2. Introduction to CD and CD-ROM (with information on CD and CD-ROM
+   formats, complete with diagrams and tables),
+   <a href="http://www.disctronics.co.uk/downloads/tech_docs/cdintroduction.pdf">http://www.disctronics.co.uk/downloads/tech_docs/cdintroduction.pdf</a>
+
+</font><font color="#461b7e">
+3. Крис Касперски. "Техника защиты компакт-дисков от копирования",
+   издательство "BHV", 2004 г.
+
+</font><font color="#461b7e">
+4. CD-Recordable FAQ, <a href="http://www.cdrfaq.org">http://www.cdrfaq.org</a>
+
+</font><font color="#461b7e">
+5. Кулаков В. "Програмирование дисковых подсистем", издательство
+   "Питер", 2002 г.
+
+</font><font color="#461b7e">
+6. Comprising a comprehensive list of terms and words used in connection
+   with CDs and DVDs and the applications that they support,
+   <a href="http://www.disctronics.co.uk/downloads/tech_docs/glossary.pdf">http://www.disctronics.co.uk/downloads/tech_docs/glossary.pdf</a>
+
+</font>
+
+Заголовочные файлы:
+<font color="#461b7e">
+#include &lt;stdio.h&gt;
+#include &lt;errno.h&gt;
+#include &lt;fcntl.h&gt;
+#include &lt;linux/cdrom.h&gt;
+#include &lt;linux/types.h&gt;
+#include &lt;sys/stat.h&gt;
+
+#define CD_DEVICE "/dev/cdrom" // имя файла устройства
+#define WAV_HDR_LEN 44 // размер WAV-заголовка
+</font><font color="#461b7e">#define WAV_HDR_LEN 44 // размер WAV-заголовка
+
+</font>
+Следующая структура описывает формат WAV-заголовка (взято из исх.
+текстов cdda2wav)
+<font color="#461b7e">
+typedef struct &#123;
+    __u8 riff&#091;4&#093;;
+    __u32 size;
+    __u8 wave&#091;8&#093;;
+    __u32 size1;
+    __u16 format_tag;
+    __u16 channels;
+    __u32 sample_per_sec;
+    __u32 byte_per_sec;
+    __u16 block_align;
+    __u16 bit_per_sample;
+    __u8 data&#091;4&#093;;
+    __u32 size2;
+&#125; __attribute__ ((packed)) wav_header_t;
+
+wav_header_t w_hdr;
+
+int main()
+&#123;
+    int fd, out, n;
+    unsigned int i, start_lba, end_lba;
+</font><font color="#461b7e">    unsigned int i, start_lba, end_lba;
+
+</font>
+Буфер для аудиоданных:
+<font color="#461b7e">
+    __u8 buff&#091;CD_FRAMESIZE_RAW&#093;;
+</font><font color="#461b7e">    __u8 buff&#091;CD_FRAMESIZE_RAW&#093;;
+
+</font>
+Значение CD_FRAMESIZE_RAW определено в файле &lt;linux/cdrom.h&gt;:
+<font color="#461b7e">
+#define CD_FRAMESIZE_RAW 2352
+
+    struct stat s;
+</font><font color="#461b7e">    struct stat s;
+
+</font>
+Следующие структуры определены в файле &lt;linux/cdrom.h&gt;:
+<font color="#461b7e">
+    struct cdrom_tochdr hdr;
+    struct cdrom_tocentry toc;
+    struct cdrom_read_audio cda;
+</font><font color="#461b7e">    struct cdrom_read_audio cda;
+
+</font>
+Структура struct cdrom_tochdr содержит заголовок таблицы содержания
+диска (Table of Contents, TOC) - номера первого и последнего треков (см.
+спецификацию INF-8020i, стр.171, табл.127):
+<font color="#461b7e">
+/* This struct is used by the CDROMREADTOCHDR ioctl */
+struct cdrom_tochdr 	
+&#123;
+    __u8 cdth_trk0; /* start track */
+    __u8 cdth_trk1; /* end track */
+&#125;;
+</font><font color="#461b7e">&#125;;
+
+</font>
+Структрура struct cdrom_tocentry содержит дескриптор трека (INF-8020i,
+стр.171, табл.127):
+<font color="#461b7e">
+/* This struct is used by the CDROMREADTOCENTRY ioctl */
+struct cdrom_tocentry 
+&#123;
+    __u8 cdte_track;
+    __u8 cdte_adr	:4;
+    __u8 cdte_ctrl	:4;
+    __u8 cdte_format;
+    union cdrom_addr cdte_addr;
+    __u8 cdte_datamode;
+&#125;;
+</font><font color="#461b7e">&#125;;
+
+</font>
+Поле cdte_track содержит номер трека, поле cdte_format определяет формат
+адреса - MSF (Minute/Second/Frame) или LBA. Значения этого поля
+определены в &lt;linux/cdrom.h&gt;:
+<font color="#461b7e">
+/* CD-ROM address types (cdrom_tocentry.cdte_format) */
+#define CDROM_LBA 0x01 /* "logical block": first frame is #0 */
+#define CDROM_MSF 0x02 /* "minute-second-frame": binary, not bcd here! */
+</font><font color="#461b7e">#define CDROM_MSF 0x02 /* "minute-second-frame": binary, not bcd here! */
+
+</font>
+В зависимости от выбранного формата адреса используется одно из полей
+объединения union cdrom_addr:
+<font color="#461b7e">
+/* Address in either MSF or logical format */
+union cdrom_addr		
+&#123;
+    struct cdrom_msf0 msf;
+    int lba;
+&#125;;
+</font><font color="#461b7e">&#125;;
+
+</font>
+Структура struct cdrom_read_audio используется для хранения аудиоданных:
+<font color="#461b7e">
+/* This struct is used by the CDROMREADAUDIO ioctl */
+struct cdrom_read_audio
+&#123;
+    union cdrom_addr addr; /* frame address */
+    __u8 addr_format; /* CDROM_LBA or CDROM_MSF */
+    int nframes; /* number of 2352-byte-frames to read at once */
+    __u8 *buf; /* frame buffer (size: nframes*2352 bytes) */
+&#125;;
+</font><font color="#461b7e">&#125;;
+
+</font>
+Открываем файл устройства:
+<font color="#461b7e">
+    fd = open(CD_DEVICE, O_RDONLY|O_NONBLOCK);
+    if(fd &lt; 0) &#123;
+        perror("open");
+        return -1;
+    &#125;
+</font><font color="#461b7e">    &#125;
+
+</font>
+Проверяем тип компакт-диска. Это должен быть Audio-CD:
+<font color="#461b7e">
+    if(ioctl(fd, CDROM_DISC_STATUS) != CDS_AUDIO) &#123;
+        printf("I need Audio-CD!\n");
+        return 0;
+    &#125;
+</font><font color="#461b7e">    &#125;
+
+</font>
+Определяем число треков на компакт-диске:
+<font color="#461b7e">
+    memset((void *)&amp;hdr, 0, sizeof(struct cdrom_tochdr));
+    if(ioctl(fd, CDROMREADTOCHDR, &amp;hdr) &lt; 0) &#123;
+        perror("ioctl");
+        return(errno);
+    &#125;
+
+    printf("First: %d\t", hdr.cdth_trk0);
+    printf("Last: %d\n", hdr.cdth_trk1);
+
+#define FIRST hdr.cdth_trk0
+#define LAST hdr.cdth_trk1
+</font><font color="#461b7e">#define LAST hdr.cdth_trk1
+
+</font>
+Вводим номер трека, который мы хотим считать с диска:
+<font color="#461b7e">
+    printf("Enter track number: ");
+    scanf("%d", &amp;n);
+
+    if((n &lt; 1) || (n &gt; LAST)) &#123;
+        printf("Wrong track number\n");
+        return -1;
+    &#125;
+</font><font color="#461b7e">    &#125;
+
+</font>
+Задаем формат адреса LBA и считываем стартовые координаты трека:
+<font color="#461b7e">
+    toc.cdte_format = CDROM_LBA;
+    toc.cdte_track = n;
+
+    if(ioctl(fd, CDROMREADTOCENTRY, &amp;toc) &lt; 0) &#123;
+        perror("ioctl");
+        return -1;
+    &#125;
+
+    start_lba = toc.cdte_addr.lba; // стартовый адрес трека
+</font><font color="#461b7e">    start_lba = toc.cdte_addr.lba; // стартовый адрес трека
+
+</font>
+Конечный адрес трека определим как стартовый адрес следующего трека.
+Если мы выбрали последний трек на диске, то необходимо определить начало
+Lead-Out области диска
+<font color="#461b7e">
+    if(n == LAST) toc.cdte_track = CDROM_LEADOUT;
+    else toc.cdte_track = n + 1;
+
+    if(ioctl(fd, CDROMREADTOCENTRY, &amp;toc) &lt; 0) &#123;
+        perror("ioctl");
+        return -1;
+    &#125;
+
+    end_lba = toc.cdte_addr.lba; // конечный адрес трека
+</font><font color="#461b7e">    end_lba = toc.cdte_addr.lba; // конечный адрес трека
+
+</font>
+Создаем файл track.wav для хранения считанных аудиоданных:
+<font color="#461b7e">
+    out = open("./track.wav", O_CREAT|O_RDWR|O_TRUNC, 0600);
+    if(out &lt; 0) &#123;
+        perror("open");
+        return -1;
+    &#125;
+</font><font color="#461b7e">    &#125;
+
+</font>
+В начале файла должен находится заголовок установленного формата длиной
+44 байта. Но так как нам пока неизвестны все значения полей заголовка (в
+частности, размер файла), запишем в файл пустой заголовок:
+<font color="#461b7e">
+    memset(&amp;w_hdr, 0, sizeof(wav_header_t));
+    write(out, (void *)&amp;w_hdr, WAV_HDR_LEN);
+</font><font color="#461b7e">    write(out, (void *)&amp;w_hdr, WAV_HDR_LEN);
+
+</font>
+Начинаем считывать аудиоданные. При каждом обращении к диску считываем
+один фрейм (2352 байта), адресация в формате LBA, считанные данные
+помещаем в буфер buff, а затем записываем в файл track.wav
+<font color="#461b7e">
+    cda.addr_format = CDROM_LBA;
+    cda.nframes = 1;
+    cda.buf = buff;
+
+    printf("Track size - %d sectors\n", end_lba - start_lba);
+
+    for(i = start_lba; i &lt; end_lba; i++) &#123;
+
+        memset(buff, 0, sizeof(buff));
+
+        cda.addr.lba = i;
+        printf("%c", 0x0D);
+        printf("lba: %u", i - start_lba + 1);
+
+        /* Читаем аудиоданные*/
+        if(ioctl(fd, CDROMREADAUDIO, &amp;cda) &lt; 0) &#123;
+            perror("ioctl");
+            return -1;
+        &#125;
+
+        if(write(out, (__u8 *)buff, CD_FRAMESIZE_RAW) &lt; 0) &#123;
+            perror("write");
+            return -1;
+        &#125;
+    &#125;
+
+    printf("\n");
+</font><font color="#461b7e">    printf("\n");
+
+</font>
+Определяем размер файла track.wav:
+<font color="#461b7e">
+    memset(&amp;s, 0, sizeof(struct stat));
+    if(fstat(out, &amp;s) &lt; 0) &#123;
+        perror("fstat");
+        exit(-1);
+    &#125;
+</font><font color="#461b7e">    &#125;
+
+</font>
+Теперь необходимо сформировать WAV-заголовок и записать его в начало файла:
+<font color="#461b7e">
+    memset(&amp;w_hdr, 0, sizeof(wav_header_t));
+    memcpy(w_hdr.riff, "RIFF", 4);
+    w_hdr.size = s.st_size - 8;
+    memcpy(w_hdr.wave, "WAVEfmt ", 8); // последний символ - пробел
+    w_hdr.size1 = 16;
+    w_hdr.format_tag = 1;
+    w_hdr.channels = 2;
+    w_hdr.sample_per_sec = 44100;
+    w_hdr.byte_per_sec = 176400;
+    w_hdr.block_align = 4;
+    w_hdr.bit_per_sample = 16;
+    memcpy(w_hdr.data, "data", 4); 
+    w_hdr.size2 = s.st_size - WAV_HDR_LEN;
+</font><font color="#461b7e">    w_hdr.size2 = s.st_size - WAV_HDR_LEN;
+
+</font>
+Записываем сформированный заголовок в файл track.wav:
+<font color="#461b7e">
+    lseek(out, 0, 0);
+    write(out, (void *)&amp;w_hdr, WAV_HDR_LEN);
+    printf("OK\n");
+
+    close(fd);
+    close(out);
+
+    return 0;
+&#125;
+</font><font color="#461b7e">&#125;
+
+</font>
+Полученный в результате работы программы файл track.wav можно
+сконвертировать в любой цифровой формат - MP3 или Ogg Vorbis, например:
+<font color="#461b7e">
+        # oggenc -b 192 track.wav
+
+</font>
+В результате получаем файл track.ogg, который можно прослушать при
+помощи утилиты ogg123:
+<font color="#461b7e">
+        # ogg123 track.ogg
+
+</font>
+Утилиты и библтотеки для работы с файлами формата Ogg Vorbis можно
+скачать с сайта <a href="http://www.vorbis.com.">http://www.vorbis.com.</a>
+
+
+
+</PRE><BR>
+<TABLE BORDER=0 CELLSPACING=0 CELLPADDING=1 BGCOLOR="#B0B190" WIDTH="100%">
+<TR><TD>
+<TABLE BORDER=0 CELLSPACING=0 CELLPADDING=0 BGCOLOR="#E9EAD6" ALIGN=CENTER WIDTH="100%">
+<TR BGCOLOR="#000000"><TD COLSPAN=7><IMG SRC="/p.gif" HEIGHT=1 WIDTH=1 ALT=""></TD></TR>
+<TR ALIGN=CENTER>
+<TD><small><A HREF="/cgi-bin/opennet/jump.cgi?name=audio_cd_grab.txt&ref=prev">&lt;&lt; Предыдущая</A></TD>
+<TD><small><A HREF="/cgi-bin/opennet/jump.cgi?name=audio_cd_grab.txt&ref=index">ИНДЕКС</A></TD>
+<TD><small><A HREF="/search.shtml">Поиск в статьях</A></TD>
+<TD><small><A HREF="/cgi-bin/opennet/jump.cgi?name=audio_cd_grab.txt&ref=raw">src</A></TD>
+<TD><small><A HREF="/cgi-bin/opennet/jump.cgi?name=audio_cd_grab.txt&ref=setbookmark">Установить закладку</A></TD>
+<TD><small><A HREF="/cgi-bin/opennet/jump.cgi?name=audio_cd_grab.txt&ref=getbookmark">Перейти на закладку</A></TD>
+<TD><small><A HREF="/cgi-bin/opennet/jump.cgi?name=audio_cd_grab.txt&ref=next">Следующая &gt;&gt;</A></TD>
+</TR><TR BGCOLOR="#000000"><TD COLSPAN=7><IMG SRC="/p.gif" HEIGHT=1 WIDTH=1 ALT=""></TD></TR>
+</TR></TABLE></TD></TR></TABLE>
+<br><TABLE BORDER=0 CELLSPACING=0 CELLPADDING=1 BGCOLOR="#B0B190" WIDTH="100%">
+<TR><TD>
+<TABLE  BORDER=0 CELLSPACING=0 CELLPADDING=5 BGCOLOR="#E9EAD6" WIDTH="100%">
+<tr BGCOLOR="#C7CBB1"><td><font color="#000090"><b>Обсуждение</b></font></td></tr>
+<tr bgcolor="E9EAD6"><td>
+
+
+<table width="100%" BORDER=0 CELLSPACING=0 CELLPADDING=0><tr><td width="3%">&nbsp;</td><td width="97%">
+
+<table bgcolor="#D9DAC6" width="100%" BORDER=0 CELLSPACING=2 CELLPADDING=2><tr><td><li><b><a href="/openforum/vsluhforumID3/5345.html#1">Написание программы для копирования треков с Audio-CD (</b></a>, <small>darkeagle</small><font color="#707070">, <font size="-2">01:09:09, 03/29/2005</font></font> [<a href="/cgi-bin/openforum/vsluhboard.cgi?az=post&om=5345&forum=vsluhforumID3&omm=1">ответить</a>] (1)
+<br><small>респект автору.</small></td></tr></table><br>
+
+</td></tr></table>
+
+
+
+<BR></td></tr>
+<tr BGCOLOR="#C7CBB1"><td><font color="#000090"><b>Ваш комментарий</b></font></td></tr>
+<tr BGCOLOR="#DDE1C2"><td>
+<form method="post" action="http://www.opennet.ru/cgi-bin/openforum/vsluhboard.cgi">
+<input type=hidden name="om"  value="5345">
+<input type=hidden name="key_section" value="topic">
+<input type=hidden name="key_sub" value="dev">
+<input type=hidden name="key_item" value="audio_cd_grab">
+<input type=hidden name="forum" value="vsluhforumID3">
+<input type=hidden name="omm" value="">
+<input type="hidden" name="az" value="a_mesg">
+
+Имя:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <input type=text name="name" value="" size=30><br>
+E-Mail:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <input type=text name="email" value="" size=30><br>
+Заголовок: <input type=text name="subject" value="Написание программы для копирования треков с Audio-CD (cdrom audio sound gcc example)" size=30><br>
+Текст:<br>
+<textarea name="body" COLS=50 ROWS=8 WRAP="virtual">
+</textarea><br>
+<INPUT TYPE="submit" NAME="post" VALUE="Отправить">
+</form>
+</td></tr>
+</table>
+</td></tr>
+</table>
+<br>
+<!--htdig_noindex--><br>
+
+<table CELLSPACING=0 CELLPADDING=0 BORDER=1 BGCOLOR="#441144" WIDTH=100% ALIGN=center>
+<tr>
+<td ALIGN="center" VALIGN="center">
+<table align="center" width=100% border=1 cellspacing=0 cellpadding=2 bordercolor=#F8BB0B bordercolordark=#F8BB0B bordercolorlight=#FFFFFF>
+<tr>
+<td bgcolor=#FFF8E8 align=center colspan=2>
+<a href=http://www.linuxcenter.ru/?sid=nP5OTFA1>
+<font size=4 face="sans-serif" color=#5B1900>
+<b>Закажи себе дистрибутив! Linux и BSD почтой от ЛинуксЦентра:</b>
+</font>
+</td>
+</tr>
+<tr>
+<td bgcolor=#FFF8E8 align=left>
+<font size=2 face="sans-serif" color=#5B1900 width=50%>&nbsp;1. <a href="http://www.linuxcenter.ru/index.phtml?good=1229&sid=nP5OTFA1">
+<font size=3 face="sans-serif" color=#5B1900>Подписка на журнал "Linux Format" 4 номера (сентябрь, октябрь, ноябрь и декабрь 2005) - 600 руб.</font>
+</a>
+<br>&nbsp;2. <a href="http://www.linuxcenter.ru/index.phtml?good=1212&sid=nP5OTFA1">
+<font size=3 face="sans-serif" color=#5B1900>Fedora Core 4, i386 binaries (1DVD) - наследник RedHat Linux - 250 руб.</font>
+</a>
+<br>&nbsp;3. <a href="http://www.linuxcenter.ru/index.phtml?good=1142&sid=nP5OTFA1">
+<font size=3 face="sans-serif" color=#5B1900>Mandriva Linux Limited Edition 2005 (1DVD) - 250 руб.</font>
+</a>
+<br>&nbsp;4. <a href="http://www.linuxcenter.ru/index.phtml?good=1054&sid=nP5OTFA1">
+<font size=3 face="sans-serif" color=#5B1900>Mandrakelinux 10.1 Official Discovery (3CD) - 545 руб.</font>
+</a>
+<br>&nbsp;5. <a href="http://www.linuxcenter.ru/index.phtml?good=1232&sid=nP5OTFA1">
+<font size=3 face="sans-serif" color=#5B1900>Gentoo Linux 2005.0 Linuxсenter Edition (1DVD) - 250 руб.</font>
+</a>
+<br>
+</font>
+</td>
+<td bgcolor=#FFF8E8 align=left>
+<font size=2 face="sans-serif" color=#5B1900 width=50%>&nbsp;6. <a href="http://www.linuxcenter.ru/index.phtml?good=1158&sid=nP5OTFA1">
+<font size=3 face="sans-serif" color=#5B1900>FreeBSD 5.4 i386 Linuxcenter Edition (2 DVD) - 500 руб.</font>
+</a>
+<br>&nbsp;7. <a href="http://www.linuxcenter.ru/index.phtml?good=1071&sid=nP5OTFA1">
+<font size=3 face="sans-serif" color=#5B1900>Knoppix 3.7 Russian Edition (1CD) - 90 руб.</font>
+</a>
+<br>&nbsp;8. <a href="http://www.linuxcenter.ru/index.phtml?good=1240&sid=nP5OTFA1">
+<font size=3 face="sans-serif" color=#5B1900>Журнал "Системный администратор", 2005 год, июль. - 145 руб.</font>
+</a>
+<br>&nbsp;9. <a href="http://www.linuxcenter.ru/index.phtml?good=1213&sid=nP5OTFA1">
+<font size=3 face="sans-serif" color=#5B1900>Fedora Core 4, 64bit binaries (1DVD) - наследник RedHat Linux - 250 руб.</font>
+</a>
+<br>&nbsp;10. <a href="http://www.linuxcenter.ru/index.phtml?good=1234&sid=nP5OTFA1">
+<font size=3 face="sans-serif" color=#5B1900>Кружка TUX! - 185 руб.</font>
+</a>
+<br>
+</font>
+</td>
+</tr>
+</table>
+</td>
+</tr>
+</table>
+<!--/htdig_noindex-->
+
+
+<!-- footer -->
+<!--htdig_noindex-->
+<br>
+<form method="get" action="http://www.opennet.ru/cgi-bin/opennet/jump.cgi">
+<TABLE BORDER=0 CELLSPACING=0 CELLPADDING=1 WIDTH="100%" BGCOLOR="#B0B190">
+<TR><TD>
+<TABLE BORDER=0 CELLSPACING=0 CELLPADDING=0 WIDTH="100%" VALIGN="MIDDLE">
+<TR ALIGN=CENTER><TD WIDTH="27%" BGCOLOR="#E9EAD6"><FONT SIZE="-1">
+    <select name="to" onChange="submit()">
+	<option value="/index.shtml" selected>Быстрая навигация по сайту</option>
+	<option value="/prog/sml">__________________ КАТАЛОГИ:</option>
+<option value="/prog/sml/">Каталог программного обеспечения</option>
+<option value="/links/sml/">Каталог ссылок на unix ресурсы</option>
+<option value="/filebase.shtml">Каталог тематических статей</option>
+<option value="/docs/">Архив документации</option>
+<option value="/tips/sml/">Советы, заметки</option>
+<option value="/man.shtml">MAN - Системные руководства</option>
+	<option value="/opennews/">__________________ НОВОСТИ:</option>
+<option value="/opennews/">Новости OpenNews</option>
+<option value="/lastsoft/">LastSoft - Свежий софт</option>
+<option value="/news/freshmeat.shtml">Обзоры ПО с freshmeat</option>
+<option value="/security/">Проблемы безопасности</option>
+<option value="/news/grab.shtml">Новости с других сайтов</option>
+	<option value="/cgi-bin/openforum/vsluhboard.cgi">__________________ ОБЩЕНИЕ:</option>
+<option value="/cgi-bin/openforum/vsluhboard.cgi">Форум/Конферения</option>
+	<option value="/index.shtml">_______________ МИНИ-ПОРТАЛЫ:</option>
+<option value="/cisco.shtml">CISCO.opennet.ru</option>
+<option value="/bsd.shtml">BSD.opennet.ru</option>
+<option value="/linux.shtml">LINUX.opennet.ru</option>
+<option value="/solaris.shtml">SOLARIS.opennet.ru</option>
+<option value="/web.shtml">WEB.opennet.ru - web-технологии</option>
+<option value="/security/">SECURITY.opennet.ru</option>
+<option value="/palm.shtml">PALM.opennet.ru - карманные ПК</option>
+	<option value="/index.shtml">__________________ НАВИГАЦИЯ:</option>
+<option value="/keywords/">Навигация по ключевым словам</option>
+<option value="/search.shtml">Системы ПОИСКА</option>
+	<option value="/index.shtml">__________________ РАЗНОЕ:</option>
+<option value="/cup.shtml">ЦУП - Центр Управления Проектом</option>
+<option value="/announce_prog.shtml">Добавление в каталоги</option>
+	</select>
+</FONT>
+</TD>
+<TD WIDTH="8%" BGCOLOR="#E9EAD6">
+<FONT SIZE="-1">
+<A HREF="/cgi-bin/opennet/bookmark.cgi">Закладки&nbsp;на&nbsp;сайте</A><BR>
+<A HREF="/cgi-bin/opennet/bookmark.cgi?submit=add" target="blank_">Проследить&nbsp;за&nbsp;страницей</A>
+</FONT>
+</TD>
+<TD WIDTH="65%" ALIGN=RIGHT BGCOLOR="#E9EAD6">
+<FONT SIZE="-1">Created&nbsp;1996-2005&nbsp;by&nbsp;<B><A HREF="mailto:mc@tyumen.ru">Maxim&nbsp;Chirkov</A></B></FONT>&nbsp;&nbsp;<BR>
+<FONT SIZE="-1"><A HREF="http://www.opennet.ru/guestbook.shtml">Добавить</A>,&nbsp;<A HREF="http://www.opennet.ru/reklama.shtml">Реклама</A>,&nbsp;<A HREF="http://www.opennet.ru/banners2.shtml">Вебмастеру</A>,&nbsp;<A HREF="../../cup.shtml">ЦУП</A>,&nbsp;<A HREF="../../guide.shtml">ГИД</A></FONT>&nbsp;&nbsp;
+</TD>
+</TR>
+</TABLE>
+</TD></TR>
+</TABLE>
+
+
+<div align=right><table><tr><td>
+<a target=_blank href="http://www.runnet.ru"><img src="/img/runnet.gif" border=0 height=31 width=88 alt="RUNNet"></a>
+<a target=_blank href="http://top.list.ru/jump?from=77689"><img src="http://top.list.ru/counter?id=77689;t=75;l=1" border=0 height=31 width=38 alt="TopList"></a>
+<a target=_blank href="http://counter.rambler.ru/top100/"><img src="http://counter.rambler.ru/top100.cnt?10566" width=1 height=1 border=0><img src="/banner.gif" width=88 height=31 border=0></a>
+<script language="JavaScript"><!--
+d=document;r=escape(d.referrer);h=""+Math.random()+"&s=105359&im=16&r="+r;
+d.write(' <a href="http://u367.96.spylog.com/cnt?f=3&p=1" target=_blank><img src="http://u367.96.spylog.com/cnt?p=1&r='+r+'" border=0 alt=SpyLog height=31 width=88></a>');
+//--></script>
+</td></tr></table>
+</div>
+</form>
+<!--/htdig_noindex-->
+<!-- end of footer -->
+
+
+
+</BODY></HTML>

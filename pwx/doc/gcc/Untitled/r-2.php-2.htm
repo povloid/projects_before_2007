@@ -1,0 +1,34 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1251"><title>www.ПЕРВЫЕ ШАГИ.ru :: Шаг 2 - Первое приложение</title></head><link rel=stylesheet type=text/css href="2.css" tppabs="http://www.firststeps.ru/2.css"><body text=black bgcolor=white link=blue vlink=blue alink=red><h2>Шаг 2 - Первое приложение</h2><div style="margin:10px;"><p>Для того, чтобы создать первую программу надо уже ознакомиться с большинством возможностей библиотеки, по крайней мере, с ее базовыми структурами и классами, но у меня принцип изучения новых языков (библиотек и т.п.) немного другой. Зачем читать книгу из нескольких сотен страниц, если создание программы требуется уже сейчас. Более разумно прочитать первый десяток страниц и создать первое работающее приложение, а затем уже постепенно вгрызаться внутрь описания других возможностей, причем не всех подряд, а только тех, которые реально нужны в данный момент. Со временем Вам потребуются все возможности изучаемого объекта, и само собой, постепенно изучение завершится победным концом.
+
+<p>В общем, хватит прелюдий. Давайте создадим первую программу. Любые приложения на <b>Qt</b> требуют подключения заголовочного файла <b>qapplication.h</b> с определением класса <b>QApplication</b>, который управляет выполнением и установками <b>GUI</b> приложения. Для того, чтобы создать примитивный интерфейс добавим к окну приложения кнопку. Для этого следует подключить описание соответствующего класса <b>QPushButton</b> в файле <b>qpushbutton.h</b>.
+<p>Пишем код в файл <b>app1.cpp</b>:
+<pre>
+#include &lt;qapplication.h&gt;
+#include &lt;qpushbutton.h&gt;
+
+int main(int argc, char **argv)
+{
+    QApplication app1(argc, argv);
+
+    QPushButton button1("linux.firststeps.ru!",0);
+    button1.resize(300,30);
+
+    app1.setMainWidget(&button1);
+    button1.show();
+    return app1.exec();
+}
+</pre>
+<p>Для компиляции этой программы требуется указать каталоги, в которых <b>gcc</b> может найти заголовочные файлы для <b>X11</b> и <b>Qt</b> с помощью ключа <b>-I</b>. А также каталоги с библиотеками. При установке библиотеки <b>Qt</b> создается специальная переменная среды <b>QTDIR</b>, указывающая базовый каталог библиотеки. Узнать его можно с помощью команды:
+<pre>
+dron:~# echo $QTDIR
+/usr/lib/qt
+dron:~#
+</pre>
+<p>У Вас это может быть другой каталог, но смысл от этого не меняется. Мы будем применять эту переменную для компиляции.
+<pre>
+dron:~# gcc app1.cpp -o app1 -I/usr/X11R6/include -I$QTDIR/include 
+  -L/usr/X11R6/lib -L$QTDIR/lib -lqt
+</pre>
+<p>По идее все должно скомпилироваться. По крайней мере, у меня образовался файл <b>app1</b>. И после запуска появилось то, что требовалось:
+<p><img src="1_1-1.gif" tppabs="http://www.firststeps.ru/linux/qt/gif/1_1.gif" alt="gif/1_1.gif (4106 b)" border=2></p>
+<p>По строкам разбирать эту программу думаю нет смысла, однако основные моменты все-таки надо обозначить. Объект <b>QApplication</b> может быть в программе только один и он самый главный. Далее, чтобы приложение знало, что отображать внутри формы требуется назначить главный ей, так называемый, <b>Widget</b> функцией <b>setMainWidget()</b>. А отображаем мы внутри него кнопку <b>button1</b>. Позже мы более детально разберемся со всеми этими классами, а пока мы научились создавать и компилировать простые приложения на <b>Qt</b>.</div><center><hr><a href="r-2.php-1.htm" tppabs="http://www.firststeps.ru/linux/qt/r.php?1">Предыдущий Шаг</a> | <a href="qt1.html" tppabs="http://www.firststeps.ru/linux/qt/qt1.html">Оглавление</a><br>Автор <a href="mailto:kuzinandrey@yandex.ru?SUBJECT=From_part_qt#2'_on_[www.firststeps.ru]">Кузин Андрей</a>.<hr><iframe src="javascript:if(confirm('http://ad.adriver.ru/cgi-bin/erle.cgi?sid=9595&target=blank&bt=1&pz=0&rnd=9674  \n\nThis file was not retrieved by Teleport Pro, because it did not meet the project\'s file type specifications.  \n\nDo you want to open it from the server?'))window.location='http://ad.adriver.ru/cgi-bin/erle.cgi?sid=9595&target=blank&bt=1&pz=0&rnd=9674'" tppabs="http://ad.adriver.ru/cgi-bin/erle.cgi?sid=9595&target=blank&bt=1&pz=0&rnd=9674" frameborder=0 vspace=0 hspace=0 width=468 height=60 marginwidth=0 marginheight=0 scrolling=no><a href="javascript:if(confirm('http://ad.adriver.ru/cgi-bin/click.cgi?sid=9595&bt=1&pz=0&rnd=9674  \n\nThis file was not retrieved by Teleport Pro, because it is addressed on a domain or path outside the boundaries set for its Starting Address.  \n\nDo you want to open it from the server?'))window.location='http://ad.adriver.ru/cgi-bin/click.cgi?sid=9595&bt=1&pz=0&rnd=9674'" tppabs="http://ad.adriver.ru/cgi-bin/click.cgi?sid=9595&bt=1&pz=0&rnd=9674" target=_blank><img src="rle.cgi-sid=9595&bt=1&pz=0&rnd=9674" tppabs="http://ad.adriver.ru/cgi-bin/rle.cgi?sid=9595&bt=1&pz=0&rnd=9674" alt="-AdRiver-" border=0 width=468 height=60></a></iframe></center><br><br>

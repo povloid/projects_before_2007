@@ -1,0 +1,392 @@
+<HTML><HEAD><META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=koi8-r"><TITLE>
+OpenNET: статья - Уровень минимальной оптимизации (-O) в GCC (gcc optimization)
+</TITLE>
+<meta name="KeyWords" content="gcc, optimization">
+</HEAD><BODY BGCOLOR="#DDE1C2" TEXT="#002040">
+<!--htdig_noindex-->
+<LINK REL="stylesheet" href="/opennet.css" type="text/css">
+<FORM method="get" action="http://www.opennet.ru/search.shtml">
+<TABLE BORDER=0 CELLSPACING=0 CELLPADDING=0 WIDTH="100%">
+<TR>
+<TD VALIGN="BOTTOM" BGCOLOR="#E9EAD6" style="background: #E9EAD6 url('/back.gif') repeat-x bottom left">
+<A HREF="http://www.opennet.ru"><IMG SRC="/opennet2.gif" HEIGHT=60 WIDTH=249 ALT="The OpenNET Project" BORDER="0"></A><br>
+</TD>
+
+<TD BGCOLOR="#B0B190" WIDTH="1"><IMG SRC="/p.gif" HEIGHT=1 WIDTH=1 ALT=""></TD>
+
+<TD VALIGN=TOP ALIGN=RIGHT WIDTH="470" BGCOLOR="#D9DAC6">
+<TABLE BORDER=0 CELLPADDING=1 WIDTH="470">
+<TR>
+<TD HEIGHT=60 BGCOLOR="#D9DAC6">
+
+<font color="#A03030"><b>Началась <a href="http://www.linuxcenter.ru/goods/1229.html">подписка</a> на журнал "<a href=http://www.linuxformat.ru/>Linux Format</a>"</b> - первый в России ежемесячный журнал, целиком посвященный ОС Linux и OpenSource ПО.</font>   
+
+
+
+</TD>
+</TR>
+</TABLE>
+</TD>
+
+<TD BGCOLOR="#B0B190" WIDTH="1"><IMG SRC="/p.gif" HEIGHT=1 WIDTH=1 ALT=""></TD>
+<TD WIDTH="40" BGCOLOR="#E9EAD6" style="background: #E9EAD6 url('/back.gif') repeat-x bottom left">&nbsp;</TD>
+<TD BGCOLOR="#B0B190" WIDTH="1"><IMG SRC="/p.gif" HEIGHT=1 WIDTH=1 ALT=""></TD>
+
+<TD VALIGN=TOP ALIGN=RIGHT WIDTH="130" BGCOLOR="#E9EAD6" ROWSPAN=3>
+<script type="text/javascript"><!--
+google_ad_client = "pub-2075278885744463";
+google_ad_width = 125;
+google_ad_height = 125;
+google_ad_format = "125x125_as";
+google_ad_channel ="";
+google_color_border = "E9EAD6";
+google_color_bg = "E9EAD6";
+google_color_link = "0000FF";
+google_color_url = "008000";
+google_color_text = "000000";
+google_language = 'ru';
+google_alternate_color = "E9EAD6";
+//--></script>
+<script type="text/javascript"
+  src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+</script>
+</TD>
+
+</TR>
+
+<TR BGCOLOR="#B0B190"><TD COLSPAN=6><IMG SRC="/p.gif" HEIGHT=1 WIDTH=1 ALT=""></TD></TR>
+
+
+<TR BGCOLOR="#E9EAD6">
+<TD ALIGN=CENTER COLSPAN=5>
+<table width="100%">
+<tr>
+<td rowspan=2 width=300 nowrap class="h">
+<INPUT type=hidden name=exclude value="index|/man.shtml"><A HREF="../../search.shtml" class="h"><u>Поиск</u></A>&nbsp;(<A HREF="../../keywords/" class="h">ключи</A>):&nbsp;<INPUT type="text" size="20" name="words" value="">
+</td><td width="25%">
+   <A HREF="../../prog/sml/" class="h"><b><u>ПРОГРАММЫ</u></b></A>
+</td><td width="25%">
+   <A HREF="../../filebase.shtml" class="h"><b><u>СТАТЬИ</u></b></A>
+</td><td width="25%">
+   <A HREF="../../tips/sml/" class="h"><b><u>СОВЕТЫ</u></b></A>
+</td><td width="25%">
+   <A HREF="http://forum.opennet.ru" class="h"><b><u>ФОРУМ</u></b></A>
+</td></tr>
+<tr><td>
+   <A HREF="../../links/sml/" class="h"><b><u>ССЫЛКИ</u></b></A>
+</td><td class="h">
+   <A HREF="../../opennews/" class="h"><b><u>НОВОСТИ</u></b></A> (<a href="../../news/grab.shtml" class="h">+</a>)
+</td><td>
+   <A HREF="../../man.shtml" class="h"><b><u>MAN'ы</u></b></A>
+</td><td>
+   <A HREF="../../docs/" class="h"><b><u>ДОКУМЕНТАЦИЯ</u></b></A>
+</td></tr>
+</table>
+</TD>
+<TD BGCOLOR="#B0B190" WIDTH="1"><IMG SRC="/p.gif" HEIGHT=1 WIDTH=1 ALT=""></TD>
+</TR>
+<TR BGCOLOR="#B0B190"><TD COLSPAN=7><IMG SRC="/p.gif" HEIGHT=2 WIDTH=1 ALT=""></TD></TR>
+</TABLE>
+<script language="JavaScript"><!--
+d=document;a='';r=escape(d.referrer);a+=';r='+r;
+js=10; d.write('<img src="http://top.list.ru/counter'+
+'?id=77689;js='+js+a+';rand='+Math.random()+
+'" alt="" height=1 width=1>');
+if(js>11)d.write('<'+'!-- ')//--></script><noscript><img
+src="http://top.list.ru/counter?js=na;id=77689"
+height=1 width=1 alt="">
+</noscript>
+</FORM>
+<!--/htdig_noindex-->
+
+<!--htdig_noindex-->
+
+<style>
+table.opensource {
+font: 12px Arial, Helvetica;
+border: 1px solid black;
+background: #dfc;
+}
+table.opensource td {
+font: bold 12px Arial, Helvetica;
+text-align:center;
+}
+table.opensource td.osc {
+border-right:1px solid silver;
+}
+table.opensource li{
+margin-left: 2px;
+}
+table.opensource a, table.opensource a:visited{
+text-decoration:none;
+color: blue;
+}
+table.opensource a:hover{
+text-decoration:underline;
+}
+</style>
+<table width='760' height='60' class='opensource' cellpadding='1' cellspacing='0' align='center' bgcolor='#FFF'>
+<tr>
+<td colspan='4' align='center' style='border-bottom: 1px solid silver'>
+<A href='http://opensource.com.ua/?rID=1816'>OpenSource.com.ua &ndash; <font color='red'>Диски с Linux, FreeBSD, OpenOffice, Книги</font>. CD - 5 грн, DVD - 14.95 грн!</A>
+</td>
+</tr>
+<tr>
+<td nowrap='yes' class='osc'>
+    <a href='http://opensource.com.ua/index.php?rID=1816&cPath=34'>
+<font color='red'>ASPLinux 10 DVD - 14.95 грн.</font>
+</a>
+    <br>
+<a href='http://opensource.com.ua/index.php?rID=1816&cPath=37'>SUSE 9.3 DVD - 14.95 грн.</a>
+</td>
+<td nowrap='yes' class='osc'>
+    <a href='http://opensource.com.ua/index.php?rID=1816&cPath=36'>Debian Sarge 3.1r0a 2 DVD - 29,90 грн.</a>
+    <br>
+<a href='http://opensource.com.ua/index.php?rID=1816&cPath=44'>
+<font color='red'>Fedora Core 4 DVD - 14,95 грн.</font>
+</a>
+</td>
+<td nowrap='yes' class='osc'>
+    <a href='http://opensource.com.ua/index.php?rID=1816&cPath=120'>
+<font color='red'>Ultimate Boot CD - 5 грн.</font>
+</a>
+    <br>
+<a href='http://opensource.com.ua/index.php?rID=1816&cPath=32'>Mandriva 2005 LE DVD - 14,95 грн.</a>
+</td>
+<td nowrap='yes'>
+    <a href='http://opensource.com.ua/index.php?rID=1816&cPath=38'>FreeBSD 5.4 2CD - 10 грн.</a>
+    <br>
+<a href='http://opensource.com.ua/index.php?rID=1816&cPath=70'>
+<font color='red'>Кружка "Linux" белая - 19.95 грн.</font>
+</a>
+</td>
+</tr>
+</table>
+
+
+<!--/htdig_noindex-->
+
+
+<CENTER><H3><FONT COLOR="#000090">
+Уровень минимальной оптимизации (-O) в GCC (gcc optimization)
+</FONT></H3></CENTER>
+<BR>
+<TABLE BORDER=0 CELLSPACING=0 CELLPADDING=1 BGCOLOR="#B0B190" WIDTH="100%">
+<TR><TD>
+<TABLE BORDER=0 CELLSPACING=0 CELLPADDING=0 BGCOLOR="#E9EAD6" ALIGN=CENTER WIDTH="100%">
+<TR BGCOLOR="#000000"><TD COLSPAN=7><IMG SRC="/p.gif" HEIGHT=1 WIDTH=1 ALT=""></TD></TR>
+<TR ALIGN=CENTER>
+<TD><small><A HREF="/cgi-bin/opennet/jump.cgi?name=gcc_min_optimize.txt&ref=prev">&lt;&lt; Предыдущая</A></TD>
+<TD><small><A HREF="/cgi-bin/opennet/jump.cgi?name=gcc_min_optimize.txt&ref=index">ИНДЕКС</A></TD>
+<TD><small><A HREF="/search.shtml">Поиск в статьях</A></TD>
+<TD><small><A HREF="/cgi-bin/opennet/jump.cgi?name=gcc_min_optimize.txt&ref=raw">src</A></TD>
+<TD><small><A HREF="/cgi-bin/opennet/jump.cgi?name=gcc_min_optimize.txt&ref=setbookmark">Установить закладку</A></TD>
+<TD><small><A HREF="/cgi-bin/opennet/jump.cgi?name=gcc_min_optimize.txt&ref=getbookmark">Перейти на закладку</A></TD>
+<TD><small><A HREF="/cgi-bin/opennet/jump.cgi?name=gcc_min_optimize.txt&ref=next">Следующая &gt;&gt;</A></TD>
+</TR><TR BGCOLOR="#000000"><TD COLSPAN=7><IMG SRC="/p.gif" HEIGHT=1 WIDTH=1 ALT=""></TD></TR>
+</TR></TABLE></TD></TR></TABLE>
+<PRE>
+<b>Ключевые слова:</b> <A href="/cgi-bin/opennet/ks.cgi?mask=gcc">gcc</a>, <A href="/cgi-bin/opennet/ks.cgi?mask=optimization">optimization</a>,  (<a href="/cgi-bin/opennet/ks.cgi?mask=gcc%20optimization">найти похожие документы</a>)<br>
+<FONT COLOR="#0000C0">Date: Tue, 19 Nov 2002 21:56:28 +0500</FONT>
+<FONT COLOR="#0000C0">From: Valentin Nechayev &lt;<A HREF="mailto:netch@segfault.kiev.ua">netch@segfault.kiev.ua</A>&gt;</FONT>
+<FONT COLOR="#0000C0">Newsgroups: ftn.ru.unix.prog</FONT>
+<FONT COLOR="#0000C0"><B>Subject: Уровень минимальной оптимизации (-O) в GCC</B></FONT>
+
+<FONT COLOR="#D00000">AC&gt; -O это не минимальный уровень оптимизации.</FONT>
+<FONT COLOR="#D00000">AC&gt; -O0 - минимальный</FONT>
+
+Так о том и говорится - что отсутствие -O (то есть -O0 по дефолту) починило.
+
+<FONT COLOR="#900000">&gt;&gt; Это да. gcc в этом плане полный урод.</FONT>
+<FONT COLOR="#D00000">AC&gt; Что имеется ввиду?</FONT>
+
+С -O0 он ухитряется вываливать в runtime вычисление того, что можно
+вычислить запросто на этапе компиляции (!), ухитряется повторять по
+нескольку раз идентичные команды, гонять значение по пяти регистрам,
+возвращая в исходный (!), и показывать прочие свои потроха. Если же дать
+-O, то эти его кишки уже оптимизируются, но сохранять действия в пределах
+одной строки он уже не в состоянии. Hормальное промежуточное состояние -
+когда бесполезные действия уже убраны и константы вычислены, но оптимизация
+между строками еще не запустилась и блочных перестановок еще нет - у него
+не предусмотрено. Поэтому - или удобство отладки, но ужасный код,
+или нормальный код, но полное неудобство отладки. Коммерческие же компиляторы
+в основном, AFAIS, в этом плане построены разумно.
+
+</PRE><BR>
+<TABLE BORDER=0 CELLSPACING=0 CELLPADDING=1 BGCOLOR="#B0B190" WIDTH="100%">
+<TR><TD>
+<TABLE BORDER=0 CELLSPACING=0 CELLPADDING=0 BGCOLOR="#E9EAD6" ALIGN=CENTER WIDTH="100%">
+<TR BGCOLOR="#000000"><TD COLSPAN=7><IMG SRC="/p.gif" HEIGHT=1 WIDTH=1 ALT=""></TD></TR>
+<TR ALIGN=CENTER>
+<TD><small><A HREF="/cgi-bin/opennet/jump.cgi?name=gcc_min_optimize.txt&ref=prev">&lt;&lt; Предыдущая</A></TD>
+<TD><small><A HREF="/cgi-bin/opennet/jump.cgi?name=gcc_min_optimize.txt&ref=index">ИНДЕКС</A></TD>
+<TD><small><A HREF="/search.shtml">Поиск в статьях</A></TD>
+<TD><small><A HREF="/cgi-bin/opennet/jump.cgi?name=gcc_min_optimize.txt&ref=raw">src</A></TD>
+<TD><small><A HREF="/cgi-bin/opennet/jump.cgi?name=gcc_min_optimize.txt&ref=setbookmark">Установить закладку</A></TD>
+<TD><small><A HREF="/cgi-bin/opennet/jump.cgi?name=gcc_min_optimize.txt&ref=getbookmark">Перейти на закладку</A></TD>
+<TD><small><A HREF="/cgi-bin/opennet/jump.cgi?name=gcc_min_optimize.txt&ref=next">Следующая &gt;&gt;</A></TD>
+</TR><TR BGCOLOR="#000000"><TD COLSPAN=7><IMG SRC="/p.gif" HEIGHT=1 WIDTH=1 ALT=""></TD></TR>
+</TR></TABLE></TD></TR></TABLE>
+<br><TABLE BORDER=0 CELLSPACING=0 CELLPADDING=1 BGCOLOR="#B0B190" WIDTH="100%">
+<TR><TD>
+<TABLE  BORDER=0 CELLSPACING=0 CELLPADDING=5 BGCOLOR="#E9EAD6" WIDTH="100%">
+<tr BGCOLOR="#C7CBB1"><td><font color="#000090"><b>Ваш комментарий</b></font></td></tr>
+<tr BGCOLOR="#DDE1C2"><td>
+<form method="post" action="http://www.opennet.ru/cgi-bin/openforum/vsluhboard.cgi">
+<input type=hidden name="om"  value="">
+<input type=hidden name="key_section" value="topic">
+<input type=hidden name="key_sub" value="dev">
+<input type=hidden name="key_item" value="gcc_min_optimize">
+<input type=hidden name="forum" value="vsluhforumID3">
+<input type=hidden name="omm" value="">
+<input type="hidden" name="az" value="a_mesg">
+
+Имя:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <input type=text name="name" value="" size=30><br>
+E-Mail:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <input type=text name="email" value="" size=30><br>
+Заголовок: <input type=text name="subject" value="Уровень минимальной оптимизации (-O) в GCC (gcc optimization)" size=30><br>
+Текст:<br>
+<textarea name="body" COLS=50 ROWS=8 WRAP="virtual">
+</textarea><br>
+<INPUT TYPE="submit" NAME="post" VALUE="Отправить">
+</form>
+</td></tr>
+</table>
+</td></tr>
+</table>
+<br>
+<!--htdig_noindex--><br>
+
+<table CELLSPACING=0 CELLPADDING=0 BORDER=1 BGCOLOR="#441144" WIDTH=100% ALIGN=center>
+<tr>
+<td ALIGN="center" VALIGN="center">
+<table align="center" width=100% border=1 cellspacing=0 cellpadding=2 bordercolor=#F8BB0B bordercolordark=#F8BB0B bordercolorlight=#FFFFFF>
+<tr>
+<td bgcolor=#FFF8E8 align=center colspan=2>
+<a href=http://www.linuxcenter.ru/?sid=nP5OTFA1>
+<font size=4 face="sans-serif" color=#5B1900>
+<b>Закажи себе дистрибутив! Linux и BSD почтой от ЛинуксЦентра:</b>
+</font>
+</td>
+</tr>
+<tr>
+<td bgcolor=#FFF8E8 align=left>
+<font size=2 face="sans-serif" color=#5B1900 width=50%>&nbsp;1. <a href="http://www.linuxcenter.ru/index.phtml?good=1229&sid=nP5OTFA1">
+<font size=3 face="sans-serif" color=#5B1900>Подписка на журнал "Linux Format" 4 номера (сентябрь, октябрь, ноябрь и декабрь 2005) - 600 руб.</font>
+</a>
+<br>&nbsp;2. <a href="http://www.linuxcenter.ru/index.phtml?good=1212&sid=nP5OTFA1">
+<font size=3 face="sans-serif" color=#5B1900>Fedora Core 4, i386 binaries (1DVD) - наследник RedHat Linux - 250 руб.</font>
+</a>
+<br>&nbsp;3. <a href="http://www.linuxcenter.ru/index.phtml?good=1142&sid=nP5OTFA1">
+<font size=3 face="sans-serif" color=#5B1900>Mandriva Linux Limited Edition 2005 (1DVD) - 250 руб.</font>
+</a>
+<br>&nbsp;4. <a href="http://www.linuxcenter.ru/index.phtml?good=1054&sid=nP5OTFA1">
+<font size=3 face="sans-serif" color=#5B1900>Mandrakelinux 10.1 Official Discovery (3CD) - 545 руб.</font>
+</a>
+<br>&nbsp;5. <a href="http://www.linuxcenter.ru/index.phtml?good=1232&sid=nP5OTFA1">
+<font size=3 face="sans-serif" color=#5B1900>Gentoo Linux 2005.0 Linuxсenter Edition (1DVD) - 250 руб.</font>
+</a>
+<br>
+</font>
+</td>
+<td bgcolor=#FFF8E8 align=left>
+<font size=2 face="sans-serif" color=#5B1900 width=50%>&nbsp;6. <a href="http://www.linuxcenter.ru/index.phtml?good=1158&sid=nP5OTFA1">
+<font size=3 face="sans-serif" color=#5B1900>FreeBSD 5.4 i386 Linuxcenter Edition (2 DVD) - 500 руб.</font>
+</a>
+<br>&nbsp;7. <a href="http://www.linuxcenter.ru/index.phtml?good=1071&sid=nP5OTFA1">
+<font size=3 face="sans-serif" color=#5B1900>Knoppix 3.7 Russian Edition (1CD) - 90 руб.</font>
+</a>
+<br>&nbsp;8. <a href="http://www.linuxcenter.ru/index.phtml?good=1240&sid=nP5OTFA1">
+<font size=3 face="sans-serif" color=#5B1900>Журнал "Системный администратор", 2005 год, июль. - 145 руб.</font>
+</a>
+<br>&nbsp;9. <a href="http://www.linuxcenter.ru/index.phtml?good=1213&sid=nP5OTFA1">
+<font size=3 face="sans-serif" color=#5B1900>Fedora Core 4, 64bit binaries (1DVD) - наследник RedHat Linux - 250 руб.</font>
+</a>
+<br>&nbsp;10. <a href="http://www.linuxcenter.ru/index.phtml?good=1234&sid=nP5OTFA1">
+<font size=3 face="sans-serif" color=#5B1900>Кружка TUX! - 185 руб.</font>
+</a>
+<br>
+</font>
+</td>
+</tr>
+</table>
+</td>
+</tr>
+</table>
+<!--/htdig_noindex-->
+
+
+<!-- footer -->
+<!--htdig_noindex-->
+<br>
+<form method="get" action="http://www.opennet.ru/cgi-bin/opennet/jump.cgi">
+<TABLE BORDER=0 CELLSPACING=0 CELLPADDING=1 WIDTH="100%" BGCOLOR="#B0B190">
+<TR><TD>
+<TABLE BORDER=0 CELLSPACING=0 CELLPADDING=0 WIDTH="100%" VALIGN="MIDDLE">
+<TR ALIGN=CENTER><TD WIDTH="27%" BGCOLOR="#E9EAD6"><FONT SIZE="-1">
+    <select name="to" onChange="submit()">
+	<option value="/index.shtml" selected>Быстрая навигация по сайту</option>
+	<option value="/prog/sml">__________________ КАТАЛОГИ:</option>
+<option value="/prog/sml/">Каталог программного обеспечения</option>
+<option value="/links/sml/">Каталог ссылок на unix ресурсы</option>
+<option value="/filebase.shtml">Каталог тематических статей</option>
+<option value="/docs/">Архив документации</option>
+<option value="/tips/sml/">Советы, заметки</option>
+<option value="/man.shtml">MAN - Системные руководства</option>
+	<option value="/opennews/">__________________ НОВОСТИ:</option>
+<option value="/opennews/">Новости OpenNews</option>
+<option value="/lastsoft/">LastSoft - Свежий софт</option>
+<option value="/news/freshmeat.shtml">Обзоры ПО с freshmeat</option>
+<option value="/security/">Проблемы безопасности</option>
+<option value="/news/grab.shtml">Новости с других сайтов</option>
+	<option value="/cgi-bin/openforum/vsluhboard.cgi">__________________ ОБЩЕНИЕ:</option>
+<option value="/cgi-bin/openforum/vsluhboard.cgi">Форум/Конферения</option>
+	<option value="/index.shtml">_______________ МИНИ-ПОРТАЛЫ:</option>
+<option value="/cisco.shtml">CISCO.opennet.ru</option>
+<option value="/bsd.shtml">BSD.opennet.ru</option>
+<option value="/linux.shtml">LINUX.opennet.ru</option>
+<option value="/solaris.shtml">SOLARIS.opennet.ru</option>
+<option value="/web.shtml">WEB.opennet.ru - web-технологии</option>
+<option value="/security/">SECURITY.opennet.ru</option>
+<option value="/palm.shtml">PALM.opennet.ru - карманные ПК</option>
+	<option value="/index.shtml">__________________ НАВИГАЦИЯ:</option>
+<option value="/keywords/">Навигация по ключевым словам</option>
+<option value="/search.shtml">Системы ПОИСКА</option>
+	<option value="/index.shtml">__________________ РАЗНОЕ:</option>
+<option value="/cup.shtml">ЦУП - Центр Управления Проектом</option>
+<option value="/announce_prog.shtml">Добавление в каталоги</option>
+	</select>
+</FONT>
+</TD>
+<TD WIDTH="8%" BGCOLOR="#E9EAD6">
+<FONT SIZE="-1">
+<A HREF="/cgi-bin/opennet/bookmark.cgi">Закладки&nbsp;на&nbsp;сайте</A><BR>
+<A HREF="/cgi-bin/opennet/bookmark.cgi?submit=add" target="blank_">Проследить&nbsp;за&nbsp;страницей</A>
+</FONT>
+</TD>
+<TD WIDTH="65%" ALIGN=RIGHT BGCOLOR="#E9EAD6">
+<FONT SIZE="-1">Created&nbsp;1996-2005&nbsp;by&nbsp;<B><A HREF="mailto:mc@tyumen.ru">Maxim&nbsp;Chirkov</A></B></FONT>&nbsp;&nbsp;<BR>
+<FONT SIZE="-1"><A HREF="http://www.opennet.ru/guestbook.shtml">Добавить</A>,&nbsp;<A HREF="http://www.opennet.ru/reklama.shtml">Реклама</A>,&nbsp;<A HREF="http://www.opennet.ru/banners2.shtml">Вебмастеру</A>,&nbsp;<A HREF="../../cup.shtml">ЦУП</A>,&nbsp;<A HREF="../../guide.shtml">ГИД</A></FONT>&nbsp;&nbsp;
+</TD>
+</TR>
+</TABLE>
+</TD></TR>
+</TABLE>
+
+
+<div align=right><table><tr><td>
+<a target=_blank href="http://www.runnet.ru"><img src="/img/runnet.gif" border=0 height=31 width=88 alt="RUNNet"></a>
+<a target=_blank href="http://top.list.ru/jump?from=77689"><img src="http://top.list.ru/counter?id=77689;t=75;l=1" border=0 height=31 width=38 alt="TopList"></a>
+<a target=_blank href="http://counter.rambler.ru/top100/"><img src="http://counter.rambler.ru/top100.cnt?10566" width=1 height=1 border=0><img src="/banner.gif" width=88 height=31 border=0></a>
+<script language="JavaScript"><!--
+d=document;r=escape(d.referrer);h=""+Math.random()+"&s=105359&im=16&r="+r;
+d.write(' <a href="http://u367.96.spylog.com/cnt?f=3&p=1" target=_blank><img src="http://u367.96.spylog.com/cnt?p=1&r='+r+'" border=0 alt=SpyLog height=31 width=88></a>');
+//--></script>
+</td></tr></table>
+</div>
+</form>
+<!--/htdig_noindex-->
+<!-- end of footer -->
+
+
+
+</BODY></HTML>

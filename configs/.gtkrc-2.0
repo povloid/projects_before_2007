@@ -1,0 +1,26 @@
+# мой ~/.gtkrc-2.0
+
+# Motif'-оподобная тема, слегка смахивает на умолчальную
+# раскраску CDE в Solaris
+# include "/usr/share/themes/Xfce-basic/gtk-2.0/gtkrc
+
+# в принципе, это должно позволять менять shortcuts,
+# но один хрен не работает
+gtk-can-change-accels = 1
+
+# стандартные UNIX'-овые ^W,^H,^J, etc
+gtk-key-theme-name = "Emacs"
+
+# не хочу глядеть на идиотские картинки в менюшках
+# gtk-menu-images = 0
+
+# та же песня -- с кнопками
+# gtk-button-images = 0
+
+# глаза -- не казенные, нефиг мыргать курсором
+# gtk-cursor-blink = 0
+
+# вот этот шрифт и будут пользовать GTK2 приложения,
+# по крайней мере, должны...
+#gtk-font-name = "Terminus 11"
+gtk-font-name ="Helvetica 9"
